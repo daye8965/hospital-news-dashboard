@@ -127,8 +127,9 @@ def is_excluded(item):
     return any(kw in combined for kw in EXCLUDE_KEYWORDS)
 
 def title_key(title):
-    """제목 정규화 (특수문자·공백 제거) → 중복 감지용"""
-    return re.sub(r"[^\w가-힣]", "", title).lower()
+    """제목 정규화: 특수문자 모두 제거 후 앞 30자로 중복 감지"""
+    t = re.sub(r"[^\w가-힣a-zA-Z0-9]", "", title)
+    return t.lower()[:30]
 
 def collect_news(query):
     collected, now = [], datetime.now(KST)

@@ -15,7 +15,9 @@ REMOVE_PATTERN = re.compile(
 )
 
 def title_key(t):
-    return re.sub(r"[^\w가-힣]", "", t).lower()
+    """제목 정규화: 특수문자·따옴표·공백·말줄임표 모두 제거 후 앞 30자"""
+    t = re.sub(r"[^\w가-힣a-zA-Z0-9]", "", t)
+    return t.lower()[:30]  # 앞 30자만 비교 (말미 차이 무시)
 
 # CSV 파일 없으면 조용히 종료
 if not CSV_PATH.exists():

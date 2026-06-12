@@ -225,6 +225,63 @@ td{padding:10px 12px;vertical-align:top}
 <script>
 // ── 상수 ─────────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 20;
+
+// 프론트엔드 매체 매핑 (백엔드와 동기화)
+const MEDIA_MAP_FE = {
+  "chosun":"조선일보","joongang":"중앙일보","donga":"동아일보",
+  "hani":"한겨레","khan":"경향신문","hankookilbo":"한국일보",
+  "seoul":"서울신문","kmib":"국민일보","segye":"세계일보","munhwa":"문화일보",
+  "hankyung":"한국경제","mk":"매일경제","sedaily":"서울경제",
+  "fnnews":"파이낸셜뉴스","mt":"머니투데이","heraldcorp":"헤럴드경제",
+  "asiae":"아시아경제","edaily":"이데일리","etnews":"전자신문",
+  "bizwatch":"비즈워치","thebell":"더벨",
+  "kbs":"KBS","imbc":"MBC","sbs":"SBS","jtbc":"JTBC","ytn":"YTN",
+  "mbn":"MBN","tvchosun":"TV조선","ichannela":"채널A","ebs":"EBS",
+  "yonhapnewstv":"연합뉴스TV","yna":"연합뉴스","newsis":"뉴시스",
+  "news1":"뉴스1","newspim":"뉴스핌",
+  "healthchosun":"헬스조선","kormedi":"코메디닷컴",
+  "medicaltimes":"메디칼타임즈","doctorsnews":"의사신문",
+  "rapportian":"라포르시안","mdtoday":"메디컬투데이",
+  "newsmp":"메디컬포스트","dailymedi":"데일리메디",
+  "bosa":"보건신문","yakup":"약업신문","kpanews":"약사공론",
+  "pharmnews":"팜뉴스","medigatenews":"메디게이트뉴스",
+  "docdocdoc":"청년의사","mdjournal":"메디컬저널","medipana":"메디파나뉴스",
+  "hitnews":"히트뉴스","ohmynews":"오마이뉴스","pressian":"프레시안",
+  "mediatoday":"미디어오늘","sisajournal":"시사저널",
+  "koreabiomed":"코리아바이오메드","imaeil":"매일신문",
+  "kookje":"국제신문","busan":"부산일보","ulsanpress":"울산매일",
+  // 미매핑 도메인 추가
+  "ziks":"직썰","widedaily":"와이드데일리","veritas-a":"베리타스알파",
+  "topstarnews":"탑스타뉴스","thepublic":"더퍼블릭","thepowernews":"더파워뉴스",
+  "joynews":"조이뉴스24","kukinews":"쿠키뉴스","inews24":"아이뉴스24",
+  "zdnet":"지디넷","bloter":"블로터","byline":"바이라인네트워크",
+  "kmedinfo":"케이메디","hira":"건강보험심사평가원","nhis":"국민건강보험",
+  "nocutnews":"노컷뉴스","cbsnews":"CBS","bbc":"BBC코리아",
+  "weekly":"주간조선","shindonga":"신동아","woman":"여성동아",
+  "joins":"중앙일보","news.joins":"중앙일보",
+};
+
+function resolveMedia(mediaStr, urlStr) {
+  // 이미 매핑된 한글 매체명이면 그대로
+  if (mediaStr && /[가-힣]/.test(mediaStr)) return mediaStr;
+  // URL이나 도메인 단편에서 추출
+  const target = urlStr || mediaStr || '';
+  if (!target) return mediaStr || '';
+  try {
+    const domain = target.replace(/https?:\/\/(www\.)?/,'').split('/')[0].toLowerCase();
+    if (domain.includes('news.naver') || domain.includes('n.news.naver')) return mediaStr||'';
+    for (const [key, name] of Object.entries(MEDIA_MAP_FE)) {
+      if (domain.includes(key)) return name;
+    }
+    // 최후수단: 도메인 파트 추출
+    const parts = domain.split('.');
+    if (parts.length >= 2) {
+      const idx = (parts[parts.length-1] === 'kr' && parts.length >= 3) ? parts.length-3 : parts.length-2;
+      return parts[idx] || mediaStr || '';
+    }
+  } catch(e) {}
+  return mediaStr || '';
+}
 const HOSPITALS = {
   asan:      {label:'서울아산병원', short:'아산',    group:'아산',     color:'#1a5fa8', keywords:['서울아산병원','아산병원','울산의대']},
   samsung:   {label:'삼성서울병원', short:'삼성',    group:'삼성',     color:'#1a7a3c', keywords:['삼성서울병원','성대의대','성균관의대']},
@@ -547,11 +604,16 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       const link = r['언론사원문']||r['네이버링크']||'';
       const naverLink = r['네이버링크']||'';
       const prof = r['교수명']||'';
+      // 날짜: 발행일시 우선, 없으면 날짜 컬럼, URL처럼 생긴 값은 무시
+      const rawDate = r['발행일시']||r['날짜']||'';
+      const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
+      // 매체명 보정
+      const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');
       return `<tr>
-        <td class="td-date">${(r['발행일시']||r['날짜']||'').slice(0,16)}</td>
+        <td class="td-date">${displayDate}</td>
         ${panelKey==='others'?`<td class="td-tag"><span class="tag" style="background:${color}22;color:${color};font-weight:600">${HOSPITALS[hKey]?.label||r['병원그룹']}</span></td>`:''}
         <td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>
-        <td class="td-media">${r['매체']||''}</td>
+        <td class="td-media">${media}</td>
         <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
         ${panelKey==='ours'?`<td style="font-size:12px;color:#1a5fa8;white-space:nowrap;font-weight:${prof?'600':'400'}">${prof||'—'}</td>`:''}
         <td class="td-summary">${r['요약']||''}</td>
@@ -641,9 +703,13 @@ function statCard(label, value, color) {
 }
 
 function sortRows(rows, state) {
-  return [...rows].sort((a,b) =>
-    state.asc ? (a[state.col]||'').localeCompare(b[state.col]||'')
-              : (b[state.col]||'').localeCompare(a[state.col]||''));
+  return [...rows].sort((a,b) => {
+    let av = a[state.col]||'', bv = b[state.col]||'';
+    // URL처럼 생긴 날짜값은 빈값으로 처리
+    if (av.startsWith('http')) av = '';
+    if (bv.startsWith('http')) bv = '';
+    return state.asc ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
 }
 
 function doSort(panelKey, col) {
@@ -799,9 +865,12 @@ function openMediaModal(category) {
           const link = r['언론사원문']||r['네이버링크']||'';
           const naver = r['네이버링크']||'';
           const prof = r['교수명']||'';
+          const rawDate = r['발행일시']||r['날짜']||'';
+          const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
+          const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');
           return `<tr>
-            <td style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap">${(r['발행일시']||r['날짜']||'').slice(0,16)}</td>
-            <td style="font-size:12px;white-space:nowrap">${r['매체']||''}</td>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap">${displayDate}</td>
+            <td style="font-size:12px;white-space:nowrap">${media}</td>
             <td>${link?`<a href="${link}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;font-size:13px;font-weight:500">${r['제목']}</a>`:r['제목']}</td>
             <td style="font-size:12px;color:#1a5fa8;font-weight:${prof?'600':'400'};white-space:nowrap">${prof||'—'}</td>
             <td>${naver?`<a href="${naver}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);font-family:var(--mono)">네이버</a>`:''}</td>

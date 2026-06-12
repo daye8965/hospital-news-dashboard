@@ -33,13 +33,13 @@ if not content:
 
 rows, removed = [], 0
 seen_titles = set()
-fieldnames = None
+seen_urls   = set()
+fieldnames  = None
 
 with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
     reader = csv.DictReader(f)
     fieldnames = reader.fieldnames
 
-    # 헤더가 없으면 종료
     if not fieldnames:
         print("헤더 없음 — 건너뜀")
         sys.exit(0)
@@ -48,16 +48,20 @@ with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
         keyword = row.get("검색어", "")
         title   = row.get("제목", "")
         summary = row.get("요약", "")
-        tk = title_key(title)
+        tk  = title_key(title)
+        url = (row.get("언론사원문","") or row.get("네이버링크","")).strip()
 
         if keyword in REMOVE_KEYWORDS:
             removed += 1; continue
         if REMOVE_PATTERN.search(title + summary):
             removed += 1; continue
+        if url and url in seen_urls:
+            removed += 1; continue
         if tk and tk in seen_titles:
             removed += 1; continue
 
-        if tk: seen_titles.add(tk)
+        if url: seen_urls.add(url)
+        if tk:  seen_titles.add(tk)
 
         # 구버전 행 보정: 발행일시 없으면 날짜 컬럼으로 채우기
         if not row.get("발행일시","").strip():

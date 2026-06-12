@@ -33,45 +33,73 @@ target_date = today - timedelta(days=1)
 start_dt    = datetime(target_date.year, target_date.month, target_date.day, tzinfo=KST)
 end_dt      = datetime(today.year,       today.month,       today.day,       tzinfo=KST)
 
-# ── 매체 매핑 (도메인 → 언론사명) ─────────────────────────────────────────────
+# ── 매체 매핑 (출입기자리스트 기반) ──────────────────────────────────────────
 MEDIA_MAP = {
-    # 종합일간지
-    "chosun.com":"조선일보", "joongang.co.kr":"중앙일보", "joongang.joins.com":"중앙일보",
-    "donga.com":"동아일보", "hani.co.kr":"한겨레", "khan.co.kr":"경향신문",
-    "hankookilbo.com":"한국일보", "seoul.co.kr":"서울신문", "kmib.co.kr":"국민일보",
-    "segye.com":"세계일보", "munhwa.com":"문화일보",
+    # 종합 일간지
+    "chosun.com":"조선일보", "joongang.co.kr":"중앙일보", "joins.com":"중앙일보",
+    "news.joins.com":"중앙일보", "donga.com":"동아일보", "hankookilbo.com":"한국일보",
+    "hani.co.kr":"한겨레", "khan.co.kr":"경향신문", "kyunghyang.com":"경향신문",
+    "seoul.co.kr":"서울신문", "kmib.co.kr":"국민일보", "segye.com":"세계일보",
+    "munhwa.com":"문화일보", "naeil.com":"내일신문",
     # 경제지
-    "hankyung.com":"한국경제", "mk.co.kr":"매일경제", "sedaily.com":"서울경제",
-    "fnnews.com":"파이낸셜뉴스", "mt.co.kr":"머니투데이", "heraldcorp.com":"헤럴드경제",
+    "hankyung.com":"한국경제", "mk.co.kr":"매일경제", "mkhealth.co.kr":"매경헬스",
+    "sedaily.com":"서울경제", "fnnews.com":"파이낸셜뉴스", "mt.co.kr":"머니투데이",
+    "heraldcorp.com":"헤럴드경제", "heraldm.com":"헤럴드경제",
     "asiae.co.kr":"아시아경제", "edaily.co.kr":"이데일리", "etnews.com":"전자신문",
-    "bizwatch.co.kr":"비즈워치", "thebell.co.kr":"더벨",
-    # 방송
-    "kbs.co.kr":"KBS", "news.kbs.co.kr":"KBS", "imbc.com":"MBC", "imnews.imbc.com":"MBC",
-    "news.sbs.co.kr":"SBS", "jtbc.co.kr":"JTBC", "ytn.co.kr":"YTN",
-    "mbn.co.kr":"MBN", "tvchosun.com":"TV조선", "ichannela.com":"채널A",
-    "ebs.co.kr":"EBS", "yonhapnewstv.co.kr":"연합뉴스TV",
-    # 통신
-    "yna.co.kr":"연합뉴스", "newsis.com":"뉴시스", "news1.kr":"뉴스1",
+    "ajunews.com":"아주경제", "chosunbiz.com":"조선비즈", "etoday.co.kr":"이투데이",
+    "dt.co.kr":"디지털타임스",
+    # 통신사
+    "yna.co.kr":"연합뉴스", "news1.kr":"뉴스1", "newsis.com":"뉴시스",
     "newspim.com":"뉴스핌",
-    # 의료/건강 전문
-    "healthchosun.com":"헬스조선", "kormedi.com":"코메디닷컴",
-    "medicaltimes.com":"메디칼타임즈", "doctorsnews.co.kr":"의사신문",
-    "rapportian.com":"라포르시안", "mdtoday.co.kr":"메디컬투데이",
-    "newsmp.com":"메디컬포스트", "dailymedi.com":"데일리메디",
-    "bosa.co.kr":"보건신문", "yakup.com":"약업신문", "kpanews.co.kr":"약사공론",
-    "pharmnews.com":"팜뉴스", "medigatenews.com":"메디게이트뉴스",
-    "청년의사":"청년의사", "docdocdoc.co.kr":"청년의사",
-    "mdjournal.kr":"메디컬저널", "medipana.com":"메디파나뉴스",
-    "hitnews.co.kr":"히트뉴스",
-    # 일반 온라인
-    "ohmynews.com":"오마이뉴스", "pressian.com":"프레시안",
-    "mediatoday.co.kr":"미디어오늘", "sisajournal.com":"시사저널",
-    "weekly.chosun.com":"주간조선", "news.joins.com":"중앙일보",
-    "koreabiomed.com":"코리아바이오메드",
-    # 지역지
-    "imaeil.com":"매일신문", "kookje.co.kr":"국제신문",
-    "busan.com":"부산일보", "ulsanpress.com":"울산매일",
-    "joongdo.co.kr":"중도일보",
+    # 공중파·종편
+    "kbs.co.kr":"KBS", "news.kbs.co.kr":"KBS", "imbc.com":"MBC", "mbc.co.kr":"MBC",
+    "imnews.imbc.com":"MBC", "news.sbs.co.kr":"SBS", "sbs.co.kr":"SBS",
+    "jtbc.co.kr":"JTBC", "ytn.co.kr":"YTN", "mbn.co.kr":"MBN",
+    "tvchosun.com":"TV조선", "ichannela.com":"채널A",
+    "yonhapnewstv.co.kr":"연합뉴스TV", "obs.co.kr":"OBS", "ebs.co.kr":"EBS",
+    # 일간지 헬스
+    "healthchosun.com":"헬스조선", "k-health.com":"헬스경향",
+    "kukinews.com":"쿠키뉴스", "kormedi.com":"코메디닷컴",
+    # 주요 의료전문지
+    "doctorsnews.co.kr":"의협신문", "bosa.co.kr":"의학신문",
+    "whosaeng.com":"후생신보", "dailymedi.com":"데일리메디",
+    "medicaltimes.com":"메디칼타임즈", "docdocdoc.co.kr":"청년의사",
+    "monews.co.kr":"메디칼업저버", "medipana.com":"메디파나뉴스",
+    "medigatenews.com":"메디게이트뉴스", "rapportian.com":"라포르시안",
+    "mdtoday.co.kr":"메디컬투데이", "newsmp.com":"의약뉴스",
+    "hitnews.co.kr":"히트뉴스", "koreabiomed.com":"코리아바이오메드",
+    "pharmstoday.com":"메디팜스투데이", "ggmedinews.com":"경기메디뉴스",
+    "bokuennews.com":"보건뉴스", "medicalworldnews.co.kr":"메디컬월드뉴스",
+    "healthinnews.co.kr":"헬스인뉴스", "healtho.co.kr":"헬스오",
+    "yakup.com":"약업신문", "kpanews.co.kr":"약사공론", "pharmnews.com":"팜뉴스",
+    "ibric.org":"브릭", "medipharmtimes.com":"메디팜타임즈",
+    # 인터넷 매체
+    "wowtv.co.kr":"한경TV", "dailian.co.kr":"데일리안",
+    "nocutnews.co.kr":"노컷뉴스", "cbs.co.kr":"CBS",
+    "sisapress.com":"시사저널", "sisaweek.com":"시사위크",
+    "newstomato.com":"뉴스토마토", "zdnet.co.kr":"지디넷코리아",
+    "inews24.com":"아이뉴스24", "asiatoday.co.kr":"아시아투데이",
+    "betanews.net":"베타뉴스", "newsway.co.kr":"뉴스웨이",
+    "greened.kr":"녹색경제신문", "veritas-a.com":"베리타스알파",
+    "paxnetnews.com":"팍스넷뉴스", "100ssd.co.kr":"백세시대",
+    "healthi.kr":"헬스앤라이프", "econovill.com":"이코노믹리뷰",
+    "newsquest.co.kr":"뉴스퀘스트", "biztribune.co.kr":"비즈트리뷴",
+    "ebn.co.kr":"EBN", "mtn.co.kr":"머니투데이방송",
+    "seoulwire.com":"서울와이어", "todaykorea.co.kr":"투데이코리아",
+    "news2day.co.kr":"뉴스투데이", "mydaily.co.kr":"마이데일리",
+    "g-enews.com":"글로벌이코노믹", "thedailypost.kr":"데일리포스트",
+    "enewstoday.co.kr":"이뉴스투데이", "megaeconomy.co.kr":"메가경제",
+    "wikileaks-kr.org":"위키리크스한국", "nbntv.co.kr":"NBN",
+    "lifein.co.kr":"라이프인", "widedaily.com":"와이드데일리",
+    "topstarnews.com":"탑스타뉴스", "thepowernews.co.kr":"더파워뉴스",
+    "thepublic.kr":"더퍼블릭", "ziks.net":"직썰",
+    "iusm.co.kr":"울산의대뉴스", "dongascience.com":"동아사이언스",
+    "joins.co.kr":"중앙일보", "joynews24.com":"조이뉴스24",
+    "kukinews.com":"쿠키뉴스", "newdailybiz.co.kr":"뉴데일리경제",
+    "cbsnews.co.kr":"CBS", "menews.co.kr":"모닝경제",
+    "kben.co.kr":"기업경제신문", "emoneynews.co.kr":"이머니뉴스",
+    "wiznews.co.kr":"위즈뉴스", "aitimes.com":"인공지능신문",
+    "mdcreport.naver.com":"메디컬리포트뉴스",
 }
 
 # 네이버 뉴스 링크일 때 originallink 없는 경우 처리용 도메인 블랙리스트

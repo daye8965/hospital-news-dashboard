@@ -195,7 +195,7 @@ td{padding:10px 12px;vertical-align:top}
 // ── 상수 ─────────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 20;
 const HOSPITALS = {
-  asan:      {label:'서울아산병원', short:'아산',    group:'아산',     color:'#1a5fa8', keywords:['서울아산병원','아산병원','울산의대','서울중앙병원']},
+  asan:      {label:'서울아산병원', short:'아산',    group:'아산',     color:'#1a5fa8', keywords:['서울아산병원','아산병원','울산의대']},
   samsung:   {label:'삼성서울병원', short:'삼성',    group:'삼성',     color:'#1a7a3c', keywords:['삼성서울병원','삼성병원','성대의대','성균관의대']},
   severance: {label:'세브란스병원', short:'세브란스', group:'세브란스', color:'#7b3fa0', keywords:['세브란스병원','연세암병원','연대병원','연세대병원']},
   snuh:      {label:'서울대병원',   short:'서울대',  group:'서울대',   color:'#c0392b', keywords:['서울대병원','서울대학교병원','서울의대']},
@@ -469,15 +469,16 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
     <tbody>${pageRows.map(r => {
       const hKey = Object.keys(HOSPITALS).find(k=>HOSPITALS[k].group===r['병원그룹']);
       const color = HOSPITALS[hKey]?.color || defaultColor;
-      const link = r['언론사원문']||r['네이버링크']||'#';
+      const link = r['언론사원문']||r['네이버링크']||'';
+      const naverLink = r['네이버링크']||'';
       return `<tr>
         <td class="td-date">${(r['발행일시']||r['날짜']||'').slice(0,16)}</td>
         ${panelKey==='others'?`<td class="td-tag"><span class="tag" style="background:${color}22;color:${color};font-weight:600">${HOSPITALS[hKey]?.label||r['병원그룹']}</span></td>`:''}
-        <td class="td-tag"><span class="tag" style="background:${color}18;color:${color}">${r['검색어']}</span></td>
+        <td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>
         <td class="td-media">${r['매체']||''}</td>
-        <td class="td-title"><a href="${link}" target="_blank" rel="noopener">${r['제목']}</a></td>
+        <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
         <td class="td-summary">${r['요약']||''}</td>
-        <td class="td-link">${r['네이버링크']?`<a href="${r['네이버링크']}" target="_blank" rel="noopener">네이버</a>`:''}</td>
+        <td class="td-link">${naverLink?`<a href="${naverLink}" target="_blank" rel="noopener">네이버</a>`:''}</td>
       </tr>`;
     }).join('')}</tbody></table>`;
 }

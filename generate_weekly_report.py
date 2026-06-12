@@ -38,7 +38,7 @@ start_dt = datetime(WEEK_START.year, WEEK_START.month, WEEK_START.day, tzinfo=KS
 end_dt   = datetime(WEEK_END.year,   WEEK_END.month,   WEEK_END.day,   23, 59, 59, tzinfo=KST)
 
 HOSPITAL_QUERIES = {
-    "서울아산병원": ["서울아산병원", "아산병원", "울산의대", "서울중앙병원"],
+    "서울아산병원": ["서울아산병원", "아산병원", "울산의대"],
     "삼성서울병원": ["삼성서울병원", "삼성병원", "성대의대", "성균관의대"],
     "신촌세브란스": ["세브란스병원", "연세암병원", "연대병원", "연세대병원"],
     "서울대병원":   ["서울대병원", "서울대학교병원", "서울의대"],

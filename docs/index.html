@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -377,6 +378,7 @@ function getFilters() {
 function applyFilters(rows) {
   const {dateFrom,dateTo,keyword,search} = getFilters();
   return rows.filter(r => {
+    if (r['검색어'] === '서울중앙병원') return false;  // 제외 키워드
     if (dateFrom && r['날짜'] < dateFrom) return false;
     if (dateTo   && r['날짜'] > dateTo)   return false;
     if (keyword  && r['검색어'] !== keyword) return false;

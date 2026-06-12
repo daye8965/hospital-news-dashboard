@@ -2,8 +2,8 @@ name: 뉴스 수집 자동화
 
 on:
   schedule:
-    - cron: "0 23 * * *"    # 매일 08:00 KST 수집
-    - cron: "0 0 * * 1"     # 매주 월 09:00 KST 주간보고서
+    - cron: "0 23 * * *"
+    - cron: "0 0 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -20,6 +20,9 @@ jobs:
           python-version: "3.12"
 
       - run: pip install requests openpyxl
+
+      - name: CSV 오염 데이터 정리
+        run: python clean_csv.py
 
       - name: 뉴스 수집 (매일)
         if: github.event.schedule == '0 23 * * *' || github.event_name == 'workflow_dispatch'

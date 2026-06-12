@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -106,6 +105,24 @@ td{padding:10px 12px;vertical-align:top}
 .excel-btn:active{transform:scale(.97)}
 .excel-btn svg{flex-shrink:0}
 
+/* 모달 */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:12px;width:90%;max-width:860px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-header h2{font-size:15px;font-weight:600}
+.modal-close{font-size:20px;border:none;background:none;cursor:pointer;color:var(--muted);line-height:1;padding:4px 8px;border-radius:4px}
+.modal-close:hover{background:var(--bg);color:var(--text)}
+.modal-body{overflow-y:auto;padding:16px 20px;flex:1}
+.modal-table table{width:100%;border-collapse:collapse;font-size:13px}
+.modal-table thead th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap}
+.modal-table tbody tr{border-bottom:1px solid var(--border)}
+.modal-table tbody tr:last-child{border-bottom:none}
+.modal-table tbody tr:hover{background:var(--accent-bg)}
+.modal-table td{padding:9px 10px;vertical-align:top;font-size:13px}
+.cat-btn{cursor:pointer;transition:opacity .15s}
+.cat-btn:hover{opacity:.75}
+
 @media(max-width:768px){
   header,.filter-bar,main,.tab-nav{padding-left:16px;padding-right:16px}
   .td-summary{display:none}
@@ -115,6 +132,19 @@ td{padding:10px 12px;vertical-align:top}
 </style>
 </head>
 <body>
+
+<!-- 매체 드릴다운 모달 -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">기사 목록</h2>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-table" id="modal-table"></div>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="header-left">
@@ -197,8 +227,8 @@ td{padding:10px 12px;vertical-align:top}
 const PAGE_SIZE = 20;
 const HOSPITALS = {
   asan:      {label:'서울아산병원', short:'아산',    group:'아산',     color:'#1a5fa8', keywords:['서울아산병원','아산병원','울산의대']},
-  samsung:   {label:'삼성서울병원', short:'삼성',    group:'삼성',     color:'#1a7a3c', keywords:['삼성서울병원','삼성병원','성대의대','성균관의대']},
-  severance: {label:'세브란스병원', short:'세브란스', group:'세브란스', color:'#7b3fa0', keywords:['세브란스병원','연세암병원','연대병원','연세대병원']},
+  samsung:   {label:'삼성서울병원', short:'삼성',    group:'삼성',     color:'#1a7a3c', keywords:['삼성서울병원','성대의대','성균관의대']},
+  severance: {label:'세브란스병원', short:'세브란스', group:'세브란스', color:'#7b3fa0', keywords:['세브란스병원','연세암병원','연세대병원']},
   snuh:      {label:'서울대병원',   short:'서울대',  group:'서울대',   color:'#c0392b', keywords:['서울대병원','서울대학교병원','서울의대']},
   smc:       {label:'서울성모병원', short:'성모',    group:'성모',     color:'#d4780a', keywords:['서울성모병원','카톨릭성모병원']},
 };
@@ -432,10 +462,11 @@ function renderOurs() {
         <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">매체 유형별 집계</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
           ${CAT_ORDER.filter(c=>catCounts[c]).map(c => `
-            <div style="display:flex;align-items:center;gap:6px;min-width:100px">
+            <div class="cat-btn" onclick="openMediaModal('${c}')" style="display:flex;align-items:center;gap:6px;min-width:100px;padding:4px 6px;border-radius:6px">
               <span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLOR[c]||'#888'};flex-shrink:0"></span>
               <span style="font-size:12px;color:var(--muted)">${c}</span>
               <span style="font-family:var(--mono);font-size:13px;font-weight:600;color:${CAT_COLOR[c]||'#888'};margin-left:auto">${catCounts[c]}</span>
+              <span style="font-size:10px;color:var(--muted);margin-left:2px">›</span>
             </div>`).join('')}
         </div>
       </div>
@@ -728,6 +759,62 @@ function downloadExcel() {
   const fileName = `빅5병원_뉴스_${weekLabel}.xlsx`;
   XLSX.writeFile(wb, fileName);
 }
+
+// ── 매체 드릴다운 모달 ────────────────────────────────────────────────────────
+function openMediaModal(category) {
+  const base = allData.filter(r => r['병원그룹'] === '아산');
+  const CAT_COLOR = {
+    '일간지':'#1a5fa8','경제지':'#1a7a3c','방송':'#7b3fa0',
+    '통신사':'#555','의료전문지':'#c0392b','기타':'#888',
+  };
+  const color = CAT_COLOR[category] || '#888';
+
+  const rows = base
+    .filter(r => classifyMedia(r['매체']) === category)
+    .sort((a,b) => (b['발행일시']||'').localeCompare(a['발행일시']||''));
+
+  document.getElementById('modal-title').innerHTML =
+    `<span style="display:inline-flex;align-items:center;gap:8px">
+      <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0"></span>
+      ${category} <span style="font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted);margin-left:4px">${rows.length}건</span>
+    </span>`;
+
+  document.getElementById('modal-table').innerHTML = rows.length === 0
+    ? `<div style="text-align:center;padding:40px;color:var(--muted)">기사가 없습니다.</div>`
+    : `<table>
+        <thead><tr>
+          <th style="width:100px">날짜</th>
+          <th style="width:90px">매체</th>
+          <th>제목</th>
+          <th style="width:60px">링크</th>
+        </tr></thead>
+        <tbody>${rows.map(r => {
+          const link = r['언론사원문']||r['네이버링크']||'';
+          const naver = r['네이버링크']||'';
+          return `<tr>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap">${(r['발행일시']||r['날짜']||'').slice(0,16)}</td>
+            <td style="font-size:12px;white-space:nowrap">${r['매체']||''}</td>
+            <td>${link?`<a href="${link}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;font-size:13px;font-weight:500">${r['제목']}</a>`:r['제목']}</td>
+            <td>${naver?`<a href="${naver}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);font-family:var(--mono)">네이버</a>`:''}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ESC 키로 닫기
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModalDirect(); });
 
 init();
 </script>

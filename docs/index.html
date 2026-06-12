@@ -388,7 +388,7 @@ function parseCSV(text) {
   const lines = text.trim().split('\n');
   if (lines.length < 2) return [];
   const headers = lines[0].split(',').map(h => h.replace(/^\uFEFF/, '').trim().replace(/^"|"$/g, ''));
-  return lines.slice(1).map(line => {
+  const parsed = lines.slice(1).map(line => {
     const cols = [];
     let cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
@@ -401,6 +401,21 @@ function parseCSV(text) {
     headers.forEach((h, i) => row[h] = (cols[i] || '').trim().replace(/^"|"$/g, ''));
     return row;
   }).filter(r => r['제목']);
+
+  // ── 프론트엔드 중복 제거 ──────────────────────────────────────────────────
+  const seenUrls   = new Set();
+  const seenTitles = new Set();
+  return parsed.filter(r => {
+    const url  = r['언론사원문'] || r['네이버링크'] || '';
+    const tk   = (r['제목'] || '').replace(/[^\w가-힣a-zA-Z0-9]/g, '').toLowerCase().slice(0, 30);
+
+    if (url && seenUrls.has(url))     return false;
+    if (tk  && seenTitles.has(tk))    return false;
+
+    if (url) seenUrls.add(url);
+    if (tk)  seenTitles.add(tk);
+    return true;
+  });
 }
 
 function buildHospFilter() {

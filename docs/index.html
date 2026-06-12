@@ -268,13 +268,51 @@ let selectedHosp = null; // null = 전체 타병원
 let barChart = null, pieChart = null;
 
 // ── 초기화 ───────────────────────────────────────────────────────────────────
-function init() {
-  allData = SAMPLE;
-  document.getElementById('total-badge').textContent = `총 ${allData.length}건`;
+async function init() {
   buildHospFilter();
   updateKeywordOptions('ours');
+
+  // CSV 로드 시도 → 실패 시 샘플 데이터 사용
+  try {
+    const res = await fetch('./news.csv?t=' + Date.now());
+    if (!res.ok) throw new Error('CSV 없음');
+    const text = await res.text();
+    const parsed = parseCSV(text);
+    if (parsed.length > 0) {
+      allData = parsed;
+      const dates = allData.map(r=>r['수집일시']).filter(Boolean).sort();
+      if (dates.length) {
+        document.getElementById('last-updated').textContent = `마지막 수집: ${dates[dates.length-1]}`;
+      }
+      // 샘플 안내 제거
+      document.querySelectorAll('.notice').forEach(el => el.style.display = 'none');
+    }
+  } catch(e) {
+    console.log('CSV 로드 실패, 샘플 데이터 사용:', e);
+  }
+
+  document.getElementById('total-badge').textContent = `총 ${allData.length.toLocaleString()}건`;
   renderOurs();
   renderCompare();
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/^\uFEFF/, '').trim().replace(/^"|"$/g, ''));
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQ = !inQ; }
+      else if (line[i] === ',' && !inQ) { cols.push(cur); cur = ''; }
+      else { cur += line[i]; }
+    }
+    cols.push(cur);
+    const row = {};
+    headers.forEach((h, i) => row[h] = (cols[i] || '').trim().replace(/^"|"$/g, ''));
+    return row;
+  }).filter(r => r['제목']);
 }
 
 function buildHospFilter() {

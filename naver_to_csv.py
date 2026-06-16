@@ -10,19 +10,71 @@ CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "itD8WVlnrL")
 
 # ── 병원별 검색 키워드 ────────────────────────────────────────────────────────
 HOSPITAL_QUERIES = {
-    "아산":    ["서울아산병원", "아산병원", "울산의대"],
-    "삼성":    ["삼성서울병원", "성대의대", "성균관의대"],
-    "세브란스": ["세브란스병원", "연세암병원", "연세대병원"],
-    "서울대":  ["서울대병원", "서울대학교병원", "서울의대"],
-    "성모":    ["서울성모병원", "카톨릭성모병원"],
+    "아산":    ["서울아산병원", "아산병원"],
+    # 울산의대 제거 → 의대입시/지역의사제/울산범죄 노이즈 주범
+    # 성대의대/성균관의대 제거 → 삼성병원 제거 → 타병원/제약 노이즈
+    "삼성":    ["삼성서울병원", "성균관의대"],
+    # 연대병원/연세대병원 제거 → 무관 기사 유입
+    "세브란스": ["세브란스병원", "연세암병원"],
+    # 서울대병원(단독) 제거 → 분당서울대 노이즈 주범
+    "서울대":  ["서울대학교병원", "서울의대"],
+    "성모":    ["서울성모병원", "가톨릭성모병원"],
 }
 
+# ── 제외 키워드 (제목+요약에 포함 시 수집 제외) ──────────────────────────────
 EXCLUDE_KEYWORDS = {
+    # 부고
     "부고", "부음", "별세", "타계", "빈소", "발인",
+
+    # 삼성 계열사 (병원 무관)
     "삼성전자", "삼성증권", "삼성물산", "삼성SDI", "삼성SDS",
     "삼성화재", "삼성생명", "삼성바이오",
-    "서울중앙병원", "삼성병원", "연대병원",
+
+    # 타병원 — 빅5 아닌 병원 (① 타병원 기사)
+    "강북삼성병원", "분당서울대병원", "강남세브란스", "영동세브란스",
+    "용인세브란스", "보라매병원", "세란병원", "강남베드로병원",
+    "순천향대서울병원", "원주의료원", "소방병원", "서울의료원",
+    "경기도의료원", "한림대성심병원", "고신대복음병원", "삼육보건대",
+
+    # 연세유업 브랜드 (⑤ 세브란스 무관 브랜드)
+    "연세유업", "세브란스케어",
+
+    # 의대 입시/지역의사제 (④)
+    "지역의사제", "수능최저", "수시 선발", "정시 선발", "의대 입시",
+    "수시로 뽑", "편입학", "사주 컨설팅", "입결",
+
+    # 제약/바이오 단순 홍보 (②)
+    "ESG 보고서", "주요공시", "개장 전 주요", "제약 단신", "제약 브리핑",
+    "제약공시", "바이오 브리핑", "제약소식", "제약업계 소식",
+    "심포지엄 성료", "학술 심포지엄 개최", "MOU 체결", "업무협약 체결",
+
+    # 부동산/지역개발 (③)
+    "분양", "임대주택", "재건축", "스마트도시 조성", "복합문화중심도시",
+    "배곧", "시흥시",
+
+    # 범죄/사건사고 (⑥)
+    "살인미수", "스토킹 살인", "살해미수",
+
+    # 지자체/보건소 행사 (⑧)
+    "왕진버스", "맨발걷기", "보건의료상생", "찾아가는 의료",
+
+    # 주요공시/증권 (⑨)
+    "주요공시", "개장 전",
 }
+
+# ── 제외 패턴 (정규식 — 위 키워드로 못 잡는 케이스 보완) ─────────────────────
+EXCLUDE_PATTERN = re.compile(
+    r"(강북삼성|분당서울대|강남세브란스|영동세브란스|용인세브란스"
+    r"|보라매병원|세란병원|강남베드로|삼육보건대"
+    r"|연세유업|세브란스케어"
+    r"|지역의사제|수능최저|의대\s*입시|수시\s*선발|편입학"
+    r"|주요\s*공시|개장\s*전\s*주요|제약\s*단신|제약\s*브리핑|바이오\s*브리핑"
+    r"|살인미수|스토킹\s*살인|살해미수|징역\s*\d+년"
+    r"|왕진버스|맨발걷기"
+    r"|삼성전자|삼성증권|삼성바이오로직스"
+    r"|LG화학|GC녹십자|대원제약|한미사이언스|에임드바이오"
+    r"|분양\s*[0-9]|임대주택|재건축|스마트도시\s*조성|복합문화중심도시)"
+)
 
 CSV_PATH   = Path("docs/news.csv")
 FIELDNAMES = ["날짜","병원그룹","검색어","매체","제목","교수명","요약","언론사원문","네이버링크","발행일시","수집일시"]
@@ -150,9 +202,15 @@ def extract_professor(title, summary):
                 found.append(name)
     return ", ".join(found[:3])  # 최대 3명
 
-def is_excluded(item):
-    combined = clean_text(item.get("title","")) + clean_text(item.get("description",""))
-    return any(kw in combined for kw in EXCLUDE_KEYWORDS)
+def is_excluded(title: str, summary: str = "") -> bool:
+    combined = title + " " + summary
+    # 키워드 제외
+    if any(kw in combined for kw in EXCLUDE_KEYWORDS):
+        return True
+    # 패턴 제외
+    if EXCLUDE_PATTERN.search(combined):
+        return True
+    return False
 
 def title_key(title):
     """제목 정규화: 특수문자 모두 제거 후 앞 30자로 중복 감지"""
@@ -178,23 +236,24 @@ def collect_news(query):
 
         for item in items:
             pub_dt = parsedate_to_datetime(item["pubDate"]).astimezone(KST)
-            if start_dt <= pub_dt < end_dt and not is_excluded(item):
-                orig  = item.get("originallink","")
-                naver = item.get("link","")
+            if start_dt <= pub_dt < end_dt:
                 title = clean_text(item.get("title",""))
                 summ  = clean_text(item.get("description",""))
-                collected.append({
-                    "날짜":     str(target_date),
-                    "검색어":   query,
-                    "매체":     extract_media(orig, naver),
-                    "제목":     title,
-                    "교수명":   extract_professor(title, summ),
-                    "요약":     summ,
-                    "언론사원문": orig,
-                    "네이버링크": naver,
-                    "발행일시": pub_dt.strftime("%Y-%m-%d %H:%M"),
-                    "수집일시": now.strftime("%Y-%m-%d %H:%M"),
-                })
+                if not is_excluded(title, summ):
+                    orig  = item.get("originallink","")
+                    naver = item.get("link","")
+                    collected.append({
+                        "날짜":     str(target_date),
+                        "검색어":   query,
+                        "매체":     extract_media(orig, naver),
+                        "제목":     title,
+                        "교수명":   extract_professor(title, summ),
+                        "요약":     summ,
+                        "언론사원문": orig,
+                        "네이버링크": naver,
+                        "발행일시": pub_dt.strftime("%Y-%m-%d %H:%M"),
+                        "수집일시": now.strftime("%Y-%m-%d %H:%M"),
+                    })
 
         last_pub = parsedate_to_datetime(items[-1]["pubDate"]).astimezone(KST)
         if last_pub < start_dt: break
@@ -215,7 +274,6 @@ def collect_all():
                 url_key = item["언론사원문"] or item["네이버링크"]
                 t_key   = title_key(item["제목"])
 
-                # URL 중복 또는 제목 90% 유사 (정규화 후 동일) 시 건너뜀
                 if url_key and url_key in seen_urls:
                     continue
                 if t_key and t_key in seen_titles:

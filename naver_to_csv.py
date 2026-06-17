@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+#test
 # ── API 키 ────────────────────────────────────────────────────────────────────
 CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID",     "_eBIxCwm7W7VId2GzO2R")
 CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "itD8WVlnrL")

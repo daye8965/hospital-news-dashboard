@@ -287,6 +287,9 @@ const MEDIA_MAP_FE = {
 };
 
 function resolveMedia(mediaStr, urlStr) {
+  // 무의미한 파싱 결과 제거
+  const JUNK = new Set(['co','or','ne','go','ac','re','pe','kr','com','net','org']);
+  if (JUNK.has((mediaStr||'').toLowerCase())) mediaStr = '';
   // 이미 매핑된 한글 매체명이면 그대로
   if (mediaStr && /[가-힣]/.test(mediaStr)) return mediaStr;
   // URL이나 도메인 단편에서 추출

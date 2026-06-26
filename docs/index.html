@@ -289,44 +289,23 @@ const MEDIA_MAP_FE = {
 };
 
 function extractProfessor(title, summary, group) {
-  const csv_prof = arguments.length > 3 ? arguments[3] : '';
   const combined = (title || '') + ' ' + (summary || '');
-  const hKey = Object.keys(HOSPITALS).find(k=>HOSPITALS[k].group===group);
-  const hospNames = hKey ? HOSPITALS[hKey].keywords : [];
-  const allHospNames = [...hospNames, '서울아산병원','아산병원','삼성서울병원','세브란스병원','서울대병원','서울대학교병원','서울성모병원'];
   const found = [];
-  const nameRe = /[가-힣]{2,4}/;
-  for (const h of allHospNames) {
-    const patterns = [
-      new RegExp(h + '\\s*(?:[가-힣]+(?:과|센터|팀)\\s+)?([가-힣]{2,3})\\s*교수', 'g'),
-      new RegExp('([가-힣]{2,3})\\s*' + h + '\\s*(?:[가-힣]*과?\\s*)?교수', 'g'),
-      new RegExp('([가-힣]{2,3})\\s*교수[^가-힣]*' + h, 'g'),
-    ];
-    for (const pat of patterns) {
-      let m;
-      while ((m = pat.exec(combined)) !== null) {
-        const name = m[1];
-        if (name.length >= 2 && name.length <= 3 && !found.includes(name)) {
-          const bad = ['교수','병원','센터','연구','의료','서울','대학','학교','이번','올해','지난','최근','국내','세계','환자','치료','수술','진료','의사','간호'];
-          if (!bad.includes(name)) found.push(name);
-        }
-      }
-    }
-  }
-  if (found.length === 0) {
-    const general = [
-      /([가-힣]{2,3})\s*교수/g,
-      /교수\s+([가-힣]{2,3})(?:\s|,|·|$)/g,
-    ];
-    for (const pat of general) {
-      let m;
-      while ((m = pat.exec(combined)) !== null) {
-        const name = m[1];
-        if (name.length >= 2 && name.length <= 3 && !found.includes(name)) {
-          const bad = ['교수','병원','센터','연구','의료','서울','대학','학교','이번','올해','지난','최근','국내','세계','환자','치료','수술','진료','의사','간호','부교','조교','겸임','석좌','명예'];
-          if (!bad.includes(name)) found.push(name);
-        }
-      }
+  const SURNAMES = '김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구신임나전민유진지엄채원천방공강현함변염양변복예편';
+  const BAD = new Set(['교수','병원','센터','연구','의료','서울','대학','학교','이번','올해','지난','최근','국내','세계','환자','치료','수술','진료','의사','간호','부교','조교','겸임','석좌','명예','임상','학과','산의','학교','정신','내분','분비','종양','외과','흉부','신경','소아','비뇨','성형','재활','마취','응급','영상','핵의','방사','진단','예방','가정','산부','해부','생리','약리','병리','미생','기생','면역','유전','생화','세포','통계','정보','의공','보건','공중','법의','산업','환경','사회','인문','의학','약학','한의','치의','수의','간호']);
+  const patterns = [
+    /([가-힣]{2,3})\s*교수/g,
+    /교수\s+([가-힣]{2,3})(?=[\s,·(]|$)/g,
+  ];
+  for (const pat of patterns) {
+    let m;
+    while ((m = pat.exec(combined)) !== null) {
+      const name = m[1];
+      if (name.length < 2 || name.length > 3) continue;
+      if (BAD.has(name)) continue;
+      if (!SURNAMES.includes(name[0])) continue;
+      if (found.includes(name)) continue;
+      found.push(name);
     }
   }
   return found.slice(0, 3).join(', ');

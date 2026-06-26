@@ -943,11 +943,11 @@ function openMediaModal(category) {
     ? `<div style="text-align:center;padding:40px;color:var(--muted)">기사가 없습니다.</div>`
     : `<table>
         <thead><tr>
-          <th style="width:100px">날짜</th>
-          <th style="width:90px">매체</th>
-          <th style="min-width:400px">제목</th>
-          <th style="width:80px">교수명</th>
-          <th style="width:60px">링크</th>
+          <th style="width:120px">날짜</th>
+          <th style="width:80px">매체</th>
+          <th>제목</th>
+          <th style="width:100px">교수명</th>
+          <th style="width:50px">링크</th>
         </tr></thead>
         <tbody>${rows.map(r => {
           const link = r['언론사원문']||r['네이버링크']||'';

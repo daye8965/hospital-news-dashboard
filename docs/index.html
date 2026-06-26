@@ -288,6 +288,14 @@ const MEDIA_MAP_FE = {
   "joynews24":"조이뉴스24",
 };
 
+function validateName(name) {
+  if (!name) return '';
+  const SURNAMES = '김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구신임나전민유진지엄채원천방공강현함변염양변복예편';
+  const parts = name.split(/[,\s·]+/).filter(Boolean);
+  const valid = parts.filter(p => p.length >= 2 && p.length <= 3 && SURNAMES.includes(p[0]) && !/병원|센터|의대|대학|학과|내과|외과|연구/.test(p));
+  return valid.join(', ');
+}
+
 function extractProfessor(title, summary, group) {
   const combined = (title || '') + ' ' + (summary || '');
   const found = [];
@@ -721,7 +729,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       const color = HOSPITALS[hKey]?.color || defaultColor;
       const link = r['언론사원문']||r['네이버링크']||'';
       const naverLink = r['네이버링크']||'';
-      const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || r['교수명'] || '';
+      const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || validateName(r['교수명']) || '';
       // 날짜: 발행일시 우선, 없으면 날짜 컬럼, URL처럼 생긴 값은 무시
       const rawDate = r['발행일시']||r['날짜']||'';
       const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
@@ -1024,7 +1032,7 @@ function openMediaModal(category) {
         <tbody>${rows.map(r => {
           const link = r['언론사원문']||r['네이버링크']||'';
           const naver = r['네이버링크']||'';
-          const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || r['교수명'] || '';
+          const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || validateName(r['교수명']) || '';
           const rawDate = r['발행일시']||r['날짜']||'';
           const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
           const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');

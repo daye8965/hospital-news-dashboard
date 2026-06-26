@@ -68,7 +68,7 @@ td{padding:10px 12px;vertical-align:top}
 .td-tag{white-space:nowrap}
 .td-title a{color:var(--text);text-decoration:none;font-weight:500;font-size:13px;line-height:1.5;display:block}
 .td-title a:hover{color:var(--accent)}
-.td-summary{font-size:12px;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-summary{font-size:12px;color:var(--muted);max-width:500px;line-height:1.5}
 .td-media{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
 .td-link a{font-size:11px;color:var(--accent);text-decoration:none;font-family:var(--mono);white-space:nowrap}
 .td-link{white-space:nowrap}
@@ -295,12 +295,12 @@ function snippetAround(text, group) {
   for (const kw of keywords) {
     const idx = text.indexOf(kw);
     if (idx >= 0) {
-      const start = Math.max(0, idx - 15);
-      const end = Math.min(text.length, idx + kw.length + 50);
+      const start = Math.max(0, idx - 30);
+      const end = Math.min(text.length, idx + kw.length + 120);
       return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
     }
   }
-  return text.length > 80 ? text.slice(0, 80) + '…' : text;
+  return text.length > 160 ? text.slice(0, 160) + '…' : text;
 }
 
 function resolveMedia(mediaStr, urlStr) {

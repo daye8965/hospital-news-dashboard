@@ -288,6 +288,50 @@ const MEDIA_MAP_FE = {
   "joynews24":"조이뉴스24",
 };
 
+function extractProfessor(title, summary, group) {
+  const csv_prof = arguments.length > 3 ? arguments[3] : '';
+  const combined = (title || '') + ' ' + (summary || '');
+  const hKey = Object.keys(HOSPITALS).find(k=>HOSPITALS[k].group===group);
+  const hospNames = hKey ? HOSPITALS[hKey].keywords : [];
+  const allHospNames = [...hospNames, '서울아산병원','아산병원','삼성서울병원','세브란스병원','서울대병원','서울대학교병원','서울성모병원'];
+  const found = [];
+  const nameRe = /[가-힣]{2,4}/;
+  for (const h of allHospNames) {
+    const patterns = [
+      new RegExp(h + '\\s*(?:[가-힣]+(?:과|센터|팀)\\s+)?([가-힣]{2,3})\\s*교수', 'g'),
+      new RegExp('([가-힣]{2,3})\\s*' + h + '\\s*(?:[가-힣]*과?\\s*)?교수', 'g'),
+      new RegExp('([가-힣]{2,3})\\s*교수[^가-힣]*' + h, 'g'),
+    ];
+    for (const pat of patterns) {
+      let m;
+      while ((m = pat.exec(combined)) !== null) {
+        const name = m[1];
+        if (name.length >= 2 && name.length <= 3 && !found.includes(name)) {
+          const bad = ['교수','병원','센터','연구','의료','서울','대학','학교','이번','올해','지난','최근','국내','세계','환자','치료','수술','진료','의사','간호'];
+          if (!bad.includes(name)) found.push(name);
+        }
+      }
+    }
+  }
+  if (found.length === 0) {
+    const general = [
+      /([가-힣]{2,3})\s*교수/g,
+      /교수\s+([가-힣]{2,3})(?:\s|,|·|$)/g,
+    ];
+    for (const pat of general) {
+      let m;
+      while ((m = pat.exec(combined)) !== null) {
+        const name = m[1];
+        if (name.length >= 2 && name.length <= 3 && !found.includes(name)) {
+          const bad = ['교수','병원','센터','연구','의료','서울','대학','학교','이번','올해','지난','최근','국내','세계','환자','치료','수술','진료','의사','간호','부교','조교','겸임','석좌','명예'];
+          if (!bad.includes(name)) found.push(name);
+        }
+      }
+    }
+  }
+  return found.slice(0, 3).join(', ');
+}
+
 function snippetAround(text, group) {
   if (!text) return '';
   const hospKey = group === '아산' ? '서울아산병원' : group === '삼성' ? '삼성서울병원' : group === '세브란스' ? '세브란스병원' : group === '서울대' ? '서울대병원' : group === '성모' ? '서울성모병원' : '';
@@ -677,7 +721,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       <th>키워드</th>
       <th onclick="doSort('${panelKey}','매체')" data-col="매체" class="${(panelKey==='ours'?oursSort:othersSort).col==='매체'?'sorted':''}">매체 <span class="si">↕</span></th>
       <th>제목</th>
-      ${panelKey==='ours'?'<th style="white-space:nowrap">교수명</th>':''}
+      <th style="white-space:nowrap">교수명</th>
       <th class="td-summary">요약</th>
       <th style="white-space:nowrap;min-width:50px">링크</th>
     </tr></thead>
@@ -686,7 +730,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       const color = HOSPITALS[hKey]?.color || defaultColor;
       const link = r['언론사원문']||r['네이버링크']||'';
       const naverLink = r['네이버링크']||'';
-      const prof = r['교수명']||'';
+      const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || r['교수명'] || '';
       // 날짜: 발행일시 우선, 없으면 날짜 컬럼, URL처럼 생긴 값은 무시
       const rawDate = r['발행일시']||r['날짜']||'';
       const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
@@ -698,7 +742,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
         <td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>
         <td class="td-media">${media}</td>
         <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
-        ${panelKey==='ours'?`<td style="font-size:12px;color:#1a5fa8;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:${prof?'600':'400'}">${prof||'—'}</td>`:''}
+        <td style="font-size:12px;color:#1a5fa8;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:${prof?'600':'400'}">${prof||'—'}</td>
         <td class="td-summary">${snippetAround(r['요약']||'', r['병원그룹'])}</td>
         <td class="td-link">${naverLink?`<a href="${naverLink}" target="_blank" rel="noopener">네이버</a>`:''}</td>
       </tr>`;
@@ -989,7 +1033,7 @@ function openMediaModal(category) {
         <tbody>${rows.map(r => {
           const link = r['언론사원문']||r['네이버링크']||'';
           const naver = r['네이버링크']||'';
-          const prof = r['교수명']||'';
+          const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || r['교수명'] || '';
           const rawDate = r['발행일시']||r['날짜']||'';
           const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
           const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');

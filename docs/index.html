@@ -536,11 +536,13 @@ const FE_EXCLUDE_KW = [
   '옥희','故 옥희','고 옥희','영면에 든','서울시스터즈',
 ];
 const FE_EXCLUDE_MEDIA = ['celuvmedia'];
+const FE_EXCLUDE_QUERY = ['서울의대'];
 
 function applyFilters(rows) {
   const {dateFrom,dateTo,keyword,search} = getFilters();
   return rows.filter(r => {
     if (r['검색어'] === '서울중앙병원') return false;
+    if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return false;
     const combined = Object.values(r).join(' ');
     if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
     const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
@@ -708,6 +710,8 @@ function getCompareData() {
   const from = document.getElementById('compare-date-from').value;
   const to = document.getElementById('compare-date-to').value;
   let data = allData.filter(r => {
+    if (r['검색어'] === '서울중앙병원') return false;
+    if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return false;
     const combined = Object.values(r).join(' ');
     if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
     const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();

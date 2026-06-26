@@ -497,10 +497,17 @@ function getFilters() {
   };
 }
 
+const FE_EXCLUDE_KW = ['부고','부음','별세','타계','빈소','발인','영결식','추도사','모친상','부친상','장례식장','셀럽포토','돌싱'];
+const FE_EXCLUDE_MEDIA = ['celuvmedia'];
+
 function applyFilters(rows) {
   const {dateFrom,dateTo,keyword,search} = getFilters();
   return rows.filter(r => {
-    if (r['검색어'] === '서울중앙병원') return false;  // 제외 키워드
+    if (r['검색어'] === '서울중앙병원') return false;
+    const combined = (r['제목']||'') + (r['요약']||'');
+    if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
+    const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
+    if (FE_EXCLUDE_MEDIA.some(m => url.includes(m))) return false;
     if (dateFrom && r['날짜'] < dateFrom) return false;
     if (dateTo   && r['날짜'] > dateTo)   return false;
     if (keyword  && r['검색어'] !== keyword) return false;
@@ -663,14 +670,15 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
 function getCompareData() {
   const from = document.getElementById('compare-date-from').value;
   const to = document.getElementById('compare-date-to').value;
-  let data = allData;
-  if (from || to) {
-    data = data.filter(r => {
-      if (from && r['날짜'] < from) return false;
-      if (to && r['날짜'] > to) return false;
-      return true;
-    });
-  }
+  let data = allData.filter(r => {
+    const combined = (r['제목']||'') + (r['요약']||'');
+    if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
+    const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
+    if (FE_EXCLUDE_MEDIA.some(m => url.includes(m))) return false;
+    if (from && r['날짜'] < from) return false;
+    if (to && r['날짜'] > to) return false;
+    return true;
+  });
   const label = document.getElementById('compare-period-label');
   label.textContent = (from || to) ? `${from || '~'} ~ ${to || '~'} (${data.length}건)` : '';
   return data;

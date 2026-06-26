@@ -26,7 +26,7 @@ HOSPITAL_QUERIES = {
 # ── 제외 키워드 (제목+요약에 포함 시 수집 제외) ──────────────────────────────
 EXCLUDE_KEYWORDS = {
     # 부고
-    "부고", "부음", "별세", "타계", "빈소", "발인",
+    "부고", "부음", "별세", "타계", "빈소", "발인", "영결식",
 
     # 삼성 계열사 (병원 무관)
     "삼성전자", "삼성증권", "삼성물산", "삼성SDI", "삼성SDS",
@@ -66,8 +66,11 @@ EXCLUDE_KEYWORDS = {
     # 인물/브랜드/기타 노이즈
     "김우빈", "김희선", "김동일", "파크로쉬", "추도사",
     "장미화", "홍수환", "조우신", "레몬헬스케어", "GSK", "보령시장",
-    "돌싱", "모친상", "부친상", "장례식장",
+    "돌싱", "모친상", "부친상", "장례식장", "셀럽포토",
 }
+
+# ── 제외 매체 (이 매체의 기사는 수집 제외) ──────────────────────────────────
+EXCLUDE_MEDIA = {"celuvmedia"}
 
 # ── 제외 패턴 (정규식 — 위 키워드로 못 잡는 케이스 보완) ─────────────────────
 EXCLUDE_PATTERN = re.compile(
@@ -253,6 +256,10 @@ def collect_news(query):
                 if not is_excluded(title, summ):
                     orig  = item.get("originallink","")
                     naver = item.get("link","")
+                    # 제외 매체 체크
+                    url_check = (orig or naver or "").lower()
+                    if any(em in url_check for em in EXCLUDE_MEDIA):
+                        continue
                     collected.append({
                         "날짜":     str(target_date),
                         "검색어":   query,

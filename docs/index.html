@@ -167,7 +167,7 @@ td{padding:10px 12px;vertical-align:top}
   <span style="color:var(--muted);font-size:12px">~</span>
   <input type="date" id="date-to">
   <select id="keyword-filter"><option value="">전체 키워드</option></select>
-  <input type="text" id="search-input" placeholder="제목 검색...">
+  <input type="text" id="search-input" placeholder="검색... (-제외어)">
   <button onclick="resetFilters()">초기화</button>
   <span id="result-count"></span>
   <button class="excel-btn" onclick="downloadExcel()">
@@ -573,7 +573,19 @@ function applyFilters(rows) {
     if (dateFrom && r['날짜'] < dateFrom) return false;
     if (dateTo   && r['날짜'] > dateTo)   return false;
     if (keyword  && r['검색어'] !== keyword) return false;
-    if (search   && !r['제목'].toLowerCase().includes(search)) return false;
+    if (search) {
+      const terms = search.split(/\s+/).filter(Boolean);
+      const titleLow = (r['제목']||'').toLowerCase();
+      const summLow = (r['요약']||'').toLowerCase();
+      const all = titleLow + ' ' + summLow;
+      for (const t of terms) {
+        if (t.startsWith('-') && t.length > 1) {
+          if (all.includes(t.slice(1))) return false;
+        } else {
+          if (!all.includes(t)) return false;
+        }
+      }
+    }
     return true;
   });
 }

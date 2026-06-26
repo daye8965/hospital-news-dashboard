@@ -166,6 +166,10 @@ MEDIA_MAP = {
     "kmedinfo":"e-의료정보", "doctorstimes":"의사신문",
     "sportsworldi":"스포츠월드", "gukjenews":"국제뉴스",
     "dynews":"동양일보", "thefirstmedia":"더퍼스트",
+    "lawissue.co.kr":"로이슈", "cnbizm.com":"CNB저널", "jemin.com":"제민일보",
+    "starnewskorea.com":"스타뉴스", "biznews.co.kr":"비즈월드",
+    "viva100.com":"브릿지경제", "worktoday.co.kr":"워크투데이",
+    "ccdailynews.com":"충청데일리", "hidoc.co.kr":"하이닥", "sportsq.co.kr":"스포츠Q",
 }
 
 # 네이버 뉴스 링크일 때 originallink 없는 경우 처리용 도메인 블랙리스트

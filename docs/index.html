@@ -876,7 +876,7 @@ document.getElementById('search-input').addEventListener('input', () => {
 // ── 엑셀 다운로드 ─────────────────────────────────────────────────────────────
 function downloadExcel() {
   const wb = XLSX.utils.book_new();
-  const COLS = ['날짜','매체','제목','링크','교수 소속','이름'];
+  const COLS = ['날짜','매체','제목','요약','링크','교수 소속','이름'];
 
   // 주간 범위 계산 (오늘 기준 최근 7일)
   const today = new Date();
@@ -903,6 +903,7 @@ function downloadExcel() {
         r['날짜']       || '',
         r['매체']       || '',
         r['제목']       || '',
+        r['요약']       || '',
         r['언론사원문'] || r['네이버링크'] || '',
         '',   // 교수 소속 (수동 입력)
         '',   // 이름 (수동 입력)
@@ -916,6 +917,7 @@ function downloadExcel() {
       {wch:12},  // 날짜
       {wch:14},  // 매체
       {wch:55},  // 제목
+      {wch:80},  // 요약
       {wch:60},  // 링크
       {wch:16},  // 교수 소속
       {wch:10},  // 이름

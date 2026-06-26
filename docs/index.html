@@ -197,6 +197,15 @@ td{padding:10px 12px;vertical-align:top}
   <!-- ③ 비교 탭 -->
   <div id="panel-compare" class="tab-panel">
     <div class="notice">📋 샘플 데이터 기준 비교입니다. 실제 배포 후 자동 반영됩니다.</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;font-weight:600;color:var(--muted)">기간 설정</span>
+      <input type="date" id="compare-date-from" style="font-family:var(--font);font-size:13px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none">
+      <span style="color:var(--muted);font-size:12px">~</span>
+      <input type="date" id="compare-date-to" style="font-family:var(--font);font-size:13px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none">
+      <button onclick="applyCompareFilter()" style="font-family:var(--font);font-size:13px;padding:5px 12px;border:1px solid var(--accent);border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer">적용</button>
+      <button onclick="resetCompareFilter()" style="font-family:var(--font);font-size:13px;padding:5px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--muted);cursor:pointer">초기화</button>
+      <span id="compare-period-label" style="font-size:11px;color:var(--muted);margin-left:auto;font-family:var(--mono)"></span>
+    </div>
     <div class="chart-grid">
       <div class="chart-card">
         <h3>병원별 기사 건수</h3>
@@ -504,17 +513,18 @@ function applyFilters(rows) {
 function renderOurs() {
   const h = HOSPITALS.asan;
   const base = allData.filter(r => r['병원그룹'] === '아산');
-  const rows = sortRows(applyFilters(base), oursSort);
+  const filtered = applyFilters(base);
+  const rows = sortRows(filtered, oursSort);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
-  // 키워드별 집계
+  // 키워드별 집계 (필터 적용)
   const kwCounts = {};
-  base.forEach(r => { kwCounts[r['검색어']] = (kwCounts[r['검색어']]||0)+1; });
-  const days = [...new Set(base.map(r=>r['날짜']))].length;
+  filtered.forEach(r => { kwCounts[r['검색어']] = (kwCounts[r['검색어']]||0)+1; });
+  const days = [...new Set(filtered.map(r=>r['날짜']))].length;
 
   // 매체 분류별 집계
   const catCounts = {};
-  base.forEach(r => {
+  filtered.forEach(r => {
     const cat = classifyMedia(r['매체']);
     catCounts[cat] = (catCounts[cat]||0)+1;
   });
@@ -526,7 +536,7 @@ function renderOurs() {
 
   // 매체별 Top5
   const mediaCounts = {};
-  base.forEach(r => { if(r['매체']) mediaCounts[r['매체']] = (mediaCounts[r['매체']]||0)+1; });
+  filtered.forEach(r => { if(r['매체']) mediaCounts[r['매체']] = (mediaCounts[r['매체']]||0)+1; });
   const top5 = Object.entries(mediaCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const maxCount = top5[0]?.[1] || 1;
 
@@ -534,7 +544,7 @@ function renderOurs() {
     <!-- 요약 카드 -->
     <div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:4px">
       ${[
-        statCard('전체 기사', base.length, h.color),
+        statCard('전체 기사', filtered.length, h.color),
         statCard('수집 일수', days, h.color),
         ...Object.entries(kwCounts).map(([k,v]) => statCard(k, v, h.color))
       ].join('')}
@@ -581,19 +591,20 @@ function renderOthers() {
   const keys = selectedHosp ? [selectedHosp] : OTHERS_KEYS;
   const groups = keys.map(k => HOSPITALS[k].group);
   const base = allData.filter(r => groups.includes(r['병원그룹']));
-  const rows = sortRows(applyFilters(base), othersSort);
+  const filtered = applyFilters(base);
+  const rows = sortRows(filtered, othersSort);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
   // 통계
   const hospCounts = {};
-  base.forEach(r => {
+  filtered.forEach(r => {
     const lbl = Object.values(HOSPITALS).find(h=>h.group===r['병원그룹'])?.label || r['병원그룹'];
     hospCounts[lbl] = (hospCounts[lbl]||0)+1;
   });
-  const days = [...new Set(base.map(r=>r['날짜']))].length;
+  const days = [...new Set(filtered.map(r=>r['날짜']))].length;
   const accentColor = selectedHosp ? HOSPITALS[selectedHosp].color : '#444';
   document.getElementById('stats-others').innerHTML = [
-    statCard('전체 기사', base.length, accentColor),
+    statCard('전체 기사', filtered.length, accentColor),
     statCard('수집 일수', days, accentColor),
     ...Object.entries(hospCounts).map(([k,v]) => {
       const color = Object.values(HOSPITALS).find(h=>h.label===k)?.color || accentColor;
@@ -649,11 +660,35 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
 }
 
 // ── 비교 탭 렌더 ──────────────────────────────────────────────────────────────
+function getCompareData() {
+  const from = document.getElementById('compare-date-from').value;
+  const to = document.getElementById('compare-date-to').value;
+  let data = allData;
+  if (from || to) {
+    data = data.filter(r => {
+      if (from && r['날짜'] < from) return false;
+      if (to && r['날짜'] > to) return false;
+      return true;
+    });
+  }
+  const label = document.getElementById('compare-period-label');
+  label.textContent = (from || to) ? `${from || '~'} ~ ${to || '~'} (${data.length}건)` : '';
+  return data;
+}
+
+function applyCompareFilter() { renderCompare(); }
+function resetCompareFilter() {
+  document.getElementById('compare-date-from').value = '';
+  document.getElementById('compare-date-to').value = '';
+  renderCompare();
+}
+
 function renderCompare() {
+  const compareData = getCompareData();
   const stats = Object.entries(HOSPITALS).map(([k,h]) => ({
     key:k, label:h.label, color:h.color,
-    count: allData.filter(r=>r['병원그룹']===h.group).length,
-    keywords: [...new Set(allData.filter(r=>r['병원그룹']===h.group).map(r=>r['검색어']))]
+    count: compareData.filter(r=>r['병원그룹']===h.group).length,
+    keywords: [...new Set(compareData.filter(r=>r['병원그룹']===h.group).map(r=>r['검색어']))]
   })).sort((a,b)=>b.count-a.count);
 
   const total = stats.reduce((s,g)=>s+g.count,0);

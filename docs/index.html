@@ -660,7 +660,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       <th>제목</th>
       ${panelKey==='ours'?'<th style="white-space:nowrap">교수명</th>':''}
       <th class="td-summary">요약</th>
-      <th>링크</th>
+      <th style="white-space:nowrap;min-width:50px">링크</th>
     </tr></thead>
     <tbody>${pageRows.map(r => {
       const hKey = Object.keys(HOSPITALS).find(k=>HOSPITALS[k].group===r['병원그룹']);

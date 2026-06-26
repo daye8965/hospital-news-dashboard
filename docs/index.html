@@ -301,8 +301,11 @@ function resolveMedia(mediaStr, urlStr) {
     // 최후수단: 도메인 파트 추출
     const parts = domain.split('.');
     if (parts.length >= 2) {
-      const idx = (parts[parts.length-1] === 'kr' && parts.length >= 3) ? parts.length-3 : parts.length-2;
-      return parts[idx] || mediaStr || '';
+      const skip = new Set(['co','or','ne','go','ac','re','pe','kr','com','net','org']);
+      for (let i = 0; i < parts.length; i++) {
+        if (!skip.has(parts[i]) && parts[i].length > 1) return parts[i];
+      }
+      return mediaStr || '';
     }
   } catch(e) {}
   return mediaStr || '';

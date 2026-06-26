@@ -679,7 +679,7 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
         <td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>
         <td class="td-media">${media}</td>
         <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
-        ${panelKey==='ours'?`<td style="font-size:12px;color:#1a5fa8;white-space:nowrap;font-weight:${prof?'600':'400'}">${prof||'—'}</td>`:''}
+        ${panelKey==='ours'?`<td style="font-size:12px;color:#1a5fa8;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:${prof?'600':'400'}">${prof||'—'}</td>`:''}
         <td class="td-summary">${r['요약']||''}</td>
         <td class="td-link">${naverLink?`<a href="${naverLink}" target="_blank" rel="noopener">네이버</a>`:''}</td>
       </tr>`;
@@ -968,7 +968,7 @@ function openMediaModal(category) {
             <td style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap">${displayDate}</td>
             <td style="font-size:12px;white-space:nowrap">${media}</td>
             <td>${link?`<a href="${link}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none;font-size:13px;font-weight:500">${r['제목']}</a>`:r['제목']}</td>
-            <td style="font-size:12px;color:#1a5fa8;font-weight:${prof?'600':'400'};white-space:nowrap">${prof||'—'}</td>
+            <td style="font-size:12px;color:#1a5fa8;font-weight:${prof?'600':'400'};white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${prof||'—'}</td>
             <td style="white-space:nowrap">${naver?`<a href="${naver}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);font-family:var(--mono)">네이버</a>`:''}</td>
           </tr>`;
         }).join('')}</tbody>

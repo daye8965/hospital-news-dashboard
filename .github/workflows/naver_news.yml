@@ -2,7 +2,7 @@ name: 뉴스 수집 자동화
 
 on:
   schedule:
-    - cron: "0 23 * * *"
+    - cron: "0 21 * * *"
     - cron: "0 0 * * 1"
   workflow_dispatch:
 
@@ -25,7 +25,7 @@ jobs:
         run: python clean_csv.py
 
       - name: 뉴스 수집 (매일)
-        if: github.event.schedule == '0 23 * * *' || github.event_name == 'workflow_dispatch'
+        if: github.event.schedule == '0 21 * * *' || github.event_name == 'workflow_dispatch'
         env:
           NAVER_CLIENT_ID:     ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}

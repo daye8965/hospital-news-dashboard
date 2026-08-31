@@ -29,7 +29,7 @@ target_date = today - timedelta(days=1)
 start_dt    = datetime(target_date.year, target_date.month, target_date.day, tzinfo=KST)
 end_dt      = datetime(today.year,       today.month,       today.day,       tzinfo=KST)
 
-FIELDNAMES = ["날짜", "병원그룹", "검색어", "매체", "제목", "요약", "언론사원문", "네이버링크", "발행일시", "수집일시"]
+FIELDNAMES = ["날짜", "병원그룹", "검색어", "매체", "제목", "교수명", "요약", "언론사원문", "네이버링크", "발행일시", "수집일시"]
 
 # 도메인 → 매체명 매핑 (자주 등장하는 주요 언론사)
 MEDIA_MAP = {
@@ -119,6 +119,7 @@ def collect_news(query: str) -> list[dict]:
                     "검색어":    query,
                     "매체":      extract_media(orig),
                     "제목":      clean_text(item.get("title", "")),
+                    "교수명":    "",
                     "요약":      clean_text(item.get("description", "")),
                     "언론사원문": item.get("originallink", ""),
                     "네이버링크": item.get("link", ""),

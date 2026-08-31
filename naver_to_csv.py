@@ -94,8 +94,33 @@ FIELDNAMES = ["날짜","병원그룹","검색어","매체","제목","교수명",
 KST         = timezone(timedelta(hours=9))
 today       = datetime.now(KST).date()
 target_date = today - timedelta(days=1)
-start_dt    = datetime(target_date.year, target_date.month, target_date.day, tzinfo=KST)
-end_dt      = datetime(today.year,       today.month,       today.day,       tzinfo=KST)
+
+MAX_BACKFILL_DAYS = 7   # 네이버 API가 되짚을 수 있는 현실적 한계
+
+def _resolve_start_date():
+    """CSV의 마지막 수집일 다음 날부터 수집.
+    스케줄 실행이 지연·누락돼도 빠진 날짜를 다음 실행에서 자동으로 메운다."""
+    earliest = target_date - timedelta(days=MAX_BACKFILL_DAYS - 1)
+    if not CSV_PATH.exists():
+        return target_date
+    last = None
+    try:
+        with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
+            for row in csv.DictReader(f):
+                d = (row.get("날짜") or "")[:10]
+                if len(d) == 10 and (last is None or d > last):
+                    last = d
+    except Exception as e:
+        print(f"CSV 마지막 날짜 확인 실패({e}) — 어제만 수집")
+        return target_date
+    if not last:
+        return target_date
+    nxt = datetime.strptime(last, "%Y-%m-%d").date() + timedelta(days=1)
+    return max(min(nxt, target_date), earliest)
+
+start_date = _resolve_start_date()
+start_dt   = datetime(start_date.year, start_date.month, start_date.day, tzinfo=KST)
+end_dt     = datetime(today.year,      today.month,      today.day,      tzinfo=KST)
 
 # ── 매체 매핑 (출입기자리스트 기반) ──────────────────────────────────────────
 MEDIA_MAP = {
@@ -266,7 +291,7 @@ def collect_news(query):
                     if any(em in url_check for em in EXCLUDE_MEDIA):
                         continue
                     collected.append({
-                        "날짜":     str(target_date),
+                        "날짜":     pub_dt.strftime("%Y-%m-%d"),
                         "검색어":   query,
                         "매체":     extract_media(orig, naver),
                         "제목":     title,

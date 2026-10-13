@@ -6,12 +6,17 @@ from pathlib import Path
 
 #test
 # ── API 키 ────────────────────────────────────────────────────────────────────
-CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID",     "_eBIxCwm7W7VId2GzO2R")
-CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "itD8WVlnrL")
+CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID",     "")
+CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
 
 # ── 병원별 검색 키워드 ────────────────────────────────────────────────────────
 HOSPITAL_QUERIES = {
-    "아산":    ["서울아산병원", "아산병원"],
+    # 재단 보도자료는 기사에 병원 이름이 안 나오는 경우가 많아 '서울아산병원'만으로는 빠진다
+    # (2026-09 아산재단 네팔 구호 보도자료는 이 때문에 1건만 수집됐다).
+    # 네이버는 공백을 AND로 처리하지 않아 '아산사회복지재단 심포지움'으로 검색하면
+    # 재단과 무관한 심포지엄 기사가 쏟아진다. 그래서 재단 이름으로만 넓게 긁고
+    # 아래 FOUNDATION_MUST_HAVE 로 추려 낸다.
+    "아산":    ["서울아산병원", "아산병원", "아산사회복지재단"],
     # 울산의대 제거 → 의대입시/지역의사제/울산범죄 노이즈 주범
     # 성대의대/성균관의대 제거 → 삼성병원 제거 → 타병원/제약 노이즈
     "삼성":    ["삼성서울병원", "성균관의대"],
@@ -63,6 +68,24 @@ EXCLUDE_KEYWORDS = {
     # 주요공시/증권 (⑨)
     "주요공시", "개장 전",
 
+    # 기업·기관이 주체이고 병원은 협력·수혜 기관으로만 나오는 기사 (2026-10 정리)
+    # 아이돌 기부·방문 — JYP 치료비 지원, 생일 기부, 병원학교 일일교사
+    "스트레이 키즈", "스트레이키즈", "스키즈", "필릭스", "방찬", "창빈", "JYP",
+    # ※ '리노'·'아이엔'·'라이즈'는 넣지 말 것 — 리노베이션·넥스트라이즈·RISE 사업이 함께 걸린다
+    "시몬스",                                                        # 침대 판매 연계 ESG 기부
+    "한화생명", "NH농협생명", "농협생명", "현대해상", "교보생명", "DB손해보험", "메리츠화재",   # 보험사 제휴
+    "신동국", "위약벌", "라데팡스", "송영숙", "임주현",                      # 한미약품 경영권 분쟁
+    "KB국민은행", "신한금융", "하나은행", "우리은행", "IBK기업은행",            # 은행·금융 제휴
+    "혁신도시", "랩허브", "대단지", "입주민", "아파트",                      # 부동산·단지 개발
+    # 스포츠 구단 — '삼성'·'아산'이 구단 이름과 겹쳐서 들어온다
+    "충남아산FC", "라이온즈", "프로야구", "유격수", "[프로농구]", "하츠투하츠", "김상식",
+    # ※ '감독'·'화백'·'병무청'은 넣지 말 것 — 금융감독원·관리감독, 황규백 화백 기부 기사,
+    #    병역비리 관련 세브란스 기사가 함께 걸린다
+    "박영대", "본인선택원",                                        # 보리작가 인터뷰 / 병무청 안내
+    # 병원이 참여기관으로만 나오는 기업·학회 기사
+    "비브레스트", "ICMRI", "듀켐바이오", "라덱셀", "쎄크",
+    # ※ '썬더스'·'히어로즈'·'프로농구'는 넣지 말 것 — '아워히어로즈' 보도자료 기사가 걸린다
+
     # 인물/브랜드/기타 노이즈
     "김우빈", "김희선", "김동일", "파크로쉬", "추도사",
     "장미화", "홍수환", "조우신", "레몬헬스케어", "GSK", "보령시장",
@@ -89,7 +112,8 @@ EXCLUDE_PATTERN = re.compile(
 )
 
 CSV_PATH   = Path("docs/news.csv")
-FIELDNAMES = ["날짜","병원그룹","검색어","매체","제목","교수명","요약","언론사원문","네이버링크","발행일시","수집일시"]
+FIELDNAMES = ["날짜","병원그룹","검색어","매체","제목","교수명","요약","언론사원문","네이버링크","발행일시","수집일시",
+              "기자명","기자이메일","지면","출입기자"]   # 뒤쪽 4개는 enrich_articles.py가 채움
 
 KST         = timezone(timedelta(hours=9))
 today       = datetime.now(KST).date()
@@ -99,7 +123,19 @@ MAX_BACKFILL_DAYS = 7   # 네이버 API가 되짚을 수 있는 현실적 한계
 
 def _resolve_start_date():
     """CSV의 마지막 수집일 다음 날부터 수집.
-    스케줄 실행이 지연·누락돼도 빠진 날짜를 다음 실행에서 자동으로 메운다."""
+    스케줄 실행이 지연·누락돼도 빠진 날짜를 다음 실행에서 자동으로 메운다.
+
+    COLLECT_FROM=2026-06-11 처럼 날짜를 주면 그 날부터 다시 수집한다.
+    검색어를 새로 넣었을 때 과거 기사를 한 번 채우려고 쓰는 수동 옵션이며,
+    이미 저장된 기사는 링크·제목으로 걸러지므로 중복이 쌓이지 않는다."""
+    forced = os.environ.get("COLLECT_FROM", "").strip()
+    if forced:
+        try:
+            day = datetime.strptime(forced, "%Y-%m-%d").date()
+            print(f"COLLECT_FROM 지정 — {day}부터 다시 수집합니다")
+            return min(day, target_date)
+        except ValueError:
+            print(f"COLLECT_FROM 형식이 잘못됨({forced}) — 평소 규칙대로 진행")
     earliest = target_date - timedelta(days=MAX_BACKFILL_DAYS - 1)
     if not CSV_PATH.exists():
         return target_date
@@ -229,25 +265,125 @@ def extract_media(orig_url, naver_url=""):
             continue
     return ""
 
+# ── 교수명 추출 ──────────────────────────────────────────────────────────────
+# docs/index.html의 isPersonName·extractProfessor와 같은 규칙이다. 한쪽만 고치지 말 것.
+# 오탐 대부분은 '혈액종양내과 교수'의 꼬리를 이름으로 오인한 것이었다(→ 양내과).
+# 그래서 이름 앞에 한글이 붙어 있으면 이름으로 보지 않는다(경계 검사)가 핵심 규칙이다.
+SURNAMES = set("강견경계고공곽구국권근금기길김나남노다도동라류마맹명모목문민박반방배백범변복봉부빈"
+               "사삼상서석선설성소손송승시신심안양어엄여연염예오옥온왕용우원위유육윤은음이인임장전정"
+               "제조종주지진차창채천초최추탁태판팽편평표피하학한함해허현형호홍화황")
+SURNAMES2 = {"남궁", "황보", "제갈", "사공", "선우", "서문", "독고", "동방", "어금", "강전", "망절"}
+# 이름 자리에 자주 끼어드는 일반어·직함·진료과 어근 (수집 데이터에서 실제로 잡히던 것들)
+NOT_NAME = set("""
+서울 서울권 지방권 경인권 전국 지역 지방 지난 이번 이어 이후 이전 오전 오후 공동 신임 최근 당시
+기존 향후 현재 관련 대상 이날 이때 주요 국내 해외 국제 세계 우리 자신 사람 환자 의사 간호 진료
+임상 명예 석좌 주임 초빙 겸임 객원 특임 전임 부임 담당 지도 발표 조사 분석 개발 초청 위촉 추대
+취임 우수 고려해 이상 이하 미만 초과 대해 통해 위해 따라 함께 각각 이런 그런 어떤 이제 아직 이미
+다시 매우 가장 더욱 아주 정말 바로 결국 물론 사실 우선 일단 제일 향년 본인 최고 최대 최초 최신
+다음 처음 실제 특히 다만 또한 한편 아울러 동시 이용 사용 적용 포함 제외 확인 예상 전망 계획 예정
+결정 시작 종료 소아 산부 정형 흉부 신경 비뇨 피부 정신 가정 응급 영상 병리 재활 마취 예방 종양
+혈액 순환 호흡 소화 내분 감염 완화 중환 통증 부속 선정 명의 한국 미국 일본 중국 영국 독일 호주
+대만 유럽 남미 북미 아시아
+""".split())
+NOT_NAME_RE = re.compile(r"병원|의원|센터|학과|학부|의대|대학|학교|연구|재단|학회|협회|공단|본부|지부|교실|클리닉|보건소|의료원")
+# '이 부회장은', '장 박사는'처럼 직함이 이름 자리에 오는 경우 (조사가 붙어도 걸러낸다)
+TITLE_WORD_RE = re.compile(r"(?:회장|이사장|원장|총장|학장|소장|실장|팀장|본부장|박사|교수|대표|위원|의원|장관|차관|사장|부장|국장)(?:은|는|이|가|도|의|를|을)?$")
+
+_NAME = r"[가-힣]{2,4}"
+_CHAIN = _NAME + r"(?:\s*[·ㆍ‧•]\s*" + _NAME + r")*"      # 장윤혁·이순태 교수
+_TITLE = r"(?:주임|책임|명예|석좌|특임|초빙|겸임|객원|임상|진료|전임|정|부|조)*"   # 임상조교수·명예교수
+# '서준범 서울아산병원 교수'처럼 이름과 '교수' 사이에 소속이 끼는 형태가 많다.
+# 아무 단어나 허용하면 '서울 아산병원 교수'가 이름 '서울'이 되므로, 소속으로 보이는 말만 허용한다.
+_AFFIL = r"(?:[가-힣]{1,10}(?:병원|의원|센터|의대|대학교|대학|학교|교실|연구소|연구원|학부|의료원|보건소)|[가-힣]{1,8}[과대])"
+PROF_PATTERNS = [
+    re.compile(r"(?:^|[^가-힣])(" + _CHAIN + r")\s+(?:" + _AFFIL + r"\s+){0,2}" + _TITLE + r"교수"),
+    re.compile(r"(?:^|[^가-힣])(" + _CHAIN + r")\s+(?:전문의|과장|원장)(?![가-힣])"),
+]
+
+def is_person_name(name):
+    if not name or not (2 <= len(name) <= 4):
+        return False
+    if name in NOT_NAME or NOT_NAME_RE.search(name) or TITLE_WORD_RE.search(name):
+        return False
+    if name.endswith("과"):      # 내과·안과·신경과
+        return False
+    if name.endswith("대"):      # 연세대·충남대 같은 대학 약칭
+        return False
+    return name[:2] in SURNAMES2 or name[0] in SURNAMES
+
 def extract_professor(title, summary):
-    """제목+요약에서 아산병원 교수명 추출"""
+    """제목+요약에서 교수명 추출 (최대 3명)"""
     combined = title + " " + summary
-    # 패턴: 이름(2~4자) + 교수 / 교수 + 이름
-    patterns = [
-        r"([가-힣]{2,4})\s*(?:서울아산병원|아산병원)?\s*(?:\w+과?\s*)?교수",
-        r"(?:서울아산병원|아산병원)\s*(?:\w+과?\s*)?([가-힣]{2,4})\s*교수",
-        r"교수\s+([가-힣]{2,4})(?:\s|,|·|$)",
-    ]
     found = []
-    for pat in patterns:
-        for m in re.finditer(pat, combined):
-            name = m.group(1).strip()
-            if 2 <= len(name) <= 4 and name not in found:
-                found.append(name)
-    return ", ".join(found[:3])  # 최대 3명
+    for pat in PROF_PATTERNS:
+        for m in pat.finditer(combined):
+            for name in re.split(r"[·ㆍ‧•\s]+", m.group(1)):
+                if is_person_name(name) and name not in found:
+                    found.append(name)
+    return ", ".join(found[:3])
+
+# '아산사회복지재단'으로 긁으면 재단 이름이 스쳐 갈 뿐인 기업·지자체 기사도 딸려 온다
+# (쿠팡 가전행사, HD현대 정기선 회장, 천안시 소식 등). 재단이 실제로 주체인 기사만 남긴다.
+FOUNDATION_QUERY = "아산사회복지재단"
+FOUNDATION_MUST_HAVE = ("아산사회복지재단", "아산재단")
+# 주의: '복지'·'재단'·'사회'는 넣지 말 것 — '아산사회복지재단' 자체에 들어 있어 조건이 무력해진다
+FOUNDATION_TOPICS = ("아산의학상", "아산상", "심포지", "장학", "수여식", "학술",
+                     "구호", "성금", "기부", "후원", "봉사", "지원사업", "의료봉사")
+
+
+# 화면 쪽 isNoise()에도 같은 규칙이 있다 — 한쪽만 고치지 말 것
+MED_SCHOOL_RE = re.compile(r"의대|의과대학|의예과")
+ADMISSION_RE  = re.compile(r"지역선발|지역인재|수시|정시|합격선|등급컷|모집요강|증원|입시|내신")
+OTHER_ASAN_RE = re.compile(r"강릉아산병원|정선아산병원|보성아산병원|홍천아산병원|영덕아산병원|보령아산병원"
+                           r"|금강아산병원|정읍아산병원|아산충무병원|아산시|아산소방서|아산경찰|충남 아산"
+                           r"|아산 경찰병원|현대아산|아산 탕정|아산캠퍼스|아산의학관")
+PHARMA_RE = re.compile(r"유한양행|대웅제약|한미약품|종근당|녹십자|제일약품|동아에스티|JW중외제약|셀트리온"
+                       r"|HK이노엔|일동제약|삼일제약|보령제약|광동제약|휴젤|메디톡스|온코닉|시지바이오"
+                       r"|아스트라제네카|로슈|화이자|MSD|노바티스|길리어드|애브비|베링거|암젠|사노피|얀센")
+HOSP_NAME_RE = re.compile(r"아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원")
+HOSP_PROF_RE = re.compile(r"(아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원)[^.]{0,40}교수")
+# 분원 기사 — 본원 이름이 함께 나오지 않으면 그 분원 기사로 본다
+BRANCH_RULES = [
+    (re.compile(r"은평성모병원|여의도성모병원|의정부성모병원|대전성모병원|성빈센트병원"
+                r"|성바오로병원|동두천성모병원|포천성모병원"), "서울성모병원"),
+    # 원주세브란스기독병원 — 연세대 원주캠퍼스 소속 별개 병원. 원주 지역 기사가 대량으로 딸려 온다
+    (re.compile(r"원주세브란스|세브란스기독병원"), "세브란스병원"),
+]
+
+
+def is_branch_article(title: str, combined: str) -> bool:
+    return any((pat.search(combined) and main not in combined)
+               or (pat.search(title) and main not in title)
+               for pat, main in BRANCH_RULES)
+
+
+def keep_foundation(title: str, summary: str = "") -> bool:
+    """재단 기사인지 — 재단 이름이 있고, 재단이 하는 일에 해당하는 말이 함께 있어야 한다"""
+    combined = title + " " + summary
+    if not any(k in combined for k in FOUNDATION_MUST_HAVE):
+        return False
+    return any(k in combined for k in FOUNDATION_TOPICS)
+
 
 def is_excluded(title: str, summary: str = "") -> bool:
     combined = title + " " + summary
+    # 연예인·팬덤 생일 기부 — 아이돌 이름을 하나씩 막으면 새 그룹이 나올 때마다 또 샌다.
+    # 화면 쪽 isNoise()에도 같은 규칙이 있다
+    if "생일" in combined and re.search(r"기부|기탁|후원|성금|쾌척", combined):
+        return True
+    # 의대 입시 기사 — 병원 뉴스가 아니라 입시 뉴스다 (지역선발·수시 합격선 등)
+    if MED_SCHOOL_RE.search(combined) and ADMISSION_RE.search(combined):
+        return True
+    # 강릉·정읍아산병원, 충남 아산시 등 — 서울아산병원이 함께 나오면 우리 기사일 수 있어 남긴다
+    if OTHER_ASAN_RE.search(combined) and "서울아산병원" not in combined:
+        return True
+    # 제약사가 주체인 기사 — 병원 이름이 제목에 없고 '○○병원 … 교수' 코멘트도 없으면
+    # 병원이 스쳐 지나갈 뿐이다. 교수가 나오는 기사는 실적에 잡히므로 남긴다
+    if (PHARMA_RE.search(combined) and not HOSP_NAME_RE.search(title)
+            and not HOSP_PROF_RE.search(combined)):
+        return True
+    if is_branch_article(title, combined):
+        return True
     # 키워드 제외
     if any(kw in combined for kw in EXCLUDE_KEYWORDS):
         return True
@@ -283,6 +419,8 @@ def collect_news(query):
             if start_dt <= pub_dt < end_dt:
                 title = clean_text(item.get("title",""))
                 summ  = clean_text(item.get("description",""))
+                if query == FOUNDATION_QUERY and not keep_foundation(title, summ):
+                    continue
                 if not is_excluded(title, summ):
                     orig  = item.get("originallink","")
                     naver = item.get("link","")
@@ -358,10 +496,15 @@ def collect_all():
 
 def save_to_csv(items):
     CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-    file_exists = CSV_PATH.exists()
+    has_content = CSV_PATH.exists() and CSV_PATH.stat().st_size > 0
+    fieldnames = FIELDNAMES
+    if has_content:
+        # 기존 파일의 열 순서를 따라야 이어 붙인 행이 한 칸씩 밀리지 않는다
+        with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
+            fieldnames = next(csv.reader(f), None) or FIELDNAMES
     with open(CSV_PATH, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-        if not file_exists:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", restval="")
+        if not has_content:
             writer.writeheader()
         writer.writerows(items)
     print(f"CSV 저장 완료: {len(items)}건")

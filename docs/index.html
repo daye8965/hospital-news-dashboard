@@ -26,12 +26,38 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 #total-badge{font-family:var(--mono);font-size:11px;background:var(--accent-bg);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:500}
 
 /* 탭 */
-.tab-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:0}
+.tab-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:0;overflow-x:auto;scrollbar-width:thin}
 .tab-btn{font-family:var(--font);font-size:14px;font-weight:600;padding:14px 28px;border:none;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;margin-bottom:-1px;letter-spacing:-.2px}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active[data-tab="ours"]{color:var(--c-asan);border-bottom-color:var(--c-asan)}
 .tab-btn.active[data-tab="others"]{color:var(--c-samsung);border-bottom-color:var(--c-samsung)}
 .tab-btn.active[data-tab="compare"]{color:var(--text);border-bottom-color:var(--text)}
+.tab-btn.active[data-tab="paper"]{color:#8a5a00;border-bottom-color:#8a5a00}
+.tab-btn.active[data-tab="report"]{color:var(--c-asan);border-bottom-color:var(--c-asan)}
+.tab-btn.active[data-tab="press"]{color:#1a7a3c;border-bottom-color:#1a7a3c}
+.press-row{cursor:pointer}
+.press-row:hover{background:var(--accent-bg)}
+.press-sub td{background:#fafaf8;padding:0}
+.press-sub table{margin:0}
+.press-sub thead th{background:#f2f2ee;font-size:10px}
+.badge-none{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:#fdecec;color:#c0392b;font-weight:600}
+.badge-wait{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:#f0f0ec;color:#888;font-weight:600}
+
+/* 보강 정보 뱃지 */
+.badge-beat{display:inline-block;font-size:10px;font-weight:600;color:#fff;background:#1a7a3c;padding:0 5px;border-radius:3px;margin-left:4px;vertical-align:1px}
+.badge-paper{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;color:#8a5a00;background:#fdf3e1;border:1px solid #f0d9a8;padding:0 5px;border-radius:3px;margin-left:4px;white-space:nowrap}
+.badge-susp{display:inline-block;font-size:10px;color:#a33;background:#fbeaea;padding:0 5px;border-radius:3px;margin-left:6px;white-space:nowrap;vertical-align:1px}
+.td-reporter{font-size:12px;color:var(--text);white-space:nowrap}
+.check-label{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+
+/* 보고용 탭 */
+.report-section{margin-bottom:28px}
+.report-section h2{font-size:14px;font-weight:600;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.report-section h2 .cnt{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted)}
+.report-section h2{cursor:pointer;user-select:none;padding:4px 0;border-radius:var(--radius)}
+.report-section h2:hover{color:var(--accent)}
+.report-section h2 .caret{font-size:17px;line-height:1;width:16px;text-align:center;transition:transform .12s}
+.report-section h2:hover .caret{transform:scale(1.15)}
 
 /* 필터 바 */
 .filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -60,6 +86,8 @@ thead th{font-size:11px;font-weight:600;color:var(--muted);text-transform:upperc
 thead th:hover{color:var(--accent)}
 thead th .si{margin-left:3px;opacity:.4}
 thead th.sorted .si{opacity:1;color:var(--accent)}
+thead th.nosort{cursor:default}
+thead th.nosort:hover{color:var(--muted)}
 tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--accent-bg)}
@@ -149,16 +177,20 @@ td{padding:10px 12px;vertical-align:top}
 
 <header>
   <div class="header-left">
-    <h1>빅5 병원 뉴스 대시보드</h1>
+    <h1>빅5 병원 뉴스 대시보드 <span id="dev-badge" hidden style="font-size:11px;font-weight:600;color:#fff;background:#d4780a;padding:2px 7px;border-radius:4px;vertical-align:middle">개발 버전</span></h1>
     <p style="font-size:11px;color:var(--muted);margin-top:1px">대시보드 제작 : 이다예</p>
     <p id="last-updated">샘플 데이터 미리보기</p>
+    <p id="dev-notice" hidden style="font-size:11px;color:#d4780a;font-weight:600;margin-top:3px">본 사이트는 현재 개발중인 버전으로, 수시로 구성이 바뀔 수 있습니다</p>
   </div>
   <span id="total-badge">—</span>
 </header>
 
 <nav class="tab-nav">
-  <button class="tab-btn active" data-tab="ours"   onclick="switchTab('ours')">🏥 우리병원</button>
+  <button class="tab-btn active" data-tab="paper"  onclick="switchTab('paper')">🗞️ 지면모음</button>
+  <button class="tab-btn"        data-tab="ours"   onclick="switchTab('ours')">🏥 우리병원</button>
   <button class="tab-btn"        data-tab="others" onclick="switchTab('others')">🔍 타병원</button>
+  <button class="tab-btn"        data-tab="report" onclick="switchTab('report')">📑 서울아산병원-보고용</button>
+  <button class="tab-btn" id="tab-btn-press" hidden data-tab="press"  onclick="switchTab('press')">📣 보도자료 게재율</button>
   <button class="tab-btn"        data-tab="compare"onclick="switchTab('compare')">📊 병원 비교</button>
 </nav>
 
@@ -168,19 +200,20 @@ td{padding:10px 12px;vertical-align:top}
   <input type="date" id="date-to">
   <select id="keyword-filter"><option value="">전체 키워드</option></select>
   <input type="text" id="search-input" placeholder="검색... (-제외어)">
+  <label class="check-label"><input type="checkbox" id="beat-only"> 출입기자 기사만</label>
   <button onclick="resetFilters()">초기화</button>
   <span id="result-count"></span>
-  <button class="excel-btn" onclick="downloadExcel()">
+  <button class="excel-btn" onclick="downloadCurrent()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
     </svg>
-    주간 엑셀 다운로드
+    <span id="excel-label">주간 엑셀 다운로드</span>
   </button>
 </div>
 
 <main>
   <!-- ① 우리병원 탭 -->
-  <div id="panel-ours" class="tab-panel active">
+  <div id="panel-ours" class="tab-panel">
     <div class="notice">📋 샘플 데이터 미리보기 — GitHub Pages 배포 후 실제 수집 데이터로 교체됩니다.</div>
     <div class="stats-row" id="stats-ours"></div>
     <div class="table-wrap" id="table-ours"></div>
@@ -231,9 +264,50 @@ td{padding:10px 12px;vertical-align:top}
       </table>
     </div>
   </div>
+
+  <!-- ④ 지면모음 탭 -->
+  <div id="panel-paper" class="tab-panel active">
+    <div class="notice notice-keep">🗞️ 네이버 '신문 지면 보기'에 등록된 주요 신문 19곳의 지면 게재 기사를 모았습니다. 방송·전문지·지면 미제공 매체는 포함되지 않으며, 최근 기사의 면 정보는 신문 발행 후 1~2일 안에 채워집니다. 한가위 특집 별지 같은 <b>H면·별지는 네이버가 지면 보기로 제공하지 않아</b>, 직접 추가한 기사만 나옵니다.</div>
+    <div class="hospital-filter" id="paper-hosp-filter"></div>
+    <div class="stats-row" id="stats-paper"></div>
+    <div class="table-wrap" id="table-paper"></div>
+    <div class="pagination" id="pag-paper"></div>
+  </div>
+
+  <!-- ⑤ 서울아산병원-보고용 탭 -->
+  <div id="panel-report" class="tab-panel">
+    <div class="notice notice-keep">📑 2026 연간 언론실적 엑셀 기준으로 모았습니다. 온라인은 <b>실적에 집계된 적 있는 매체</b>만, '제외 추정'은 6/11~9/10 대시보드 기사를 실적과 대조해 <b>제외율 85% 이상이었던 유형</b>만 표시합니다(서울아산병원 기사에만 적용, 태그에 마우스를 올리면 제외율 표시). 신문은 네이버 지면 정보로 게재가 확인된 기사만 담고, 방송 프로그램 실적은 기사로 구분되지 않아 방송사 웹기사는 온라인에 포함됩니다.
+      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="hide-suspect"> 제외 추정 기사 숨기기</label>
+    </div>
+    <div id="report-body"></div>
+  </div>
+
+  <!-- ⑥ 보도자료 게재율 탭 -->
+  <div id="panel-press" class="tab-panel">
+    <div class="notice notice-keep">📣 구글 시트 <b>'언론 업무'</b> 탭에서 구분이 <b>보도자료</b>이고 게재일이 적힌 건을 가져와, 배포일 전후에 수집된 서울아산병원 기사와 맞춰 봤습니다. <b>의료진 이름과 제목 키워드가 겹치는 기사</b>를 그 보도자료에서 나온 것으로 셉니다. 줄을 누르면 실제 기사 목록이 펼쳐집니다.
+      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="press-zero-only"> 게재 0건만 보기</label>
+    </div>
+    <div class="stats-row" id="stats-press"></div>
+    <div class="table-wrap" id="table-press"></div>
+  </div>
 </main>
 
 <script>
+// ── 개발 버전 전용 ───────────────────────────────────────────────────────────
+// 여기는 운영 저장소입니다 — 이 값은 반드시 false로 둡니다. 개발 저장소
+// (hospital-news-dashboard-dev)에서는 true이고, 그 밖의 내용은 두 파일이 똑같습니다.
+// 그래야 다음 반영 때 index.html을 그대로 복사해 이 한 줄만 고치면 됩니다.
+// false라서 가려지는 것: 제목의 [개발], 헤더 배지·안내 문구, 보도자료 게재율 탭.
+const IS_DEV = false;
+
+if (IS_DEV) {
+  document.title = '[개발] ' + document.title;
+  for (const id of ['dev-badge', 'dev-notice', 'tab-btn-press']) {
+    const el = document.getElementById(id);
+    if (el) el.hidden = false;
+  }
+}
+
 // ── 상수 ─────────────────────────────────────────────────────────────────────
 const PAGE_SIZE = 20;
 
@@ -286,34 +360,100 @@ const MEDIA_MAP_FE = {
   "newdailybiz":"뉴데일리경제","menews":"모닝경제",
   "emoneynews":"이머니뉴스","wiznews":"위즈뉴스","aitimes":"인공지능신문",
   "joynews24":"조이뉴스24",
+  // 연간 언론실적 엑셀과 대조해 확인한 도메인
+  "koreahealthlog":"코리아헬스로그","financialpost":"파이낸셜포스트","medical-tribune":"메디칼트리뷴",
+  "nongmin.com":"농민신문","ikunkang":"건강다이제스트","sentv":"서울경제TV","dizzo":"디지틀조선일보",
+  "it.chosun":"IT조선","biz.chosun":"조선비즈","ekn.kr":"에너지경제","hinews.co.kr":"하이뉴스","dailypharm":"데일리팜",
+  "ggilbo":"금강일보","joseilbo":"조세일보","kado.net":"강원도민일보","kwnews.co.kr":"강원일보",
+  "daily.hankooki":"데일리한국","sisajournal":"시사저널","insight.co.kr":"인사이트","pinpointnews":"핀포인트뉴스",
+  "newdaily":"뉴데일리","cstimes":"컨슈머타임스","wikitree":"위키트리","businesspost":"비즈니스포스트",
+  "sportsseoul":"스포츠서울","newsen":"뉴스엔","tenasia":"텐아시아","hansbiz":"한스경제","ablenews":"에이블뉴스",
+  "dailygoodnews":"데일리굿뉴스","kizmom":"키즈맘","paxetv":"팍스경제TV","kyeonggi.com":"경기일보",
+  "ksilbo":"경상일보","womaneconomy":"여성경제신문","asiatime.co.kr":"아시아타임즈","newscj":"천지일보",
+  "tf.co.kr":"더팩트","imaeil":"매일신문","gndomin":"경남도민일보","koreatimes":"코리아타임즈",
+  "magazine.hankyung":"한경비즈니스","medicopharma":"메디코파마","welfarenews":"웰페어뉴스",
+  "isplus":"일간스포츠","sports.khan":"스포츠경향","science.ytn":"YTN사이언스","biz.sbs":"SBS Biz",
+  "apsk":"메디팜스투데이",
 };
 
-function validateName(name) {
-  if (!name) return '';
-  const SURNAMES = '김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구신임나전민유진지엄채원천방공강현함변염양변복예편';
-  const parts = name.split(/[,\s·]+/).filter(Boolean);
-  const valid = parts.filter(p => p.length >= 2 && p.length <= 3 && SURNAMES.includes(p[0]) && !/병원|센터|의대|대학|학과|내과|외과|연구/.test(p));
-  return valid.join(', ');
+// ── 보강 열(기자명·지면·출입기자) 헬퍼 ────────────────────────────────────────
+const CHECKED_NONE = '-';   // enrich_articles.py가 '확인했지만 값 없음'으로 남기는 표시
+function hasPaper(r) { return /^[A-Z]?\d{1,3}면$/.test(r['지면'] || ''); }
+function mediaOf(r) { return resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||''); }
+function isBroadcast(r) { return BROADCAST.has(mediaOf(r)); }
+function hospLabel(r) { return Object.values(HOSPITALS).find(h => h.group === r['병원그룹'])?.label || r['병원그룹'] || ''; }
+// CSV의 교수명 컬럼은 예전 규칙으로 모은 값이라 '평균'·'반도체' 같은 게 섞여 있다.
+// 지금은 본문 추출이 더 정확해서 그것만 쓴다 (새로 수집되는 행은 같은 규칙으로 채워진다).
+function profOf(r) { return extractProfessor(r['제목'], r['요약']); }
+function reporterNames(r) {
+  const v = (r['기자명'] || '').trim();
+  return v === CHECKED_NONE ? '' : v;
+}
+function reporterCell(r) {
+  const names = reporterNames(r).split(/,\s*/).filter(Boolean);
+  if (!names.length) return '<span style="color:var(--muted)">—</span>';
+  const shown = names.slice(0, 2).join(', ') + (names.length > 2 ? ' 외' : '');
+  const beat = r['출입기자'] === 'Y' ? '<span class="badge-beat" title="우리 병원 출입기자">출입</span>' : '';
+  return `<span title="${names.join(', ')}">${shown}</span>${beat}`;
+}
+function ymdLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function mdOf(r) {
+  const m = (r['날짜'] || '').match(/^\d{4}-(\d{2})-(\d{2})/);
+  return m ? `${+m[1]}/${+m[2]}` : '';
 }
 
-function extractProfessor(title, summary, group) {
+// 사람 이름 판정 ─ 오탐 대부분은 '혈액종양내과 교수'의 꼬리를 이름으로 오인한 것이었다.
+// 그래서 이름 앞뒤에 한글이 붙어 있으면 이름으로 보지 않는다(경계 검사)가 핵심 규칙이다.
+const SURNAMES = new Set([...'강견경계고공곽구국권근금기길김나남노다도동라류마맹명모목문민박반방배백범변복봉부빈사삼상서석선설성소손송승시신심안양어엄여연염예오옥온왕용우원위유육윤은음이인임장전정제조종주지진차창채천초최추탁태판팽편평표피하학한함해허현형호홍화황']);
+const SURNAMES2 = new Set(['남궁','황보','제갈','사공','선우','서문','독고','동방','어금','강전','망절']);
+// 이름 자리에 자주 끼어드는 일반어·직함·진료과 어근 (데이터에서 실제로 잡히던 것들)
+const NOT_NAME = new Set(`
+서울 서울권 지방권 경인권 전국 지역 지방 지난 이번 이어 이후 이전 오전 오후 공동 신임 최근 당시
+기존 향후 현재 관련 대상 이날 이때 주요 국내 해외 국제 세계 우리 자신 사람 환자 의사 간호 진료
+임상 명예 석좌 주임 초빙 겸임 객원 특임 전임 부임 담당 지도 발표 조사 분석 개발 초청 위촉 추대
+취임 우수 고려해 이상 이하 미만 초과 대해 통해 위해 따라 함께 각각 이런 그런 어떤 이제 아직 이미
+다시 매우 가장 더욱 아주 정말 바로 결국 물론 사실 우선 일단 제일 향년 본인 최고 최대 최초 최신
+다음 처음 실제 특히 다만 또한 한편 아울러 동시 이용 사용 적용 포함 제외 확인 예상 전망 계획 예정
+결정 시작 종료 소아 산부 정형 흉부 신경 비뇨 피부 정신 가정 응급 영상 병리 재활 마취 예방 종양
+혈액 순환 호흡 소화 내분 감염 완화 중환 통증 부속 선정 명의 한국 미국 일본 중국 영국 독일 호주
+대만 유럽 남미 북미 아시아
+`.trim().split(/\s+/));
+const NOT_NAME_RE = /병원|의원|센터|학과|학부|의대|대학|학교|연구|재단|학회|협회|공단|본부|지부|교실|클리닉|보건소|의료원/;
+// '이 부회장은', '장 박사는'처럼 직함이 이름 자리에 오는 경우 (조사가 붙어도 걸러낸다)
+const TITLE_WORD_RE = /(?:회장|이사장|원장|총장|학장|소장|실장|팀장|본부장|박사|교수|대표|위원|의원|장관|차관|사장|부장|국장)(?:은|는|이|가|도|의|를|을)?$/;
+
+function isPersonName(n) {
+  if (!n || n.length < 2 || n.length > 4) return false;
+  if (NOT_NAME.has(n) || NOT_NAME_RE.test(n) || TITLE_WORD_RE.test(n)) return false;
+  if (n.endsWith('과')) return false;   // 내과·안과·신경과
+  if (n.endsWith('대')) return false;   // 연세대·충남대 같은 대학 약칭
+  return SURNAMES2.has(n.slice(0, 2)) || SURNAMES.has(n[0]);
+}
+
+// '장윤혁·이순태 교수'처럼 가운뎃점으로 이어진 공동 저자를 함께 잡는다
+const NAME_TOKEN = '[가-힣]{2,4}';
+const NAME_CHAIN = NAME_TOKEN + '(?:\\s*[·ㆍ‧•]\\s*' + NAME_TOKEN + ')*';
+const TITLE_PREFIX = '(?:주임|책임|명예|석좌|특임|초빙|겸임|객원|임상|진료|전임|정|부|조)*';   // 임상조교수·명예교수
+// '서준범 서울아산병원 교수'처럼 이름과 '교수' 사이에 소속이 끼는 형태가 많다.
+// 아무 단어나 허용하면 '서울 아산병원 교수'가 이름 '서울'이 되므로, 소속으로 보이는 말만 허용한다.
+const AFFIL = '(?:[가-힣]{1,10}(?:병원|의원|센터|의대|대학교|대학|학교|교실|연구소|연구원|학부|의료원|보건소)|[가-힣]{1,8}[과대])';
+const PROF_PATTERNS = [
+  new RegExp('(?:^|[^가-힣])(' + NAME_CHAIN + ')\\s+(?:' + AFFIL + '\\s+){0,2}' + TITLE_PREFIX + '교수', 'g'),
+  new RegExp('(?:^|[^가-힣])(' + NAME_CHAIN + ')\\s+(?:전문의|과장|원장)(?![가-힣])', 'g'),
+];
+
+function extractProfessor(title, summary) {
   const combined = (title || '') + ' ' + (summary || '');
   const found = [];
-  const SURNAMES = '김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노정하곽성차주우구신임나전민유진지엄채원천방공강현함변염양변복예편';
-  const patterns = [
-    /([가-힣]{2,3})\s+(?:[가-힣]+\s+)?교수/g,
-    /교수\s+([가-힣]{2,3})(?=[\s,·(]|$)/g,
-    /([가-힣]{2,3})\s+(?:교수|전문의|원장)/g,
-  ];
-  for (const pat of patterns) {
+  for (const pat of PROF_PATTERNS) {
+    pat.lastIndex = 0;
     let m;
     while ((m = pat.exec(combined)) !== null) {
-      const name = m[1];
-      if (name.length < 2 || name.length > 3) continue;
-      if (!SURNAMES.includes(name[0])) continue;
-      if (/^(병원|센터|연구|의료|대학|학교|환자|치료|수술|진료|의사|간호|임상|학과|정신|내분|분비|종양|외과|흉부|신경|소아|비뇨|성형|재활|마취|응급|영상|방사|진단|예방|가정|산부|해부|약리|병리|면역|유전|세포|보건|공동|공식|공사|공급|공학|공단|공립|공공|공중|내과|산의)$/.test(name)) continue;
-      if (found.includes(name)) continue;
-      found.push(name);
+      for (const name of m[1].split(/[·ㆍ‧•\s]+/)) {
+        if (isPersonName(name) && !found.includes(name)) found.push(name);
+      }
     }
   }
   return found.slice(0, 3).join(', ');
@@ -346,9 +486,12 @@ function resolveMedia(mediaStr, urlStr) {
   try {
     const domain = target.replace(/https?:\/\/(www\.)?/,'').split('/')[0].toLowerCase();
     if (domain.includes('news.naver') || domain.includes('n.news.naver')) return mediaStr||'';
-    for (const [key, name] of Object.entries(MEDIA_MAP_FE)) {
-      if (domain.includes(key)) return name;
+    // 가장 긴 키 우선: 'chosunbiz'·'it.chosun'이 'chosun'보다, 'sports.khan'이 'khan'보다 먼저 맞도록
+    let hit = '';
+    for (const key of Object.keys(MEDIA_MAP_FE)) {
+      if (domain.includes(key) && key.length > hit.length) hit = key;
     }
+    if (hit) return MEDIA_MAP_FE[hit];
     // 최후수단: 도메인 파트 추출
     const parts = domain.split('.');
     if (parts.length >= 2) {
@@ -428,16 +571,25 @@ function classifyMedia(media) {
 
 // ── 상태 ─────────────────────────────────────────────────────────────────────
 let allData = SAMPLE;
-let currentTab = 'ours';
-let oursPage = 1, othersPage = 1;
-let oursSort = {col:'발행일시',asc:false}, othersSort = {col:'발행일시',asc:false};
+let currentTab = 'paper';   // 처음 열릴 때 보이는 탭
+const pages = {ours:1, others:1, paper:1};
+const pageTotals = {};
+const sorts = {
+  ours:   {col:'발행일시', asc:false},
+  others: {col:'발행일시', asc:false},
+  paper:  {col:'발행일시', asc:false},
+};
+// 보고용 탭은 실적 양식대로 날짜 오름차순이 기본. 화면에서만 바꿀 수 있고 엑셀은 늘 날짜순으로 받는다
+const reportSort = {col:'날짜', asc:true};
+let pressData = [];   // docs/press_releases.json 의 보도자료 목록
 let selectedHosp = null; // null = 전체 타병원
+let paperHosp = null;    // null = 지면모음 전체 병원
 let barChart = null, pieChart = null;
 
 // ── 초기화 ───────────────────────────────────────────────────────────────────
 async function init() {
   buildHospFilter();
-  updateKeywordOptions('ours');
+  updateKeywordOptions(currentTab);
 
   // CSV 로드 시도 → 실패 시 샘플 데이터 사용
   try {
@@ -452,14 +604,22 @@ async function init() {
         document.getElementById('last-updated').textContent = `마지막 수집: ${dates[dates.length-1]}`;
       }
       // 샘플 안내 제거
-      document.querySelectorAll('.notice').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.notice:not(.notice-keep)').forEach(el => el.style.display = 'none');
     }
   } catch(e) {
     console.log('CSV 로드 실패, 샘플 데이터 사용:', e);
   }
 
+  // 보도자료 목록 (없으면 보도자료 탭만 비어 보이고 나머지는 그대로 동작한다)
+  if (IS_DEV) try {
+    const res = await fetch('./press_releases.json?t=' + Date.now());
+    if (res.ok) pressData = (await res.json())['목록'] || [];
+  } catch(e) {
+    console.log('보도자료 목록 로드 실패:', e);
+  }
+
   document.getElementById('total-badge').textContent = `총 ${allData.length.toLocaleString()}건`;
-  renderOurs();
+  switchTab(currentTab);   // 탭 강조·필터·엑셀 버튼 문구까지 한 번에 맞춘다
   renderCompare();
 }
 
@@ -509,7 +669,7 @@ function buildHospFilter() {
 
 function selectHosp(key) {
   selectedHosp = key === 'all' ? null : key;
-  document.querySelectorAll('.hosp-btn').forEach(b => {
+  document.querySelectorAll('#hosp-filter .hosp-btn').forEach(b => {
     const active = b.dataset.hk === key;
     b.classList.toggle('active', active);
     if (active) b.style.background = key === 'all' ? '#444' : HOSPITALS[key]?.color || '#444';
@@ -518,7 +678,7 @@ function selectHosp(key) {
     else b.style.color = key === 'all' ? '' : (HOSPITALS[b.dataset.hk]?.color || '');
   });
   updateKeywordOptions('others');
-  othersPage = 1;
+  pages.others = 1;
   renderOthers();
 }
 
@@ -528,9 +688,20 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-'+tab));
   document.getElementById('filter-bar').style.display = tab === 'compare' ? 'none' : 'flex';
-  if (tab === 'ours')   { updateKeywordOptions('ours');   renderOurs(); }
-  if (tab === 'others') { updateKeywordOptions('others'); renderOthers(); }
-  if (tab === 'compare') renderCompare();
+  document.getElementById('excel-label').textContent =
+    tab === 'paper' ? '지면모음 엑셀 다운로드' : tab === 'report' ? '보고용 엑셀 다운로드'
+    : tab === 'press' ? '게재율 엑셀 다운로드' : '주간 엑셀 다운로드';
+  if (tab === 'compare') { renderCompare(); return; }
+  updateKeywordOptions(tab);
+  renderCurrent();
+}
+
+function renderCurrent() {
+  if (currentTab === 'ours')        renderOurs();
+  else if (currentTab === 'others') renderOthers();
+  else if (currentTab === 'paper')  renderPaper();
+  else if (currentTab === 'report') renderReport();
+  else if (currentTab === 'press')  renderPress();
 }
 
 function updateKeywordOptions(tab) {
@@ -538,9 +709,11 @@ function updateKeywordOptions(tab) {
   let kws = [];
   if (tab === 'ours') {
     kws = HOSPITALS.asan.keywords;
-  } else {
+  } else if (tab === 'others') {
     const keys = selectedHosp ? [selectedHosp] : OTHERS_KEYS;
     kws = [...new Set(keys.flatMap(k => HOSPITALS[k].keywords))];
+  } else {
+    kws = [...new Set(Object.values(HOSPITALS).flatMap(h => h.keywords))];
   }
   sel.innerHTML = '<option value="">전체 키워드</option>' + kws.map(k=>`<option>${k}</option>`).join('');
   document.getElementById('search-input').value = '';
@@ -553,6 +726,7 @@ function getFilters() {
     dateTo:   document.getElementById('date-to').value,
     keyword:  document.getElementById('keyword-filter').value,
     search:   document.getElementById('search-input').value.toLowerCase(),
+    beatOnly: document.getElementById('beat-only').checked,
   };
 }
 
@@ -565,19 +739,80 @@ const FE_EXCLUDE_KW = [
   '지역의사제','수능최저','의대 입시','편입학',
   '분양','임대주택','재건축','살인미수','스토킹 살인','살해미수',
   '옥희','故 옥희','고 옥희','영면에 든','서울시스터즈',
+  // 기업·기관이 주체이고 병원은 협력·수혜 기관으로만 나오는 기사 (2026-10 정리)
+  // 아이돌 기부·방문 — 'JYP 치료비 지원', 생일 기부, 병원학교 일일교사
+  '스트레이 키즈','스트레이키즈','스키즈','필릭스','방찬','창빈','JYP',
+  // ※ '리노'·'아이엔'·'라이즈'는 넣지 말 것 — 리노베이션·넥스트라이즈·RISE 사업이 함께 걸린다
+  '시몬스',                                                    // 침대 판매 연계 ESG 기부
+  '한화생명','NH농협생명','농협생명','현대해상','교보생명','DB손해보험','메리츠화재',  // 보험사 제휴·MOU
+  '신동국','위약벌','라데팡스','송영숙','임주현',                        // 한미약품 경영권 분쟁
+  'KB국민은행','신한금융','하나은행','우리은행','IBK기업은행',              // 은행·금융 제휴
+  '혁신도시','랩허브','대단지','입주민','아파트',                        // 부동산·단지 개발
+  // 스포츠 구단 — '삼성'·'아산'이 구단 이름과 겹쳐서 들어온다
+  '충남아산FC','라이온즈','프로야구','유격수','[프로농구]','하츠투하츠','김상식',
+  // ※ '감독'·'화백'·'병무청'은 넣지 말 것 — 금융감독원·관리감독, 황규백 화백 기부 기사,
+  //    병역비리 관련 세브란스 기사가 함께 걸린다
+  '박영대','본인선택원',                                        // 보리작가 인터뷰 / 병무청 안내
+  // 병원이 참여기관으로만 나오는 기업·학회 기사
+  '비브레스트','ICMRI','듀켐바이오','라덱셀','쎄크',
+  // ※ '썬더스'·'히어로즈'·'프로농구'는 넣지 말 것 — 우리 '아워히어로즈' 보도자료와
+  //    민윤기치료센터 기사가 함께 걸린다
 ];
+
 const FE_EXCLUDE_MEDIA = ['celuvmedia'];
 const FE_EXCLUDE_QUERY = ['서울의대'];
 
+// 노이즈 판정은 기사 본래 필드만 본다 — 기자명 같은 보강 열이 제외 키워드(인명)에 걸리지 않도록
+const NOISE_FIELDS = ['검색어','매체','제목','교수명','요약','언론사원문','네이버링크'];
+// 연예인·팬덤 생일 기부 — 아이돌 이름을 하나씩 막으면 새 그룹이 나올 때마다 또 샌다.
+// '생일' + '기부·기탁·후원' 조합으로 거르면 이름을 몰라도 걸린다.
+// 제목에만 보면 '…삼성서울병원에 3천만원 기부'(생일은 요약에만)를 놓쳐서 요약까지 함께 본다.
+const BIRTHDAY_DONATION_RE = /기부|기탁|후원|성금|쾌척/;
+
+// 의대 입시 기사 — 병원 뉴스가 아니라 입시 뉴스다 (지역선발·수시 합격선 등)
+const MED_SCHOOL_RE = /의대|의과대학|의예과/;
+const ADMISSION_RE = /지역선발|지역인재|수시|정시|합격선|등급컷|모집요강|증원|입시|내신/;
+
+// 제약사가 주체인 기사 — 병원 이름이 제목에 없고 '○○병원 … 교수' 코멘트도 없으면
+// 병원이 스쳐 지나갈 뿐이다. 교수가 나오는 기사는 실적에 잡히므로 남긴다
+const PHARMA_RE = /유한양행|대웅제약|한미약품|종근당|녹십자|제일약품|동아에스티|JW중외제약|셀트리온|HK이노엔|일동제약|삼일제약|보령제약|광동제약|휴젤|메디톡스|온코닉|시지바이오|아스트라제네카|로슈|화이자|MSD|노바티스|길리어드|애브비|베링거|암젠|사노피|얀센/;
+const HOSP_NAME_RE = /아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원/;
+const HOSP_PROF_RE = /(아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원)[^.]{0,40}교수/;
+
+// 분원 기사 — 본원 이름이 함께 나오지 않으면 그 분원 기사로 본다.
+// 제목에 분원만 있고 본원은 요약에만 있는 경우(SCL사이언스, 은평성모병원 원내 코드 확보)도 분원 기사다.
+const BRANCH_RULES = [
+  {re: /은평성모병원|여의도성모병원|의정부성모병원|대전성모병원|성빈센트병원|성바오로병원|동두천성모병원|포천성모병원/,
+   main: '서울성모병원'},
+  // 원주세브란스기독병원 — 연세대 원주캠퍼스 소속 별개 병원. 원주 지역 기사가 대량으로 딸려 온다
+  {re: /원주세브란스|세브란스기독병원/, main: '세브란스병원'},
+];
+function isBranchArticle(title, headSumm) {
+  return BRANCH_RULES.some(({re, main}) =>
+    (re.test(headSumm) && !headSumm.includes(main)) || (re.test(title) && !title.includes(main)));
+}
+
+function isNoise(r) {
+  if (r['검색어'] === '서울중앙병원') return true;
+  if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return true;
+  const combined = NOISE_FIELDS.map(f => r[f] || '').join(' ');
+  const headSumm = (r['제목'] || '') + ' ' + (r['요약'] || '');
+  if (headSumm.includes('생일') && BIRTHDAY_DONATION_RE.test(headSumm)) return true;
+  if (MED_SCHOOL_RE.test(headSumm) && ADMISSION_RE.test(headSumm)) return true;
+  // 강릉·정읍아산병원, 충남 아산시 등 — 서울아산병원이 함께 나오면 우리 기사일 수 있어 남긴다
+  if (OTHER_ASAN_RE.test(headSumm) && !headSumm.includes('서울아산병원')) return true;
+  if (PHARMA_RE.test(headSumm) && !HOSP_NAME_RE.test(r['제목'] || '') && !HOSP_PROF_RE.test(headSumm)) return true;
+  if (isBranchArticle(r['제목'] || '', headSumm)) return true;
+  if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return true;
+  const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
+  return FE_EXCLUDE_MEDIA.some(m => url.includes(m));
+}
+
 function applyFilters(rows) {
-  const {dateFrom,dateTo,keyword,search} = getFilters();
+  const {dateFrom,dateTo,keyword,search,beatOnly} = getFilters();
   return rows.filter(r => {
-    if (r['검색어'] === '서울중앙병원') return false;
-    if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return false;
-    const combined = Object.values(r).join(' ');
-    if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
-    const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
-    if (FE_EXCLUDE_MEDIA.some(m => url.includes(m))) return false;
+    if (isNoise(r)) return false;
+    if (beatOnly && r['출입기자'] !== 'Y') return false;
     if (dateFrom && r['날짜'] < dateFrom) return false;
     if (dateTo   && r['날짜'] > dateTo)   return false;
     if (keyword  && r['검색어'] !== keyword) return false;
@@ -603,7 +838,7 @@ function renderOurs() {
   const h = HOSPITALS.asan;
   const base = allData.filter(r => r['병원그룹'] === '아산');
   const filtered = applyFilters(base);
-  const rows = sortRows(filtered, oursSort);
+  const rows = sortRows(filtered, sorts.ours);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
   // 키워드별 집계 (필터 적용)
@@ -671,8 +906,8 @@ function renderOurs() {
       </div>
     </div>`;
 
-  renderTable('table-ours', rows, oursPage, 'ours', h.color);
-  renderPag('pag-ours', rows.length, oursPage, 'ours');
+  renderTable('table-ours', rows, pages.ours, 'ours', h.color);
+  renderPag('pag-ours', rows.length, pages.ours, 'ours');
 }
 
 // ── 타병원 렌더 ───────────────────────────────────────────────────────────────
@@ -681,7 +916,7 @@ function renderOthers() {
   const groups = keys.map(k => HOSPITALS[k].group);
   const base = allData.filter(r => groups.includes(r['병원그룹']));
   const filtered = applyFilters(base);
-  const rows = sortRows(filtered, othersSort);
+  const rows = sortRows(filtered, sorts.others);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
   // 통계
@@ -701,11 +936,539 @@ function renderOthers() {
     })
   ].join('');
 
-  renderTable('table-others', rows, othersPage, 'others', accentColor);
-  renderPag('pag-others', rows.length, othersPage, 'others');
+  renderTable('table-others', rows, pages.others, 'others', accentColor);
+  renderPag('pag-others', rows.length, pages.others, 'others');
+}
+
+// ── 지면모음 렌더 ─────────────────────────────────────────────────────────────
+function paperGroups() {
+  return paperHosp ? [HOSPITALS[paperHosp].group] : Object.values(HOSPITALS).map(h => h.group);
+}
+
+function buildPaperHospFilter() {
+  const current = paperHosp || 'all';
+  const btn = (key, label, color) => {
+    const active = current === key;
+    return `<button class="hosp-btn${active?' active':''}" onclick="selectPaperHosp('${key}')"
+      style="border-color:${color};color:${active?'#fff':color};background:${active?color:''}">${label}</button>`;
+  };
+  document.getElementById('paper-hosp-filter').innerHTML =
+    btn('all', '전체 병원', '#444') + Object.entries(HOSPITALS).map(([k, h]) => btn(k, h.label, h.color)).join('');
+}
+
+function selectPaperHosp(key) {
+  paperHosp = key === 'all' ? null : key;
+  pages.paper = 1;
+  renderPaper();
+}
+
+function renderPaper() {
+  buildPaperHospFilter();
+  const groups = paperGroups();
+  const filtered = applyFilters(allData.filter(r => groups.includes(r['병원그룹']) && hasPaper(r)));
+  const rows = sortRows(filtered, sorts.paper);
+  document.getElementById('result-count').textContent = `${rows.length}건`;
+
+  const hospCounts = {};
+  filtered.forEach(r => { hospCounts[r['병원그룹']] = (hospCounts[r['병원그룹']]||0) + 1; });
+  const accent = paperHosp ? HOSPITALS[paperHosp].color : '#8a5a00';
+  document.getElementById('stats-paper').innerHTML = [
+    statCard('지면 기사', filtered.length, accent),
+    statCard('신문사', new Set(filtered.map(mediaOf)).size, accent),
+    statCard('출입기자 기사', filtered.filter(r => r['출입기자'] === 'Y').length, '#1a7a3c'),
+    ...Object.values(HOSPITALS).filter(h => hospCounts[h.group]).map(h => statCard(h.label, hospCounts[h.group], h.color)),
+  ].join('');
+
+  renderTable('table-paper', rows, pages.paper, 'paper', accent);
+  renderPag('pag-paper', rows.length, pages.paper, 'paper');
+}
+
+// ── 서울아산병원-보고용 렌더 ──────────────────────────────────────────────────
+// ⚠️ 임시값: 연간 언론실적 엑셀 분석 후 실제 매체 목록·제외 규칙으로 교체한다
+// 2026 연간 언론실적 '아산_온라인' 시트에 한 번 이상 집계된 매체 (엑셀의 표기 오타는 바로잡음)
+const REPORT_ONLINE_MEDIA_NAMES = [
+  '라포르시안','더퍼스트','보건뉴스','의학신문','데일리메디','중앙일보','뉴시스','메디파나뉴스','코리아헬스로그','후생신보',
+  '뉴스1','서울경제','한국일보','머니투데이','데일리안','연합뉴스','세계일보','헬스경향','메디컬월드뉴스','동아일보',
+  '매일경제','한국경제','이데일리','청년의사','조선일보','헬스조선','파이낸셜뉴스','아시아경제','메디칼업저버','e-의료정보',
+  '로이슈','경향신문','이투데이','베리타스알파','백세시대','메디칼트리뷴','코메디닷컴','동아사이언스','서울신문','파이낸셜포스트',
+  '메가경제','메디칼타임즈','문화일보','디지틀조선일보','헤럴드경제','의사신문','하이뉴스','중앙일보 헬스미디어','전자신문','메디게이트뉴스',
+  '메디컬투데이','쿠키뉴스','국민일보','한겨레','마이데일리','인공지능신문','매경헬스','서울경제TV','EBN','에너지경제',
+  '시사저널','농민신문','아주경제','뉴데일리','건강다이제스트','TV조선','내일신문','팍스경제TV','데일리한국','메디팜스투데이',
+  '약사공론','조선비즈','스포츠월드','이뉴스투데이','노컷뉴스','한국경제TV','히트뉴스','아이뉴스24','글로벌경제','뉴스토마토',
+  '지디넷코리아','의협신문','MBC','SBS','연합뉴스TV','JTBC','하이닥','KBS','경기메디뉴스','글로벌이코노믹',
+  '인사이트','데일리팜','약업신문','경기일보','디지털타임스','한경TV','YTN','데일리굿뉴스','아시아투데이','키즈맘',
+  'MBN','헬스중앙','중앙헬스','데일리포스트','브릿지경제','금강일보','컨슈머타임스','핀포인트뉴스','아시아타임즈','여성경제신문',
+  '울산신문','천지일보','의약뉴스','한스경제','조세일보','주간조선','경상일보','메디칼옵저버','녹색경제신문','위키리크스한국',
+  '와이드경제','매일일보','울산매일신문','데일리아','스타뉴스','TJB','국제뉴스','YTN사이언스','일간스포츠','와이드데일리',
+  '더팩트','매일신문','경남매일신문','IT조선','비즈월드','SBS Biz','뉴스엔','울산제일일보','스포츠경향','경남일보',
+  '메디코파마','스포츠서울','위키트리','웰페어뉴스','화이트페이퍼','텐아시아','경남도민일보','비즈니스포스트','이코노믹리뷰','코리아타임즈',
+  '한경비즈니스','에이블뉴스','더퍼블릭',
+];
+const normMedia = m => (m || '').replace(/[\s·\-_.()]/g, '').toLowerCase();
+const REPORT_ONLINE_MEDIA = new Set(REPORT_ONLINE_MEDIA_NAMES.map(normMedia));
+function isReportOnlineMedia(r) { return REPORT_ONLINE_MEDIA.has(normMedia(mediaOf(r))); }
+// 2026-06-11~09-10 대시보드의 서울아산병원 기사 3,515건을 연간 언론실적 엑셀과 대조해 만든 규칙.
+// rate = 해당 유형에 걸린 기사 중 실제로 실적에서 빠진 비율. 85% 이상인 유형만 쓴다.
+// (제약 기업 발표 속 교수 코멘트 52%, 정책 발언 57%, 학회 임원 소속 70% 등은 실적 기사와 구분이 안 돼 제외)
+const OTHER_ASAN_RE = /강릉아산병원|정선아산병원|보성아산병원|홍천아산병원|영덕아산병원|보령아산병원|금강아산병원|정읍아산병원|아산충무병원|아산시|아산소방서|아산경찰|충남 아산|아산 경찰병원|현대아산|아산 탕정|아산캠퍼스|아산의학관/;
+const REPORT_SUSPECT_RULES = [
+  {tag:'다른 아산병원·지명',     rate:100, test:(t,s,a) => OTHER_ASAN_RE.test(a) && !/서울아산병원/.test(a)},
+  {tag:'병원명 없음',            rate:97,  test:(t,s,a) => !/아산병원|서울아산/.test(a)},
+  {tag:'출신·경력 언급',         rate:86,  test:(t,s,a) => /출신|거쳐|전임의|수련|근무했|재직했|역임|졸업|펠로우?를|임상 경험/.test(s) || /영입|개원|합류|취임|선임/.test(t)},
+  {tag:'기업 IR·계약·수주',      rate:89,  test:(t,s,a) => /특징주|주가|공시|상장|매출|투자|계약 체결|계약을 체결|위탁계약|수주|코스닥|증권|IR|목표가|억원 규모|억 규모|공급/.test(a)},
+  {tag:'공동연구 참여기관 나열', rate:85,  test:(t,s,a) => /공동연구기관|참여기관|컨소시엄|국책과제|과제 선정|과제에 선정|공동연구개발기관|참여한다|참여하는|협력기관|등이 참여|등과 함께|공동으로 참여/.test(s) && !/서울아산/.test(t)},
+  {tag:'여러 병원 나열',         rate:87,  test:(t,s,a) => (s.match(/서울대병원|서울대학교병원|삼성서울|세브란스|서울성모|빅5|고려대|아주대/g) || []).length >= 2 && !/서울아산/.test(t)},
+  {tag:'연예·인물 화제',         rate:96,  test:(t,s,a) => /배우|가수|아이돌|방송인|개그맨|아나운서|헬스톡|건강!톡|유튜버/.test(a)},
+  {tag:'인사·수상 단신',         rate:86,  test:(t,s,a) => /수상|선정|선출|인사|동정|임명/.test(a) && !/서울아산/.test(t)},
+  {tag:'기부·후원 전달',         rate:91,  test:(t,s,a) => /기부|후원금|발전기금|성금|기탁|전달식/.test(a)},
+  {tag:'원내 처방·도입',         rate:100, test:(t,s,a) => /입성|처방권|신규약물|약사위원회|DC 통과|랜딩/.test(a)},
+  {tag:'부동산·광고 연계',       rate:100, test:(t,s,a) => /아이파크|푸르지오|분양|입주민|주거|레지던스|서울원|하이엔드|오피스텔|청약/.test(a)},
+  {tag:'사건·노동 이슈',         rate:96,  test:(t,s,a) => /태움|사망 사건|사고|노조|파업|교통체증|교통지옥|출입금지|논란|갑질|징계/.test(a)},
+];
+const SUSPECT_RATE = Object.fromEntries(REPORT_SUSPECT_RULES.map(rule => [rule.tag, rule.rate]));
+const REPORT_OTHER_GROUPS = ['삼성','서울대','세브란스'];   // 타병원 실적은 신문·방송만 집계
+
+function suspectTag(r) {
+  if (r['병원그룹'] !== '아산') return '';   // 규칙은 서울아산병원 기사로만 검증됨
+  const t = r['제목'] || '', s = r['요약'] || '', a = t + ' ' + s;
+  return REPORT_SUSPECT_RULES.find(rule => rule.test(t, s, a))?.tag || '';
+}
+
+function reportRange() {
+  const {dateFrom, dateTo} = getFilters();
+  if (dateFrom || dateTo) {
+    return {from: dateFrom || '0000-00-00', to: dateTo || '9999-99-99',
+            label: `${dateFrom || '처음'} ~ ${dateTo || '오늘'}`, isDefault: false};
+  }
+  const to = new Date(), from = new Date();
+  from.setDate(to.getDate() - 7);
+  return {from: ymdLocal(from), to: ymdLocal(to), label: `${ymdLocal(from)} ~ ${ymdLocal(to)}`, isDefault: true};
+}
+
+function getReportSections() {
+  const range = reportRange();
+  const hideSuspect = document.getElementById('hide-suspect').checked;
+  const base = applyFilters(allData.filter(r => r['날짜'] >= range.from && r['날짜'] <= range.to));
+  // 방송 실적은 프로그램 출연이라 네이버 기사로 구분할 수 없고, 방송사 웹기사는 실적에서도 온라인으로 집계된다
+  // → 신문 섹션은 지면이 확인된 기사만, 방송사 기사는 온라인 섹션으로 보낸다
+  const printOrBroadcast = r => hasPaper(r);
+  const prep = rows => rows
+    .map(r => ({r, tag: suspectTag(r)}))
+    .filter(x => !(hideSuspect && x.tag))
+    .sort((a, b) => (a.r['발행일시']||'').localeCompare(b.r['발행일시']||''));   // 실적 양식처럼 날짜 오름차순
+  const asan = base.filter(r => r['병원그룹'] === '아산');
+  return {
+    range,
+    sections: [
+      {key:'asan-print',   title:'서울아산병원 신문 (지면 확인)', color:HOSPITALS.asan.color,
+       items: prep(asan.filter(printOrBroadcast))},
+      {key:'asan-online',  title:'서울아산병원 온라인', color:HOSPITALS.asan.color,
+       items: prep(asan.filter(r => !printOrBroadcast(r) && isReportOnlineMedia(r)))},
+      {key:'others-print', title:'타병원 신문 (지면 확인, 삼성·서울대·세브란스)', color:'#444',
+       items: prep(base.filter(r => REPORT_OTHER_GROUPS.includes(r['병원그룹']) && printOrBroadcast(r)))},
+    ],
+  };
+}
+
+function reportKind(r) { return isBroadcast(r) ? '방송' : hasPaper(r) ? '신문' : '온라인'; }
+
+// 보고용 탭 정렬 — 화면에 보이는 값 기준으로 맞춘다 (병원은 '삼성서울병원' 같은 표시 이름)
+const REPORT_SORT_VALUE = {
+  '날짜': r => r['발행일시'] || r['날짜'] || '',
+  '매체': r => mediaOf(r),
+  '병원': r => hospLabel(r),
+};
+
+function doReportSort(col) {
+  if (reportSort.col === col) reportSort.asc = !reportSort.asc;
+  else { reportSort.col = col; reportSort.asc = true; }
+  renderReport();
+}
+
+function sortReportItems(items) {
+  const valueOf = REPORT_SORT_VALUE[reportSort.col] || REPORT_SORT_VALUE['날짜'];
+  const dir = reportSort.asc ? 1 : -1;
+  return [...items].sort((a, b) => {
+    const diff = valueOf(a.r).localeCompare(valueOf(b.r), 'ko', {numeric:true});
+    if (diff) return diff * dir;
+    return (a.r['발행일시']||'').localeCompare(b.r['발행일시']||'');   // 같은 값이면 날짜순
+  });
+}
+
+function reportTh(label, col, style = '') {
+  const on = reportSort.col === col;
+  const arrow = on ? (reportSort.asc ? '↑' : '↓') : '↕';
+  return `<th ${style} class="${on ? 'sorted' : ''}" onclick="doReportSort('${col}')"
+    title="${label} 기준 정렬">${label} <span class="si">${arrow}</span></th>`;
+}
+
+function renderReport() {
+  const {range, sections} = getReportSections();
+  document.getElementById('result-count').textContent = `${sections.reduce((s, x) => s + x.items.length, 0)}건`;
+  const empty = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">해당 기간 기사가 없습니다.</div>`;
+
+  document.getElementById('report-body').innerHTML =
+    `<div style="font-size:12px;color:var(--muted);margin:0 0 14px;font-family:var(--mono)">기간: ${range.label}${range.isDefault ? ' (기간 미설정 시 최근 7일)' : ''}</div>` +
+    sections.map(sec => {
+      const withHosp = sec.key === 'others-print';
+      const items = sortReportItems(sec.items);
+      const table = !sec.items.length ? empty : `<table>
+        <thead><tr>
+          ${reportTh('날짜', '날짜', 'style="width:56px"')}${reportTh('매체', '매체')}${withHosp ? reportTh('병원', '병원') : ''}
+          <th class="nosort">보도내용</th>
+          <th class="nosort">기자</th><th class="nosort">교수명</th><th class="nosort">구분</th>
+          <th class="nosort" style="min-width:50px">링크</th>
+        </tr></thead>
+        <tbody>${items.map(({r, tag}) => {
+          const link = r['언론사원문']||r['네이버링크']||'';
+          const naver = r['네이버링크']||'';
+          const prof = profOf(r);
+          const hKey = Object.keys(HOSPITALS).find(k => HOSPITALS[k].group === r['병원그룹']);
+          const hColor = HOSPITALS[hKey]?.color || '#444';
+          return `<tr${tag ? ' style="background:#fffafa"' : ''}>
+            <td class="td-date">${mdOf(r)}</td>
+            <td class="td-media">${mediaOf(r)}${hasPaper(r) ? `<span class="badge-paper">${r['지면']}</span>` : ''}</td>
+            ${withHosp ? `<td class="td-tag"><span class="tag" style="background:${hColor}22;color:${hColor};font-weight:600">${hospLabel(r)}</span></td>` : ''}
+            <td class="td-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>` : r['제목']}${tag ? `<span class="badge-susp" title="과거 실적 대조 시 이 유형의 ${SUSPECT_RATE[tag]}%가 실적에서 제외됨">제외 추정: ${tag}</span>` : ''}</td>
+            <td class="td-reporter">${reporterCell(r)}</td>
+            <td style="font-size:12px;color:#1a5fa8;white-space:nowrap;font-weight:${prof?'600':'400'}">${prof || '—'}</td>
+            <td style="font-size:12px;color:var(--muted);white-space:nowrap">${reportKind(r)}</td>
+            <td class="td-link">${naver ? `<a href="${naver}" target="_blank" rel="noopener">네이버</a>` : ''}</td>
+          </tr>`;
+        }).join('')}</tbody></table>`;
+      const open = reportSectionOpen[sec.key] !== false;
+      return `<div class="report-section">
+        <h2 onclick="toggleReportSection('${sec.key}')" title="${open ? '접기' : '펼치기'}">
+          <span class="caret" style="color:${sec.color}">${open ? '▼' : '▶'}</span>${sec.title}<span class="cnt">${sec.items.length}건</span></h2>
+        ${open ? `<div class="table-wrap">${table}</div>` : ''}
+      </div>`;
+    }).join('');
+}
+
+// ── 보도자료 게재율 ───────────────────────────────────────────────────────────
+// 배포일 전후에 나온 아산 기사 중, 보도자료 제목의 단어가 겹치거나 의료진 이름이 나오는 것을 센다.
+// 단어를 정확히 쪼개 비교하면 '어린이병원 병원학교'가 기사의 '어린이병원학교'와 안 맞으므로
+// 부분 문자열로 찾고, 흔한 말이 우연히 겹치는 것을 막으려고 드문 말일수록 점수를 크게 준다.
+const PRESS_BEFORE = 1;      // 엠바고를 깨고 하루 먼저 나오는 기사가 있다
+const PRESS_AFTER  = 7;      // 전문지는 1주일쯤 뒤에 받아쓰기도 한다
+const PRESS_MIN_SCORE = 6.0;
+// 아래 두 값은 기사 풀 크기에 따라 가중치가 조금씩 움직이므로 여유를 두고 잡았다.
+// (노이즈를 걸러 풀이 줄자 '몽골'이 5.27→5.08로 내려가 기준 5.2에 걸린 적이 있다)
+const PRESS_RARE = 4.9;      // 이보다 드문 말이 기사 '제목'에 있으면 점수가 모자라도 인정한다
+const PRESS_RARE_LONG = 4.6; // 3글자 이상이면 조금 덜 드물어도 인정 ('아산상' 4.7 같은 고유명사)
+const PRESS_DOCTOR_WEIGHT = 4.0;
+// 거의 모든 기사에 들어 있어 변별력이 없는 말들
+const PRESS_STOP = new Set(`서울아산병원 아산병원 서울 아산 병원 교수 연구팀 국내 최초 세계 규명 개최 발표
+확인 성공 제시 기술 환자 치료 진단 수술 연구 질환 효과 가능 대상 관련 통해 위해 이후 기존 새로운 밝혀 입증`
+  .trim().split(/\s+/));
+const HAS_LETTER = /[가-힣A-Za-z]/;
+
+// 보도자료 제목에서 찾을 말들 — 낱말과, 붙어 있는 두 낱말(구)로 나눠 둔다.
+// 'AI 기반'이 맞으면 'AI'와 '기반'을 또 세지 않으려고 구와 낱말을 따로 들고 있어야 한다.
+// 흔한 말은 아예 빼 둔다 — 'AI'(2.0)·'개발'(2.3) 같은 게 여러 개 모이면 임계를 넘겨
+// 비브레스트 수면앱, 쎄크 국책과제 같은 무관한 기사가 묶였다.
+const PRESS_KEY_FLOOR = 4.0;
+// 보도자료 제목 끝에 오는 서술형은 키로 쓰지 않는다 — '…심장 뛰어'의 '뛰어'가
+// 기사의 '13계단 뛰어올라'와 맞아 엉뚱한 보도자료로 묶인 적이 있다
+const PRESS_VERBISH_RE = /(다|요|죠)$/;
+const PRESS_SHORT_VERB_RE = /[어아여워해져며네]$/;
+function pressVerbish(key) {
+  const kn = pressNorm(key);
+  if (PRESS_VERBISH_RE.test(kn)) return true;                       // 찾는다·나선다·막는다
+  return kn.length === 2 && PRESS_SHORT_VERB_RE.test(kn);           // 뛰어·높여
+}
+
+// 다섯 글자 넘는 드문 고유명사는 기사 제목이 아니라 본문에 있어도 인정한다
+// ('네이처인덱스'가 제목에 없고 요약에만 있는 기사를 살리기 위한 규칙)
+const PRESS_LONG_NOUN_LEN = 5;
+
+function pressKeys(title) {
+  const words = (title || '').split(/[^0-9A-Za-z가-힣]+/).filter(Boolean);
+  const singles = new Map(), phrases = new Map();
+  for (const x of words) {
+    if (x.length >= 2 && !PRESS_STOP.has(x) && HAS_LETTER.test(x) && !pressVerbish(x)) {
+      const w = pressWeight(x);
+      if (w >= PRESS_KEY_FLOOR) singles.set(x, w);
+    }
+  }
+  for (let i = 0; i < words.length - 1; i++) {
+    const phrase = words[i] + ' ' + words[i+1];
+    if (phrase.length >= 5 && HAS_LETTER.test(words[i]) && HAS_LETTER.test(words[i+1])
+        && !pressVerbish(phrase)) {
+      const w = pressWeight(phrase);
+      if (w >= PRESS_KEY_FLOOR) phrases.set(phrase, w);
+    }
+  }
+  return {singles, phrases};
+}
+
+// 드문 말일수록 큰 값 (log(전체 기사 수 / 그 말이 나온 기사 수))
+const pressDf = new Map();
+function pressWeight(key) {
+  if (!pressDf.has(key)) {
+    let n = 0;
+    const needle = pressNorm(key);
+    for (const a of pressArticleList()) if (a.textN.includes(needle)) n++;
+    pressDf.set(key, Math.max(n, 1));
+  }
+  return Math.log(pressArticleList().length / pressDf.get(key));
+}
+
+// 띄어쓰기는 매체마다 다르다 — 보도자료는 '네이처인덱스', 기사는 '네이처 인덱스'로 쓴다.
+// 그래서 찾을 때는 양쪽 다 공백을 떼고 비교한다
+function pressNorm(text) { return (text || '').replace(/\s+/g, ''); }
+
+let pressArticleCache = null;   // 아산 기사를 한 번만 추려 두고 날짜별로도 묶어 둔다
+function pressArticleList() {
+  if (!pressArticleCache) {
+    const list = [], byDate = new Map();
+    for (const r of allData) {
+      if (r['병원그룹'] !== '아산' || isNoise(r)) continue;
+      const day = (r['날짜'] || '').slice(0, 10);
+      if (!day) continue;
+      const full = (r['제목'] || '') + ' ' + (r['요약'] || '');
+      const item = {r, day, title: r['제목'] || '', text: full,
+                    titleN: pressNorm(r['제목'] || ''), textN: pressNorm(full)};
+      list.push(item);
+      if (!byDate.has(day)) byDate.set(day, []);
+      byDate.get(day).push(item);
+    }
+    pressArticleCache = {list, byDate};
+  }
+  return pressArticleCache.list;
+}
+function pressArticleIndex() { pressArticleList(); return pressArticleCache.byDate; }
+
+function shiftDay(ymd, days) {
+  const d = new Date(ymd + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return ymdLocal(d);
+}
+
+function pressMatches(item) {
+  const idx = pressArticleIndex();
+  const {singles, phrases} = pressKeys(item['제목']);
+  const found = [];
+  for (let off = -PRESS_BEFORE; off <= PRESS_AFTER; off++) {
+    for (const a of idx.get(shiftDay(item['날짜'], off)) || []) {
+      let score = 0, matched = 0;
+      const used = new Set();
+      for (const [k, w] of phrases) {                 // 구를 먼저 세고
+        if (!a.textN.includes(pressNorm(k))) continue;
+        score += w; matched++;
+        for (const part of k.split(' ')) used.add(part);
+      }
+      for (const [k, w] of singles) {                 // 구에 이미 들어간 낱말은 다시 세지 않는다
+        if (used.has(k) || !a.textN.includes(pressNorm(k))) continue;
+        score += w; matched++;
+      }
+      if (!matched) continue;
+      // 제목 신호는 중복 제거와 따로 본다 — '아산상 수상자'가 요약에서 맞았다고 해서
+      // 제목에 박힌 '아산상'을 못 보고 넘어가면 안 된다
+      let titleRare = false;
+      for (const [k, w] of [...phrases, ...singles]) {
+        const kn = pressNorm(k);
+        if (a.titleN.includes(kn) && (w >= PRESS_RARE || (w >= PRESS_RARE_LONG && kn.length >= 3))) titleRare = true;
+        // 긴 고유명사는 본문에만 있어도 인정 ('네이처인덱스'가 요약에만 나오는 기사)
+        if (kn.length >= PRESS_LONG_NOUN_LEN && w >= PRESS_RARE_LONG && a.textN.includes(kn)) titleRare = true;
+      }
+      const byDoctor = (item['의료진'] || []).some(n => a.textN.includes(pressNorm(n)));
+      if (byDoctor) score += PRESS_DOCTOR_WEIGHT;
+      if (score >= PRESS_MIN_SCORE || titleRare) found.push({r: a.r, score, byDoctor});
+    }
+  }
+  found.sort((x, y) => y.score - x.score || (x.r['발행일시'] || '').localeCompare(y.r['발행일시'] || ''));
+  return found;
+}
+
+// 기사 하나는 보도자료 하나에만 — 날짜가 가깝고 주제어가 겹치는 보도자료가 여럿이면
+// 점수가 가장 높은 쪽으로 보낸다. 이게 없으면 10/13 '로봇 전립선 조직검사' 보도자료가
+// 10/12 '전립선암 방사선치료' 기사를 통째로 가져간다.
+// 배정은 화면 기간 필터와 무관하게 전체 보도자료로 한 번에 한다 — 그래야 기간을 좁혀도 결과가 같다.
+let pressAssignCache = null;
+function pressAssignments(dataFrom) {
+  if (pressAssignCache) return pressAssignCache;
+  const items = pressData.filter(it => it['날짜'] >= dataFrom);
+  const hitsPer = items.map(it => pressMatches(it));
+  const best = new Map();   // 기사 → {score, idx}
+  hitsPer.forEach((hits, idx) => {
+    for (const h of hits) {
+      const prev = best.get(h.r);
+      if (prev && prev.score > h.score) continue;
+      // 점수가 같으면 배포일이 기사 날짜에 더 가까운 보도자료가 가져간다
+      if (prev && prev.score === h.score) {
+        const day = (h.r['날짜'] || '').slice(0, 10);
+        const gapNew = Math.abs(new Date(day) - new Date(items[idx]['날짜']));
+        const gapOld = Math.abs(new Date(day) - new Date(items[prev.idx]['날짜']));
+        if (gapOld <= gapNew) continue;
+      }
+      best.set(h.r, {score: h.score, idx});
+    }
+  });
+  pressAssignCache = new Map();
+  hitsPer.forEach((hits, idx) =>
+    pressAssignCache.set(items[idx], hits.filter(h => best.get(h.r).idx === idx)));
+  return pressAssignCache;
+}
+
+// 기사 수집이 시작되기 전의 보도자료는 게재 0건으로 보일 수밖에 없어 아예 빼고 센다
+function pressRows() {
+  if (!pressData.length || !allData.length) return {rows: [], dataFrom: '', dataTo: ''};
+  const days = allData.map(r => (r['날짜'] || '').slice(0, 10)).filter(Boolean).sort();
+  const dataFrom = days[0], dataTo = days[days.length - 1];
+  const assigned = pressAssignments(dataFrom);
+  const {dateFrom, dateTo} = getFilters();
+  const zeroOnly = document.getElementById('press-zero-only').checked;
+  const rows = pressData
+    .filter(it => it['날짜'] >= dataFrom)
+    .filter(it => (!dateFrom || it['날짜'] >= dateFrom) && (!dateTo || it['날짜'] <= dateTo))
+    .map(it => {
+      const hits = assigned.get(it) || [];
+      const media = new Set(hits.map(h => mediaOf(h.r)));
+      return {it, hits, media,
+              paper: hits.filter(h => hasPaper(h.r)).length,
+              beat:  hits.filter(h => h.r['출입기자'] === 'Y').length,
+              // 배포일이 수집 범위를 넘어선 건 — 엠바고로 하루 먼저 난 기사는 잡힐 수 있다
+              pending: it['날짜'] > dataTo};
+    })
+    .filter(x => !zeroOnly || (x.hits.length === 0 && !x.pending));
+  rows.sort((a, b) => reportSortPress(a, b));
+  return {rows, dataFrom, dataTo};
+}
+
+// 보고용 탭 섹션 접기 — 기본은 모두 펼침. 화면에서만 바뀌고 엑셀은 늘 세 섹션을 다 담는다
+const reportSectionOpen = {};
+function toggleReportSection(key) {
+  reportSectionOpen[key] = reportSectionOpen[key] === false;
+  renderReport();
+}
+
+const pressSort = {col: '배포일', asc: false};
+function reportSortPress(a, b) {
+  const dir = pressSort.asc ? 1 : -1;
+  if (pressSort.col === '게재') return (a.hits.length - b.hits.length) * dir;
+  if (pressSort.col === '매체') return (a.media.size - b.media.size) * dir;
+  if (pressSort.col === '담당') {
+    const cmp = pressOwner(a.it).localeCompare(pressOwner(b.it), 'ko') * dir;
+    if (cmp) return cmp;
+    return b.it['날짜'].localeCompare(a.it['날짜']);   // 같은 담당자면 최근 배포가 위로
+  }
+  return a.it['날짜'].localeCompare(b.it['날짜']) * dir;
+}
+
+// 공동 담당은 시트에 줄바꿈이나 쉼표로 들어 있다 (박준규 / 오혜성) → '박준규·오혜성'
+function pressOwner(it) {
+  return (it['담당'] || '').trim().split(/[\s,/]+/).filter(Boolean).join('·');
+}
+function doPressSort(col) {
+  if (pressSort.col === col) pressSort.asc = !pressSort.asc;
+  else { pressSort.col = col; pressSort.asc = false; }
+  renderPress();
+}
+
+const pressOpen = new Set();
+function togglePress(key) {
+  if (pressOpen.has(key)) pressOpen.delete(key); else pressOpen.add(key);
+  renderPress();
+}
+
+function pressTh(label, col, style = '') {
+  const on = pressSort.col === col;
+  return `<th ${style} class="${on ? 'sorted' : ''}" onclick="doPressSort('${col}')"
+    title="${label} 기준 정렬">${label} <span class="si">${on ? (pressSort.asc ? '↑' : '↓') : '↕'}</span></th>`;
+}
+
+function renderPress() {
+  const {rows, dataFrom, dataTo} = pressRows();
+  document.getElementById('result-count').textContent = `${rows.length}건`;
+  const counted = rows.filter(x => !x.pending);
+  const total = counted.reduce((s, x) => s + x.hits.length, 0);
+  const zero = counted.filter(x => x.hits.length === 0).length;
+  document.getElementById('stats-press').innerHTML = [
+    statCard('배포 보도자료', counted.length, '#1a7a3c'),
+    statCard('게재 기사', total, '#1a7a3c'),
+    statCard('보도자료당 평균', counted.length ? (total / counted.length).toFixed(1) + '건' : '—', '#1a7a3c'),
+    statCard('게재 0건', zero, zero ? '#c0392b' : '#888'),
+  ].join('');
+
+  const wrap = document.getElementById('table-press');
+  if (!rows.length) {
+    wrap.innerHTML = `<div style="text-align:center;padding:50px 20px;color:var(--muted);font-size:13px">
+      해당 기간에 배포한 보도자료가 없습니다. (기사 수집은 ${dataFrom}부터라 그 이전 보도자료는 집계하지 않습니다)</div>`;
+    return;
+  }
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      ${pressTh('배포일', '배포일', 'style="width:84px"')}
+      <th class="nosort">보도자료</th>
+      <th class="nosort" style="white-space:nowrap">의료진</th>
+      ${pressTh('담당', '담당', 'style="width:84px"')}
+      ${pressTh('게재', '게재', 'style="width:78px;white-space:nowrap"')}
+      ${pressTh('매체', '매체', 'style="width:66px"')}
+      <th class="nosort" style="width:54px">지면</th>
+      <th class="nosort" style="width:66px">출입기자</th>
+    </tr></thead>
+    <tbody>${rows.map((x, i) => {
+      const key = x.it['날짜'] + '|' + i;
+      const open = pressOpen.has(key);
+      const cnt = x.pending
+        ? '<span class="badge-wait">수집 전</span>'
+        : (x.hits.length ? `<b style="color:#1a7a3c">${x.hits.length}</b>` : '<span class="badge-none">0</span>');
+      const main = `<tr class="press-row" onclick="togglePress('${key}')">
+        <td class="td-date">${x.it['날짜'].slice(5).replace('-', '/')}</td>
+        <td class="td-title">${open ? '▾ ' : '▸ '}${x.it['제목']}
+          ${x.it['배포범위'] ? `<span style="font-size:11px;color:var(--muted);margin-left:6px">${x.it['배포범위']}</span>` : ''}</td>
+        <td style="font-size:12px;color:#1a5fa8;white-space:nowrap">${(x.it['의료진'] || []).join(', ') || '—'}</td>
+        <td style="font-size:12px;color:var(--text);white-space:nowrap">${pressOwner(x.it) || '—'}</td>
+        <td style="font-family:var(--mono);font-size:14px;white-space:nowrap">${cnt}</td>
+        <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.media.size || '—'}</td>
+        <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.paper || '—'}</td>
+        <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.beat || '—'}</td>
+      </tr>`;
+      if (!open) return main;
+      const sub = !x.hits.length
+        ? `<div style="padding:14px 18px;color:var(--muted);font-size:12px">맞는 기사를 찾지 못했습니다.</div>`
+        : `<table><thead><tr><th class="nosort" style="width:96px">날짜</th><th class="nosort" style="width:110px">매체</th>
+             <th class="nosort">제목</th><th class="nosort" style="width:96px">기자</th></tr></thead>
+           <tbody>${x.hits.map(h => {
+             const link = h.r['언론사원문'] || h.r['네이버링크'] || '';
+             return `<tr>
+               <td class="td-date">${(h.r['발행일시'] || h.r['날짜'] || '').slice(0, 16)}</td>
+               <td class="td-media">${mediaOf(h.r)}${hasPaper(h.r) ? `<span class="badge-paper">${h.r['지면']}</span>` : ''}</td>
+               <td class="td-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${h.r['제목']}</a>` : h.r['제목']}</td>
+               <td class="td-reporter">${reporterCell(h.r)}</td>
+             </tr>`;
+           }).join('')}</tbody></table>`;
+      return main + `<tr class="press-sub"><td colspan="8">${sub}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+function downloadPressExcel() {
+  const {rows} = pressRows();
+  const data = [['배포일', '보도자료', '의료진', '담당', '진료과', '배포범위', '게재 건수', '매체 수', '지면', '출입기자', '게재 매체']];
+  rows.forEach(x => data.push([
+    x.it['날짜'], x.it['제목'], (x.it['의료진'] || []).join(', '), pressOwner(x.it),
+    x.it['진료과'] || '', x.it['배포범위'] || '',
+    x.pending ? '수집 전' : x.hits.length, x.media.size, x.paper, x.beat,
+    [...x.media].join(', '),
+  ]));
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:11},{wch:50},{wch:14},{wch:12},{wch:12},{wch:14},{wch:9},{wch:8},{wch:6},{wch:9},{wch:60}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '보도자료 게재율');
+  const {dateFrom, dateTo} = getFilters();
+  XLSX.writeFile(wb, `보도자료_게재율_${dateFrom || '처음'}_${dateTo || '오늘'}.xlsx`);
 }
 
 // ── 공통 테이블 렌더 ──────────────────────────────────────────────────────────
+// 정렬되는 열에만 화살표가 서고(↑ 오름차순 ↓ 내림차순), 나머지는 ↕로 둔다
+function sortTh(panelKey, label, col, style = '') {
+  const on = sorts[panelKey].col === col;
+  const arrow = on ? (sorts[panelKey].asc ? '↑' : '↓') : '↕';
+  return `<th ${style} data-col="${col}" class="${on ? 'sorted' : ''}" onclick="doSort('${panelKey}','${col}')"
+    title="${label} 기준 정렬">${label} <span class="si">${arrow}</span></th>`;
+}
+
 function renderTable(id, rows, page, panelKey, defaultColor) {
   const wrap = document.getElementById(id);
   const pageRows = rows.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
@@ -715,34 +1478,39 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
   }
   wrap.innerHTML = `<table>
     <thead><tr>
-      <th onclick="doSort('${panelKey}','발행일시')" data-col="발행일시" class="${(panelKey==='ours'?oursSort:othersSort).col==='발행일시'?'sorted':''}">날짜 <span class="si">↕</span></th>
-      ${panelKey==='others'?'<th>병원</th>':''}
-      <th>키워드</th>
-      <th onclick="doSort('${panelKey}','매체')" data-col="매체" class="${(panelKey==='ours'?oursSort:othersSort).col==='매체'?'sorted':''}">매체 <span class="si">↕</span></th>
-      <th>제목</th>
-      <th style="white-space:nowrap">교수명</th>
-      <th class="td-summary">요약</th>
-      <th style="white-space:nowrap;min-width:50px">링크</th>
+      ${sortTh(panelKey,'날짜','발행일시')}
+      ${panelKey!=='ours'?'<th class="nosort">병원</th>':''}
+      ${panelKey==='paper'?'':'<th class="nosort">키워드</th>'}
+      ${sortTh(panelKey,'매체','매체')}
+      ${panelKey==='paper'?sortTh('paper','면','지면'):''}
+      <th class="nosort">제목</th>
+      <th class="nosort" style="white-space:nowrap">기자</th>
+      <th class="nosort" style="white-space:nowrap">교수명</th>
+      ${panelKey==='paper'?'':'<th class="nosort td-summary">요약</th>'}
+      <th class="nosort" style="white-space:nowrap;min-width:50px">링크</th>
     </tr></thead>
     <tbody>${pageRows.map(r => {
       const hKey = Object.keys(HOSPITALS).find(k=>HOSPITALS[k].group===r['병원그룹']);
       const color = HOSPITALS[hKey]?.color || defaultColor;
       const link = r['언론사원문']||r['네이버링크']||'';
       const naverLink = r['네이버링크']||'';
-      const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || validateName(r['교수명']) || '';
+      const prof = profOf(r);
       // 날짜: 발행일시 우선, 없으면 날짜 컬럼, URL처럼 생긴 값은 무시
       const rawDate = r['발행일시']||r['날짜']||'';
       const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
       // 매체명 보정
       const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');
+      const paperView = panelKey === 'paper';
       return `<tr>
         <td class="td-date">${displayDate}</td>
-        ${panelKey==='others'?`<td class="td-tag"><span class="tag" style="background:${color}22;color:${color};font-weight:600">${HOSPITALS[hKey]?.label||r['병원그룹']}</span></td>`:''}
-        <td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>
-        <td class="td-media">${media}</td>
+        ${panelKey!=='ours'?`<td class="td-tag"><span class="tag" style="background:${color}22;color:${color};font-weight:600">${HOSPITALS[hKey]?.label||r['병원그룹']}</span></td>`:''}
+        ${paperView?'':`<td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>`}
+        <td class="td-media">${media}${!paperView&&hasPaper(r)?`<span class="badge-paper">${r['지면']}</span>`:''}</td>
+        ${paperView?`<td class="td-media"><span class="badge-paper" style="margin-left:0">${r['지면']}</span></td>`:''}
         <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
+        <td class="td-reporter">${reporterCell(r)}</td>
         <td style="font-size:12px;color:#1a5fa8;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:${prof?'600':'400'}">${prof||'—'}</td>
-        <td class="td-summary">${snippetAround(r['요약']||'', r['병원그룹'])}</td>
+        ${paperView?'':`<td class="td-summary">${snippetAround(r['요약']||'', r['병원그룹'])}</td>`}
         <td class="td-link">${naverLink?`<a href="${naverLink}" target="_blank" rel="noopener">네이버</a>`:''}</td>
       </tr>`;
     }).join('')}</tbody></table>`;
@@ -753,12 +1521,7 @@ function getCompareData() {
   const from = document.getElementById('compare-date-from').value;
   const to = document.getElementById('compare-date-to').value;
   let data = allData.filter(r => {
-    if (r['검색어'] === '서울중앙병원') return false;
-    if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return false;
-    const combined = Object.values(r).join(' ');
-    if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
-    const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
-    if (FE_EXCLUDE_MEDIA.some(m => url.includes(m))) return false;
+    if (isNoise(r)) return false;
     if (from && r['날짜'] < from) return false;
     if (to && r['날짜'] > to) return false;
     return true;
@@ -861,21 +1624,20 @@ function sortRows(rows, state) {
     // URL처럼 생긴 날짜값은 빈값으로 처리
     if (av.startsWith('http')) av = '';
     if (bv.startsWith('http')) bv = '';
-    return state.asc ? av.localeCompare(bv) : bv.localeCompare(av);
+    // numeric: 'A10면'이 'A2면'보다 뒤에 오도록
+    return state.asc ? av.localeCompare(bv, 'ko', {numeric:true}) : bv.localeCompare(av, 'ko', {numeric:true});
   });
 }
 
 function doSort(panelKey, col) {
-  if (panelKey === 'ours') {
-    if (oursSort.col===col) oursSort.asc=!oursSort.asc; else{oursSort.col=col;oursSort.asc=false;}
-    oursPage=1; renderOurs();
-  } else {
-    if (othersSort.col===col) othersSort.asc=!othersSort.asc; else{othersSort.col=col;othersSort.asc=false;}
-    othersPage=1; renderOthers();
-  }
+  const s = sorts[panelKey];
+  if (s.col === col) s.asc = !s.asc; else { s.col = col; s.asc = false; }
+  pages[panelKey] = 1;
+  renderCurrent();
 }
 
 function renderPag(id, total_rows, page, key) {
+  pageTotals[key] = total_rows;
   const total = Math.ceil(total_rows/PAGE_SIZE);
   const el = document.getElementById(id);
   if (total<=1){el.innerHTML='';return;}
@@ -889,12 +1651,10 @@ function renderPag(id, total_rows, page, key) {
 }
 
 function goPage(key, p) {
-  const base = key==='ours' ? allData.filter(r=>r['병원그룹']==='아산')
-    : allData.filter(r=>OTHERS_KEYS.map(k=>HOSPITALS[k].group).includes(r['병원그룹']));
-  const total = Math.ceil(base.length/PAGE_SIZE);
+  const total = Math.ceil((pageTotals[key]||0)/PAGE_SIZE);
   if(p<1||p>total) return;
-  if(key==='ours'){oursPage=p;renderOurs();}
-  else{othersPage=p;renderOthers();}
+  pages[key] = p;
+  renderCurrent();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -902,24 +1662,23 @@ function resetFilters() {
   ['date-from','date-to'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('keyword-filter').value='';
   document.getElementById('search-input').value='';
-  if(currentTab==='ours'){oursPage=1;renderOurs();}
-  else{othersPage=1;renderOthers();}
+  document.getElementById('beat-only').checked=false;
+  onFilterChange();
 }
 
-['date-from','date-to','keyword-filter'].forEach(id =>
-  document.getElementById(id).addEventListener('change', () => {
-    if(currentTab==='ours'){oursPage=1;renderOurs();}
-    else{othersPage=1;renderOthers();}
-  }));
-document.getElementById('search-input').addEventListener('input', () => {
-  if(currentTab==='ours'){oursPage=1;renderOurs();}
-  else{othersPage=1;renderOthers();}
-});
+function onFilterChange() {
+  if (pages[currentTab] !== undefined) pages[currentTab] = 1;
+  renderCurrent();
+}
+
+['date-from','date-to','keyword-filter','beat-only','hide-suspect','press-zero-only'].forEach(id =>
+  document.getElementById(id).addEventListener('change', onFilterChange));
+document.getElementById('search-input').addEventListener('input', onFilterChange);
 
 // ── 엑셀 다운로드 ─────────────────────────────────────────────────────────────
 function downloadExcel() {
   const wb = XLSX.utils.book_new();
-  const COLS = ['날짜','매체','제목','요약','링크','교수 소속','이름'];
+  const COLS = ['날짜','매체','지면','제목','요약','링크','기자','출입기자','교수 소속','이름'];
 
   // 주간 범위 계산 (오늘 기준 최근 7일)
   const today = new Date();
@@ -937,13 +1696,7 @@ function downloadExcel() {
     const rows = allData.filter(r => {
       if (r['병원그룹'] !== h.group) return false;
       if (r['날짜'] < dateFrom || r['날짜'] > dateTo) return false;
-      if (r['검색어'] === '서울중앙병원') return false;
-      if (FE_EXCLUDE_QUERY.includes(r['검색어'])) return false;
-      const combined = Object.values(r).join(' ');
-      if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return false;
-      const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
-      if (FE_EXCLUDE_MEDIA.some(m => url.includes(m))) return false;
-      return true;
+      return !isNoise(r);
     }).sort((a,b) => b['발행일시'].localeCompare(a['발행일시']));
 
     const sheetData = [
@@ -951,9 +1704,12 @@ function downloadExcel() {
       ...rows.map(r => [
         r['날짜']       || '',
         r['매체']       || '',
+        hasPaper(r) ? r['지면'] : '',
         r['제목']       || '',
         r['요약']       || '',
         r['언론사원문'] || r['네이버링크'] || '',
+        reporterNames(r),
+        r['출입기자'] === 'Y' ? '출입' : '',
         '',   // 교수 소속 (수동 입력)
         '',   // 이름 (수동 입력)
       ])
@@ -965,9 +1721,12 @@ function downloadExcel() {
     ws['!cols'] = [
       {wch:12},  // 날짜
       {wch:14},  // 매체
+      {wch:7},   // 지면
       {wch:55},  // 제목
       {wch:80},  // 요약
       {wch:60},  // 링크
+      {wch:16},  // 기자
+      {wch:8},   // 출입기자
       {wch:16},  // 교수 소속
       {wch:10},  // 이름
     ];
@@ -991,6 +1750,55 @@ function downloadExcel() {
 
   const fileName = `빅5병원_뉴스_${weekLabel}.xlsx`;
   XLSX.writeFile(wb, fileName);
+}
+
+function downloadCurrent() {
+  if (currentTab === 'paper')  return downloadPaperExcel();
+  if (currentTab === 'report') return downloadReportExcel();
+  if (currentTab === 'press')  return downloadPressExcel();
+  downloadExcel();
+}
+
+function downloadPaperExcel() {
+  const groups = paperGroups();
+  const rows = sortRows(applyFilters(allData.filter(r => groups.includes(r['병원그룹']) && hasPaper(r))), sorts.paper);
+  const data = [
+    ['날짜','병원','매체','면','제목','기자','출입기자','교수명','링크'],
+    ...rows.map(r => [
+      r['날짜']||'', hospLabel(r), mediaOf(r), r['지면']||'', r['제목']||'',
+      reporterNames(r), r['출입기자']==='Y' ? '출입' : '', profOf(r), r['네이버링크']||r['언론사원문']||'',
+    ]),
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:11},{wch:12},{wch:12},{wch:6},{wch:60},{wch:16},{wch:8},{wch:14},{wch:50}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '지면모음');
+  const {dateFrom, dateTo} = getFilters();
+  XLSX.writeFile(wb, `지면모음_${dateFrom||'처음'}_${dateTo||'오늘'}.xlsx`);
+}
+
+// 연간 언론실적 엑셀과 같은 열 구성 (진료과·중복은 담당자 입력용으로 비워 둠)
+function downloadReportExcel() {
+  const {range, sections} = getReportSections();
+  const wb = XLSX.utils.book_new();
+  sections.forEach(sec => {
+    const withHosp = sec.key === 'others-print';
+    const online = sec.key === 'asan-online';
+    const head = ['날짜','매체', ...(withHosp?['병원']:[]), '보도내용','진료과','이름','중복','구분', ...(online?['링크']:[]), '제외 추정'];
+    const body = sec.items.map(({r, tag}) => [
+      mdOf(r),
+      mediaOf(r) + (hasPaper(r) ? ` (${r['지면']})` : ''),
+      ...(withHosp ? [hospLabel(r)] : []),
+      r['제목']||'', '', profOf(r), '',
+      isBroadcast(r) ? '방송' : '',
+      ...(online ? [r['언론사원문']||r['네이버링크']||''] : []),
+      tag,
+    ]);
+    const ws = XLSX.utils.aoa_to_sheet([head, ...body]);
+    ws['!cols'] = head.map(h => ({wch: h==='보도내용' ? 60 : h==='링크' ? 50 : h==='매체' ? 18 : 10}));
+    XLSX.utils.book_append_sheet(wb, ws, sec.title.replace(/[\\\/?*\[\]:]/g, '').slice(0, 31));
+  });
+  XLSX.writeFile(wb, `서울아산병원_보고용_${range.from.replace('0000-00-00','처음')}_${range.to.replace('9999-99-99','오늘')}.xlsx`);
 }
 
 // ── 매체 드릴다운 모달 ────────────────────────────────────────────────────────
@@ -1032,7 +1840,7 @@ function openMediaModal(category) {
         <tbody>${rows.map(r => {
           const link = r['언론사원문']||r['네이버링크']||'';
           const naver = r['네이버링크']||'';
-          const prof = extractProfessor(r['제목'], r['요약'], r['병원그룹']) || validateName(r['교수명']) || '';
+          const prof = profOf(r);
           const rawDate = r['발행일시']||r['날짜']||'';
           const displayDate = (rawDate && !rawDate.startsWith('http')) ? rawDate.slice(0,16) : '—';
           const media = resolveMedia(r['매체']||'', r['언론사원문']||r['네이버링크']||'');

@@ -1,0 +1,707 @@
+"""
+기사 보강 스크립트 — 뉴스 수집 뒤에 실행
+
+1) 기자명·기자이메일 : 네이버 기사 페이지 바이라인 (네이버 링크가 없으면 언론사 원문)
+2) 지면              : 네이버 '신문 지면 보기' 페이지의 면 정보 (주요 신문 19곳)
+                      + paper_manual.csv에 사람이 직접 적어 둔 면 (특집 별지 등 네이버에 없는 면)
+3) 출입기자          : 구글 시트 출입기자 명단으로 CSV 전체를 매 실행마다 다시 대조
+
+출입기자 명단 자체는 어디에도 저장하지 않고, 기사별 표시(Y)만 CSV에 남긴다.
+"""
+import csv
+import html
+import json
+import os
+import re
+import sys
+import time
+import traceback
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from urllib.parse import quote
+
+import requests
+
+CSV_PATH    = Path("docs/news.csv")
+STATUS_PATH = Path("docs/enrich_status.json")
+
+FIELDNAMES = ["날짜","병원그룹","검색어","매체","제목","교수명","요약","언론사원문","네이버링크",
+              "발행일시","수집일시","기자명","기자이메일","지면","출입기자"]
+
+KST = timezone(timedelta(hours=9))
+NOW = datetime.now(KST)
+
+# 과거 기사 백필은 한 번에 끝내지 않고 실행마다 나눠서 진행한다
+BYLINE_BUDGET  = int(os.environ.get("BYLINE_BUDGET", "800"))       # 실행당 기사 페이지 요청 수
+PAPER_BUDGET   = int(os.environ.get("PAPER_BUDGET", "300"))        # 실행당 지면 페이지 요청 수
+TIME_LIMIT_SEC = int(os.environ.get("ENRICH_TIME_LIMIT", "1500"))  # 전체 보강 시간 상한
+REQUEST_DELAY  = 0.25
+# 지면 정보는 신문 발행 뒤에 붙으므로, 이 기간 안의 기사는 '미게재'여도 다시 확인한다
+PAPER_RECHECK_DAYS = 4
+
+CHECKED_NONE = "-"   # 확인했지만 값이 없음 → 다음 실행에서 다시 요청하지 않음
+
+# 네이버 '신문 지면 보기'를 제공하는 신문사 (네이버 언론사 코드)
+PAPER_PRESS = {
+    "023": "조선일보",   "020": "동아일보",   "025": "중앙일보",   "469": "한국일보",
+    "021": "문화일보",   "081": "서울신문",   "005": "국민일보",   "022": "세계일보",
+    "028": "한겨레",     "032": "경향신문",   "009": "매일경제",   "015": "한국경제",
+    "011": "서울경제",   "016": "헤럴드경제", "008": "머니투데이", "014": "파이낸셜뉴스",
+    "277": "아시아경제", "018": "이데일리",   "030": "전자신문",
+}
+
+NAVER_ARTICLE_RE = re.compile(r"n\.news\.naver\.com/(?:mnews/)?article/(?:newspaper/)?(\d{3})/(\d{10})")
+EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+")
+
+SURNAMES = set("김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노하곽성차주우구나민진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예경봉사부가복태목계피두감음빈동온호")
+# 바이라인에 기자 이름과 함께 딸려 오던 것들 (직함·소속·지역 표기)
+TITLE_SUFFIXES = ("기자", "특파원", "위원", "에디터", "앵커", "뉴스팀", "취재팀", "편집국", "보도국",
+                  "교수", "전문의", "간호사", "연구원", "원장", "부장", "국장", "팀장", "실장", "차장",
+                  "사장", "회장", "소장", "지부장", "위원장", "본부장", "이사장", "센터장",
+                  "대표", "대변인", "의원", "장관", "차관", "총장", "학장", "주필", "편집인", "발행인", "논설")
+NOT_NAMES = {"의사", "약사", "교수", "박사", "변호사", "한의사", "인턴", "객원", "선임", "수석",
+             "온라인", "디지털", "사진", "영상", "그래픽", "편집", "종합", "특별", "공동", "정리", "취재",
+             "공학", "인사이트", "기획", "특집", "칼럼", "기고", "제공", "자료", "보도", "데스크",
+             # 지역·소속 표기 ('배연호 원주주재기자'처럼 이름 옆에 붙어 있던 것들)
+             "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원",
+             "충북", "충남", "전북", "전남", "경북", "경남", "제주", "원주", "전주", "전남광주",
+             "서울대", "고려대", "연세대", "인하대", "국민의힘", "선이한국", "사회가치", "인투아이", "공유"}
+# '대'로 끝나는 말은 대학 약칭일 때도 있지만 하경대·박성대 같은 실제 기자 이름도 있어 일괄 제외하지 않는다
+MEDIA_HINT_RE = re.compile(r"일보|신문|뉴스|경제|방송|닷컴|미디어|타임즈|타임스|저널|통신|데일리|투데이|헬스|메디|비즈|TV|http|\.com|\.kr", re.I)
+
+SESSION = requests.Session()
+SESSION.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept-Language": "ko-KR,ko;q=0.9",
+})
+
+
+class Blocked(Exception):
+    """접근 차단(403/429) — 이번 실행에서 해당 호스트 요청을 멈춘다"""
+
+
+def fetch(url):
+    """200이면 본문, 그 밖의 응답이면 None. 차단 응답은 Blocked"""
+    time.sleep(REQUEST_DELAY)
+    resp = SESSION.get(url, timeout=15)
+    if resp.status_code in (403, 429):
+        raise Blocked(f"{resp.status_code} {url}")
+    if resp.status_code != 200:
+        return None
+    if not resp.encoding or resp.encoding.lower() == "iso-8859-1":
+        resp.encoding = resp.apparent_encoding
+    return resp.text
+
+
+def _clean(fragment):
+    return html.unescape(re.sub(r"<[^>]+>", " ", fragment or "")).strip()
+
+
+def _add_unique(target, items):
+    for item in items:
+        if item and item not in target:
+            target.append(item)
+
+
+def _pub_date(row):
+    try:
+        return datetime.strptime((row.get("날짜") or "")[:10], "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+# ── 1) 기자명 ────────────────────────────────────────────────────────────────
+def parse_byline(raw):
+    """바이라인 문자열에서 기자 이름과 이메일을 뽑는다.
+    '고양=박재구 기자 park9@kmib.co.kr'          → (['박재구'], ['park9@kmib.co.kr'])
+    '최지은·문일요·박선하 기자'                   → (['최지은', '문일요', '박선하'], [])
+    '이진한 의학전문기자·의사 likeday@donga.com'  → (['이진한'], ['likeday@donga.com'])"""
+    text = _clean(raw)
+    emails = [e.lower() for e in EMAIL_RE.findall(text)]
+    text = EMAIL_RE.sub(" ", text)
+    text = re.sub(r"[^\s=]{1,10}\s*=\s*", " ", text)   # 지역 표기 '세종=' 제거
+    names = []
+    for token in re.split(r"[\s·,/|()\[\]<>{}]+", text):
+        if not re.fullmatch(r"[가-힣]{2,4}", token):
+            continue
+        if token in NOT_NAMES or token.endswith(TITLE_SUFFIXES) or token[0] not in SURNAMES:
+            continue
+        if token.endswith("과"):        # 성형외과 같은 진료과
+            continue
+        if len(token) >= 4 and token.endswith("의"):   # '김현정의 고수다'처럼 조사가 붙은 프로그램·코너 이름
+            continue
+        if MEDIA_HINT_RE.search(token):
+            continue
+        _add_unique(names, [token])
+    return names, emails
+
+
+# 해외 IP(GitHub Actions)에는 네이버가 다른 구조의 페이지를 주므로 클래스가 여러 개 붙거나
+# 태그 종류가 달라도 잡히게 하고, 구조화 데이터(JSON-LD author)도 본다
+NAVER_BYLINE_RE = re.compile(r'class="[^"]*\bbyline_s\b[^"]*"[^>]*>(.*?)</(?:span|p|em|div)>', re.S)
+NAVER_JOURNALIST_RE = re.compile(
+    r'class="[^"]*\bmedia_end_head_journalist_name\b[^"]*"[^>]*>(.*?)</(?:em|span|strong|a|div|p)>', re.S)
+JSONLD_AUTHOR_RE = re.compile(r'"author"\s*:\s*(\{.*?\}|\[.*?\])', re.S)
+
+
+def byline_from_naver(page):
+    names, emails = [], []
+    for fragment in NAVER_BYLINE_RE.findall(page):
+        found_names, found_emails = parse_byline(fragment)
+        _add_unique(names, found_names)
+        _add_unique(emails, found_emails)
+    if not names:
+        for fragment in NAVER_JOURNALIST_RE.findall(page):
+            _add_unique(names, parse_byline(fragment)[0])
+    if not names:
+        _add_unique(names, names_from_jsonld(page))
+    return names, emails
+
+
+def names_from_jsonld(page):
+    """구조화 데이터의 author (예: "author": [{"@type":"Person","name":"홍길동 기자"}])"""
+    names = []
+    for block in JSONLD_AUTHOR_RE.findall(page):
+        for value in re.findall(r'"name"\s*:\s*"([^"]+)"', block):
+            if not MEDIA_HINT_RE.search(value):
+                _add_unique(names, parse_byline(value)[0])
+    return names
+
+
+META_AUTHOR_RE = re.compile(
+    r'<meta\b[^>]*?(?:property|name)\s*=\s*["\'](?:article:author|og:article:author|dable:author|author)["\'][^>]*>',
+    re.I)
+META_CONTENT_RE = re.compile(r'content\s*=\s*["\']([^"\']*)["\']', re.I)
+BODY_BYLINE_RE = re.compile(
+    r"([가-힣]{2,4})\s*(?:선임|수석|의학전문|전문|객원|인턴)?기자\s*[(\[]?\s*"
+    r"([A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)")
+
+
+# 이데일리처럼 dable:author 메타태그에 기자명 대신 기사 제목을 넣는 매체가 있다.
+# 그대로 믿으면 '심방세동·심부전 …' 같은 제목 조각이 기자명이 된다 → 페이지 제목과 대조해 걸러낸다.
+PAGE_TITLE_RES = [
+    re.compile(r'<meta\b[^>]*?(?:property|name)\s*=\s*["\'](?:og:title|twitter:title)["\'][^>]*>', re.I),
+]
+HTML_TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.S | re.I)
+HEADLINE_CHARS_RE = re.compile(r"[‘’“”\"…?!]")
+
+
+def _title_keys(page):
+    """페이지가 스스로 밝히는 기사 제목들 (공백·기호를 뗀 형태)"""
+    titles = []
+    for pattern in PAGE_TITLE_RES:
+        for tag in pattern.findall(page):
+            match = META_CONTENT_RE.search(tag)
+            if match:
+                titles.append(html.unescape(match.group(1)))
+    match = HTML_TITLE_RE.search(page)
+    if match:
+        titles.append(html.unescape(match.group(1)))
+    keys = [re.sub(r"[^0-9A-Za-z가-힣]+", "", t) for t in titles]
+    return [k for k in keys if len(k) >= 8]
+
+
+def _looks_like_headline(value, title_keys):
+    if len(value) > 40 or HEADLINE_CHARS_RE.search(value):
+        return True
+    key = re.sub(r"[^0-9A-Za-z가-힣]+", "", value)
+    if len(key) < 8:
+        return False       # 짧은 값은 제목일 리 없다 (기자명일 가능성)
+    return any(key in t or t in key for t in title_keys)
+
+
+def byline_from_original(page):
+    """언론사 원문: 기사 전용 메타태그 우선, 없으면 본문의 '홍길동 기자 (메일)' 형식"""
+    names, emails = [], []
+    title_keys = _title_keys(page)
+    for tag in META_AUTHOR_RE.findall(page):
+        match = META_CONTENT_RE.search(tag)
+        value = html.unescape(match.group(1)).strip() if match else ""
+        if not value or MEDIA_HINT_RE.search(value):
+            continue   # 매체명·URL이 들어간 메타태그는 기자 정보가 아님
+        if _looks_like_headline(value, title_keys):
+            continue   # 기자명 자리에 기사 제목이 들어 있는 경우
+        found_names, found_emails = parse_byline(value)
+        _add_unique(names, found_names)
+        _add_unique(emails, found_emails)
+    if not names:
+        _add_unique(names, names_from_jsonld(page))   # 이데일리 등은 여기에 진짜 기자명이 있다
+    if not names:
+        match = BODY_BYLINE_RE.search(_clean(page))
+        if match:
+            _add_unique(names, parse_byline(match.group(1))[0])
+            _add_unique(emails, [match.group(2).lower()])
+    return names, emails
+
+
+def byline_sources(row):
+    """기자명을 찾아볼 페이지 목록 (앞에서 찾으면 뒤는 요청하지 않음).
+
+    GitHub Actions(해외 IP)가 받는 네이버 기사 페이지에는 기자 이름 요소가 아예 없어서
+    (컨테이너 div만 있고 이름·JSON-LD 모두 없음) 언론사 원문을 먼저 본다.
+    네이버는 원문 주소가 없는 기사에서만 쓴다."""
+    sources = []
+    original = row.get("언론사원문") or ""
+    if original.startswith("http") and "naver.com" not in original:
+        sources.append((original, byline_from_original))
+    match = NAVER_ARTICLE_RE.search(row.get("네이버링크") or "")
+    if match:
+        sources.append((f"https://n.news.naver.com/mnews/article/{match.group(1)}/{match.group(2)}", byline_from_naver))
+    return sources
+
+
+def _naver_diagnosis(url, page):
+    title = re.search(r"<title[^>]*>(.*?)</title>", page, re.S)
+    at = page.find("media_end_head_journalist")
+    around = re.sub(r"\s+", " ", page[max(0, at - 120):at + 400]) if at >= 0 else ""
+    return {"url": url, "길이": len(page), "title": _clean(title.group(1))[:80] if title else "",
+            "byline_s태그": "byline_s" in page, "journalist태그": at >= 0,
+            "journalist주변HTML": around, "jsonld_author": '"author"' in page}
+
+
+def enrich_bylines(rows, status, deadline):
+    targets = [r for r in rows if not (r.get("기자명") or "").strip()]
+    targets.sort(key=lambda r: r.get("발행일시") or r.get("날짜") or "", reverse=True)
+    stats = {"대상": len(targets), "요청": 0, "채움": 0, "이름없음": 0, "오류": 0, "차단호스트": 0,
+             "네이버바이라인없음": 0}
+    cache, blocked_hosts = {}, set()
+
+    for row in targets:
+        if stats["요청"] >= BYLINE_BUDGET:
+            stats["예산소진"] = True
+            break
+        if time.monotonic() > deadline:
+            stats["시간초과"] = True
+            break
+        sources = byline_sources(row)
+        if not sources:
+            row["기자명"] = CHECKED_NONE
+            continue
+
+        names, emails, retry_later = [], [], False
+        for url, parser in sources:
+            host = re.sub(r"^https?://", "", url).split("/")[0].lower()
+            if host in blocked_hosts:
+                retry_later = True
+                continue
+            if url not in cache:
+                stats["요청"] += 1
+                try:
+                    page = fetch(url)
+                except Blocked:
+                    blocked_hosts.add(host)
+                    stats["차단호스트"] = len(blocked_hosts)
+                    retry_later = True
+                    continue
+                except requests.RequestException:
+                    stats["오류"] += 1   # 일시 오류는 비워 두고 다음 실행에서 재시도
+                    retry_later = True
+                    continue
+                cache[url] = parser(page) if page else ([], [])
+                if parser is byline_from_naver and page and not cache[url][0]:
+                    stats["네이버바이라인없음"] += 1
+                    stats.setdefault("네이버진단", _naver_diagnosis(url, page))
+            names, emails = cache[url]
+            if names:
+                break
+
+        if names:
+            row["기자명"] = ", ".join(names)
+            row["기자이메일"] = ", ".join(emails)
+            stats["채움"] += 1
+        elif not retry_later:
+            row["기자명"] = CHECKED_NONE
+            row["기자이메일"] = ""
+            stats["이름없음"] += 1
+
+    stats["남은대상"] = sum(1 for r in rows if not (r.get("기자명") or "").strip())
+    status["기자명"] = stats
+
+
+# ── 2) 지면 ──────────────────────────────────────────────────────────────────
+def fetch_paper_page(oid, day):
+    """신문 지면 페이지 → {기사ID: 'A12면'}. 발행이 없는 날은 빈 dict, 요청 실패는 None"""
+    ymd = day.strftime("%Y%m%d")
+    page = fetch(f"https://media.naver.com/press/{oid}/newspaper?date={ymd}")
+    if page is None:
+        return None
+    link_re = re.compile(rf"/article/newspaper/{oid}/(\d{{10}})(?:\?date=(\d{{8}}))?")
+    result = {}
+    # 면마다 page_notation('<em>A1</em>면') 제목 뒤에 그 면의 기사 링크가 이어진다
+    for chunk in page.split('class="page_notation"')[1:]:
+        match = re.match(r"[^>]*>(.*?)</span>", chunk, re.S)
+        label = re.sub(r"\s+", "", _clean(match.group(1))) if match else ""
+        if not re.fullmatch(r"[A-Z]?\d{1,3}면", label):
+            continue
+        for aid, link_date in link_re.findall(chunk):
+            if link_date and link_date != ymd:
+                continue   # 해당 날짜 호가 없어 다른 날짜 지면이 나온 경우
+            result.setdefault(aid, label)
+    return result
+
+
+def enrich_paper(rows, status, deadline):
+    today = NOW.date()
+    candidates = []
+    for row in rows:
+        current = (row.get("지면") or "").strip()
+        if current and current != CHECKED_NONE:
+            continue
+        match = NAVER_ARTICLE_RE.search(row.get("네이버링크") or "")
+        if not match or match.group(1) not in PAPER_PRESS:
+            continue
+        day = _pub_date(row)
+        if not day:
+            continue
+        if current == CHECKED_NONE and (today - day).days > PAPER_RECHECK_DAYS:
+            continue
+        candidates.append((row, match.group(1), match.group(2), day))
+
+    def issue_keys(oid, day):
+        # 온라인 기사는 전날 저녁에 먼저 나오는 경우가 많아 발행일과 다음 날 지면을 함께 본다
+        return [(oid, d) for d in (day, day + timedelta(days=1)) if d <= today]
+
+    needed = sorted({key for _, oid, _, day in candidates for key in issue_keys(oid, day)},
+                    key=lambda key: key[1], reverse=True)
+    stats = {"대상": len(candidates), "요청": 0, "게재확인": 0, "미게재": 0, "오류": 0}
+    pages = {}
+    for key in needed:
+        if stats["요청"] >= PAPER_BUDGET:
+            stats["예산소진"] = True
+            break
+        if time.monotonic() > deadline:
+            stats["시간초과"] = True
+            break
+        stats["요청"] += 1
+        try:
+            pages[key] = fetch_paper_page(*key)
+        except Blocked:
+            stats["차단"] = True
+            break
+        except requests.RequestException:
+            stats["오류"] += 1
+
+    for row, oid, aid, day in candidates:
+        keys = issue_keys(oid, day)
+        label = next((pages[k][aid] for k in keys if pages.get(k) and aid in pages[k]), "")
+        if label:
+            row["지면"] = label
+            stats["게재확인"] += 1
+        elif all(pages.get(k) is not None for k in keys):
+            row["지면"] = CHECKED_NONE
+            stats["미게재"] += 1
+
+    status["지면"] = stats
+
+
+# ── 2-1) 직접 지정한 지면 ────────────────────────────────────────────────────
+# 네이버 '신문 지면 보기'에 없는 면은 자동으로 못 찾는다. 특집 별지(H면 등)가 그렇고,
+# 전문지처럼 네이버 기사 링크가 아예 없는 기사도 마찬가지다.
+# paper_manual.csv에 '링크,면'을 적어 두면 그 값으로 덮어쓴다 — 사람이 적은 값이 우선이다.
+PAPER_MANUAL_PATH = Path("paper_manual.csv")
+PAPER_LABEL_RE = re.compile(r"^[A-Z]?\d{1,3}면$")
+
+
+def url_key(url):
+    """주소 비교용 정규화 — 프로토콜·www·추적 파라미터·끝 슬래시 차이를 무시한다"""
+    text = (url or "").strip()
+    if not text:
+        return ""
+    text = re.sub(r"^https?://", "", text, flags=re.I)
+    text = re.sub(r"^www\.", "", text, flags=re.I)
+    base, _, query = text.partition("?")
+    keep = [p for p in query.split("&") if p and not re.match(r"(utm_|fbclid|gclid|ref=)", p, re.I)]
+    return base.rstrip("/").lower() + ("?" + "&".join(keep) if keep else "")
+
+
+def load_paper_manual():
+    """{정규화한 주소: '면'} 과 형식이 잘못된 줄 목록"""
+    if not PAPER_MANUAL_PATH.exists():
+        return {}, []
+    manual, bad = {}, []
+    with open(PAPER_MANUAL_PATH, encoding="utf-8-sig", newline="") as f:
+        for line_no, row in enumerate(csv.DictReader(f), start=2):
+            link = (row.get("링크") or "").strip()
+            label = (row.get("면") or "").strip()
+            if not link and not label:
+                continue
+            if not link:
+                bad.append(f"{line_no}행: 링크가 비었습니다")
+            elif not PAPER_LABEL_RE.match(label):
+                bad.append(f"{line_no}행: 면 표기 '{label}' — A16면·H4면 형식으로 적어주세요")
+            else:
+                manual[url_key(link)] = label
+    return manual, bad
+
+
+def apply_paper_manual(rows, status):
+    manual, bad = load_paper_manual()
+    if not manual and not bad:
+        return
+    matched, changed = set(), 0
+    for row in rows:
+        for field in ("언론사원문", "네이버링크"):
+            key = url_key(row.get(field))
+            label = manual.get(key)
+            if not label:
+                continue
+            matched.add(key)
+            if row.get("지면") != label:
+                row["지면"] = label
+                changed += 1
+            break
+    stats = {"목록": len(manual), "찾은기사": len(matched), "이번에바뀐행": changed}
+    missing = [k for k in manual if k not in matched]
+    if missing:
+        stats["기사를못찾은링크"] = missing[:10]   # 주소가 다르거나 아직 수집되지 않은 기사
+    if bad:
+        stats["형식오류"] = bad[:10]
+    status["직접지정지면"] = stats
+
+
+# ── 3) 출입기자 ──────────────────────────────────────────────────────────────
+def _norm(text):
+    return re.sub(r"[\s()·\-_.]", "", text or "").lower()
+
+
+ROSTER_NAME_HEADERS  = ("기자", "이름", "성명", "기자명")
+ROSTER_MEDIA_HEADERS = ("매체", "매체명", "언론사", "소속", "회사")
+ROSTER_EMAIL_HEADERS = ("이메일", "메일", "email")
+ROSTER_NOT_NAMES = {"기자", "이름", "성명", "기자명", "팀장", "부장", "차장", "국장", "공석", "미정"}
+
+
+def _find_col(header, keys, exact_only=False):
+    cells = [_norm(str(cell)) for cell in header]
+    for i, h in enumerate(cells):   # 제목이 정확히 같은 열을 먼저
+        if h in keys:
+            return i
+    if exact_only:
+        return None
+    for i, h in enumerate(cells):
+        if any(key in h for key in keys):
+            return i
+    return None
+
+
+def _clean_reporter_name(raw):
+    """'고유선(팀장)', '김길원(전문기자, 병원)', '백영미(26년 7월까지 연수)' → 이름만"""
+    text = re.sub(r"[(\[（].*?[)\]）]", " ", raw or "")
+    for token in re.split(r"[\s,/·]+", text):
+        if re.fullmatch(r"[가-힣]{2,4}", token) and token not in ROSTER_NOT_NAMES:
+            return token
+    return ""
+
+
+def parse_roster(values):
+    header_idx = name_col = None
+    for i, row in enumerate(values[:10]):
+        col = _find_col(row, ROSTER_NAME_HEADERS, exact_only=True)
+        # '기자리스트' 같은 표 제목과 헷갈리지 않도록 매체나 이메일 열 제목도 같이 있는 행을 헤더로 본다
+        if col is not None and (_find_col(row, ROSTER_MEDIA_HEADERS) is not None
+                                or _find_col(row, ROSTER_EMAIL_HEADERS) is not None):
+            header_idx, name_col = i, col
+            break
+    if header_idx is None:
+        raise ValueError("명단에서 제목 행을 찾지 못함 (기자·이름 열과 매체·이메일 열 제목 필요)")
+    header = values[header_idx]
+    media_col = _find_col(header, ROSTER_MEDIA_HEADERS)
+    email_col = _find_col(header, ROSTER_EMAIL_HEADERS)
+
+    emails, by_name, current_media = set(), {}, ""
+    for row in values[header_idx + 1:]:
+        def cell(i):
+            return str(row[i]).strip() if i is not None and i < len(row) else ""
+        # 병합된 매체 칸은 첫 행에만 값이 오므로 다음 매체가 나올 때까지 이어 쓴다.
+        # 칸 전체('조선일보 / 정기적 - 헬스조선')를 보관해 자매지 기사도 매칭되게 한다
+        if cell(media_col):
+            current_media = cell(media_col)
+        name = _clean_reporter_name(cell(name_col))
+        if not name:
+            continue
+        emails.update(e.lower() for e in EMAIL_RE.findall(cell(email_col)))
+        by_name.setdefault(name, set()).add(_norm(current_media))
+    return {"emails": emails, "by_name": by_name, "has_media": media_col is not None}
+
+
+# ── 4) 보도자료 목록 ─────────────────────────────────────────────────────────
+# 같은 구글 시트의 '언론 업무' 탭에서 구분이 '보도자료'인 행만 추려 둔다.
+# 대시보드가 이 목록과 수집 기사를 맞춰 보도자료별 게재 건수를 센다.
+PRESS_PATH  = Path("docs/press_releases.json")
+PRESS_RANGE = os.environ.get("PRESS_SHEET_RANGE", "").strip() or "'언론 업무'!A:M"
+# '언론 업무' 탭 4행이 머리글: 완·년도·월·게재일·구분·담당·제목/내용·진료과·의료진·요청·비고·배포범위
+P_YEAR, P_MONTH, P_DAY, P_KIND, P_OWNER, P_TITLE, P_DEPT, P_DOCTOR, P_SCOPE = 1, 2, 3, 4, 5, 6, 7, 8, 11
+
+
+def update_press_releases(status):
+    sa_json  = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+    sheet_id = os.environ.get("REPORTER_SHEET_ID", "").strip()
+    if not (sa_json and sheet_id):
+        status["보도자료"] = {"결과": "시트 설정 없음 — 기존 목록 유지"}
+        return
+    try:
+        from google.oauth2 import service_account
+        from google.auth.transport.requests import AuthorizedSession
+        creds = service_account.Credentials.from_service_account_info(
+            json.loads(sa_json), scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"])
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}/values/{quote(PRESS_RANGE, safe='')}"
+        resp = AuthorizedSession(creds).get(url, timeout=30)
+        resp.raise_for_status()
+        values = resp.json().get("values", [])
+    except Exception as e:
+        status["보도자료"] = {"결과": f"불러오기 실패 ({type(e).__name__}) — 기존 목록 유지"}
+        return
+
+    def cell(row, i):
+        return str(row[i]).strip() if i < len(row) else ""
+
+    items, skipped = [], 0
+    for row in values:
+        if cell(row, P_KIND) != "보도자료":
+            continue
+        y, m, d = cell(row, P_YEAR), cell(row, P_MONTH), cell(row, P_DAY)
+        if not (y.isdigit() and m.isdigit() and d.isdigit()):
+            skipped += 1      # 배포일이 아직 안 정해진 건은 집계 대상이 아니다
+            continue
+        try:
+            day = datetime(int(y), int(m), int(d)).date()
+        except ValueError:
+            skipped += 1
+            continue
+        items.append({
+            "날짜": day.isoformat(),
+            "제목": re.sub(r"\s+", " ", cell(row, P_TITLE)),
+            "의료진": [n.strip() for n in re.split(r"[,/\n·]+", cell(row, P_DOCTOR))
+                     if re.fullmatch(r"[가-힣]{2,4}", n.strip())],
+            "진료과": re.sub(r"\s+", " ", cell(row, P_DEPT)),
+            "배포범위": re.sub(r"\s+", " ", cell(row, P_SCOPE)),
+            "담당": cell(row, P_OWNER),
+        })
+    if not items:
+        status["보도자료"] = {"결과": "보도자료 행을 찾지 못함 — 기존 목록 유지"}
+        return
+    items.sort(key=lambda x: x["날짜"])
+    PRESS_PATH.write_text(json.dumps(
+        {"생성": NOW.strftime("%Y-%m-%d %H:%M"), "건수": len(items), "목록": items},
+        ensure_ascii=False, indent=1), encoding="utf-8")
+    status["보도자료"] = {"목록": len(items), "배포일없음": skipped,
+                      "기간": f"{items[0]['날짜']} ~ {items[-1]['날짜']}"}
+
+
+def load_roster():
+    """서비스 계정(권장) 또는 웹 게시 CSV 주소로 명단을 읽는다. 둘 다 없으면 None"""
+    sa_json     = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
+    sheet_id    = os.environ.get("REPORTER_SHEET_ID", "").strip()
+    sheet_range = os.environ.get("REPORTER_SHEET_RANGE", "").strip() or "A:Z"
+    csv_url     = os.environ.get("REPORTER_SHEET_CSV_URL", "").strip()
+
+    if sa_json and sheet_id:
+        from google.oauth2 import service_account
+        from google.auth.transport.requests import AuthorizedSession
+        creds = service_account.Credentials.from_service_account_info(
+            json.loads(sa_json), scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"])
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}/values/{quote(sheet_range, safe='')}"
+        resp = AuthorizedSession(creds).get(url, timeout=20)
+        resp.raise_for_status()
+        values = resp.json().get("values", [])
+    elif csv_url:
+        resp = requests.get(csv_url, timeout=20)
+        resp.raise_for_status()
+        resp.encoding = "utf-8"
+        values = list(csv.reader(resp.text.splitlines()))
+    else:
+        return None
+    return parse_roster(values)
+
+
+def is_beat_reporter(row, roster):
+    row_emails = {e.lower() for e in EMAIL_RE.findall(row.get("기자이메일") or "")}
+    if row_emails & roster["emails"]:
+        return True
+    media = _norm(row.get("매체"))
+    for name in re.split(r"[,\s]+", row.get("기자명") or ""):
+        roster_media = roster["by_name"].get(name)
+        if not roster_media:
+            continue
+        if not roster["has_media"]:
+            return True
+        # 동명이인 방지: 명단의 매체와 기사의 매체가 같아야 인정
+        if len(media) >= 2 and any(m and (m in media or media in m) for m in roster_media):
+            return True
+    return False
+
+
+def mark_beat_reporters(rows, status):
+    try:
+        roster = load_roster()
+    except Exception as e:   # 명단 문제로 기자명·지면 보강 결과까지 잃지 않도록 여기서 끝낸다
+        code = getattr(getattr(e, "response", None), "status_code", "")
+        status["출입기자"] = {"결과": f"명단 불러오기 실패 ({type(e).__name__} {code}".strip() + ") — 기존 표시 유지"}
+        return
+    if roster is None:
+        status["출입기자"] = {"결과": "명단 미설정 — 기존 표시 유지"}
+        return
+    marked = 0
+    for row in rows:
+        row["출입기자"] = "Y" if is_beat_reporter(row, roster) else ""
+        marked += row["출입기자"] == "Y"
+    status["출입기자"] = {"결과": "대조 완료", "명단인원": len(roster["by_name"]), "표시기사": marked}
+
+
+# ── 실행 ─────────────────────────────────────────────────────────────────────
+def read_rows():
+    with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def write_rows(rows):
+    tmp = CSV_PATH.with_name(CSV_PATH.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=FIELDNAMES, extrasaction="ignore", restval="")
+        writer.writeheader()
+        writer.writerows(rows)
+    tmp.replace(CSV_PATH)
+
+
+def write_status(status):
+    STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def main(status):
+    if not CSV_PATH.exists():
+        status["결과"] = "CSV 없음 — 건너뜀"
+        return
+    rows = read_rows()
+    status["전체기사"] = len(rows)
+    deadline = time.monotonic() + TIME_LIMIT_SEC
+
+    # 지면을 먼저 한다 — 기자명 백필은 남은 기사가 수천 건이라 시간 상한을 다 쓰는데,
+    # 그러면 지면이 매번 요청 0건으로 굶는다. 지면은 대상이 최근 기사뿐이라 금방 끝나고,
+    # 네이버가 지면을 며칠만 제공하므로 놓치면 그 날짜는 영영 못 채운다.
+    enrich_paper(rows, status, deadline)
+    apply_paper_manual(rows, status)   # 사람이 적은 지면이 네이버에서 찾은 값보다 우선
+    enrich_bylines(rows, status, deadline)
+    mark_beat_reporters(rows, status)
+    # 운영본은 보도자료 게재율 탭이 없다 — 보도자료 목록(담당자 이름 포함)을 공개 페이지에
+    # 올리지 않도록 SKIP_PRESS_RELEASES=1 로 끈다
+    if os.environ.get("SKIP_PRESS_RELEASES", "").strip() in ("", "0"):
+        update_press_releases(status)  # 실패해도 기존 목록을 그대로 두고 넘어간다
+    else:
+        status["보도자료"] = "건너뜀 (SKIP_PRESS_RELEASES)"
+
+    write_rows(rows)
+    status["결과"] = "완료"
+
+
+if __name__ == "__main__":
+    run_status = {"실행시각": NOW.strftime("%Y-%m-%d %H:%M")}
+    try:
+        main(run_status)
+    except Exception:
+        run_status["결과"] = "실패"
+        run_status["오류"] = traceback.format_exc(limit=5)
+        write_status(run_status)
+        print(run_status["오류"], file=sys.stderr)
+        sys.exit(1)
+    write_status(run_status)
+    print(json.dumps(run_status, ensure_ascii=False, indent=2))

@@ -33,11 +33,32 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active[data-tab="ours"]{color:var(--c-asan);border-bottom-color:var(--c-asan)}
 .tab-btn.active[data-tab="others"]{color:var(--c-samsung);border-bottom-color:var(--c-samsung)}
-.tab-btn.active[data-tab="compare"]{color:var(--text);border-bottom-color:var(--text)}
 .tab-btn.active[data-tab="paper"]{color:#8a5a00;border-bottom-color:#8a5a00}
 .tab-btn.active[data-tab="report"]{color:var(--c-asan);border-bottom-color:var(--c-asan)}
 .tab-btn.active[data-tab="press"]{color:#1a7a3c;border-bottom-color:#1a7a3c}
+.tab-btn.active[data-tab="ai"]{color:#6a3fb5;border-bottom-color:#6a3fb5}
+/* AI 분석 탭 */
+.ai-section{margin-bottom:26px}
+.ai-section h2{font-size:14px;font-weight:600;margin:0 0 4px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:4px 0;border-radius:var(--radius)}
+.ai-section h2:hover{color:var(--accent)}
+.ai-section h2 .caret{font-size:17px;line-height:1;width:16px;text-align:center;transition:transform .12s}
+.ai-section h2:hover .caret{transform:scale(1.15)}
+.ai-section h2 .cnt{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted)}
+.ai-section .ai-desc{font-size:12px;color:var(--muted);margin:0 0 10px}
+.ai-issue{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+.ai-issue h3{font-size:13px;font-weight:600;margin:0 0 3px}
+.ai-issue p{font-size:12px;color:var(--text);margin:0 0 6px}
+.ai-issue details summary{font-size:11px;color:var(--accent);cursor:pointer}
+.ai-issue ul{margin:6px 0 0 16px;font-size:12px}
+.ai-day{font-family:var(--mono);font-size:12px;color:var(--muted);margin:12px 0 6px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;padding:3px 0;border-radius:var(--radius)}
+.ai-day:hover{color:var(--text)}
+.ai-day .caret{font-size:15px;line-height:1;width:14px;text-align:center}
 .press-row{cursor:pointer}
+/* 의료진이 다섯 명이면 한 줄로 늘어져 표가 넓어진다 — 칸 폭에 맞춰 줄바꿈 */
+.td-doctors{font-size:12px;color:#1a5fa8;display:flex;flex-wrap:wrap;gap:0 6px;line-height:1.5}
+.td-doctors>span::after{content:',';color:var(--muted)}
+.td-doctors>span:last-child::after{content:''}
+#table-press td{padding:10px 8px}
 .press-row:hover{background:var(--accent-bg)}
 .press-sub td{background:#fafaf8;padding:0}
 .press-sub table{margin:0}
@@ -50,6 +71,18 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .badge-paper{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;color:#8a5a00;background:#fdf3e1;border:1px solid #f0d9a8;padding:0 5px;border-radius:3px;margin-left:4px;white-space:nowrap}
 .badge-susp{display:inline-block;font-size:10px;color:#a33;background:#fbeaea;padding:0 5px;border-radius:3px;margin-left:6px;white-space:nowrap;vertical-align:1px}
 .td-reporter{font-size:12px;color:var(--text);white-space:nowrap}
+.badge-tone{display:inline-block;font-size:10px;font-weight:600;padding:0 5px;border-radius:3px;margin-left:6px;white-space:nowrap;vertical-align:1px}
+.badge-tone.pos{color:#1a7a3c;background:#e6f4ea}
+.badge-tone.neg{color:#c0392b;background:#fdecec}
+.badge-crisis{display:inline-block;font-size:10px;font-weight:600;color:#fff;background:#c0392b;padding:0 5px;border-radius:3px;margin-left:4px;white-space:nowrap;vertical-align:1px}
+.badge-ai{display:inline-block;font-size:10px;padding:0 5px;border-radius:3px;margin-left:6px;white-space:nowrap;vertical-align:1px;cursor:help}
+.badge-ai.out{color:#7a4a00;background:#fdf3e1}
+.badge-ai.in{color:#1a5fa8;background:#eef4fb}
+/* 보고용 탭 — 딱지를 제목에서 떼어 '판정' 열에 모은다. 제목 줄이 깨끗해진다 */
+.td-verdict{display:flex;flex-wrap:wrap;gap:3px;align-items:flex-start}
+.td-verdict>span{margin-left:0}
+#report-body td{padding:10px 8px}
+#report-body .td-reporter,#report-body .td-prof{max-width:92px;overflow:hidden;text-overflow:ellipsis}
 .check-label{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
 
 /* 보고용 탭 */
@@ -78,6 +111,10 @@ main{padding:20px 32px;max-width:1280px;margin:0 auto}
 /* 통계 카드 */
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+/* 눌러서 기사 목록을 볼 수 있는 카드 */
+.stat-card.clickable{cursor:pointer;transition:border-color .12s,background .12s}
+.stat-card.clickable:hover{border-color:var(--accent);background:var(--accent-bg)}
+.stat-card.clickable .label::after{content:' ▸';font-size:10px;color:var(--muted)}
 .stat-card .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .stat-card .value{font-size:20px;font-weight:600;font-family:var(--mono)}
 
@@ -99,6 +136,13 @@ td{padding:10px 12px;vertical-align:top}
 .td-title a{color:var(--text);text-decoration:none;font-weight:500;font-size:13px;line-height:1.5;display:block}
 .td-title a:hover{color:var(--accent)}
 .td-summary{font-size:12px;color:var(--muted);max-width:500px;line-height:1.5}
+/* 키워드 열을 뺀 만큼 제목에 폭을 몰아 준다.
+   좁은 화면에서는 걸지 않는다 — .table-wrap이 overflow:hidden이라
+   표가 넓어지면 뒤쪽 열(기자·교수명·링크)이 잘려 보이지 않는다 */
+@media(min-width:1000px){
+  #table-ours .td-title,#table-others .td-title{min-width:340px}
+  #table-ours .td-summary,#table-others .td-summary{max-width:360px}
+}
 .td-media{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
 .td-link a{font-size:11px;color:var(--accent);text-decoration:none;font-family:var(--mono);white-space:nowrap}
 .td-link{white-space:nowrap}
@@ -151,6 +195,11 @@ td{padding:10px 12px;vertical-align:top}
 .modal-table tbody tr:last-child{border-bottom:none}
 .modal-table tbody tr:hover{background:var(--accent-bg)}
 .modal-table td{padding:9px 10px;vertical-align:top;font-size:13px}
+/* 요약 보드 기간 전환 */
+.period-bar{grid-column:1/-1;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:2px}
+.period-btn{font-family:var(--font);font-size:11px;padding:3px 10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:20px;cursor:pointer}
+.period-btn:hover{color:var(--text)}
+.period-btn.on{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:600}
 .cat-btn{cursor:pointer;transition:opacity .15s}
 .cat-btn:hover{opacity:.75}
 
@@ -189,11 +238,11 @@ td{padding:10px 12px;vertical-align:top}
 
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="paper"  onclick="switchTab('paper')">🗞️ 지면모음</button>
+  <button class="tab-btn"        data-tab="report" onclick="switchTab('report')">📑 서울아산병원-보고용</button>
   <button class="tab-btn"        data-tab="ours"   onclick="switchTab('ours')">🏥 우리병원</button>
   <button class="tab-btn"        data-tab="others" onclick="switchTab('others')">🔍 타병원</button>
-  <button class="tab-btn"        data-tab="report" onclick="switchTab('report')">📑 서울아산병원-보고용</button>
+  <button class="tab-btn" id="tab-btn-ai" hidden data-tab="ai" onclick="switchTab('ai')">🤖 AI 분석</button>
   <button class="tab-btn" id="tab-btn-press" hidden data-tab="press"  onclick="switchTab('press')">📣 보도자료 게재율</button>
-  <button class="tab-btn"        data-tab="compare"onclick="switchTab('compare')">📊 병원 비교</button>
 </nav>
 
 <div class="filter-bar" id="filter-bar">
@@ -231,11 +280,51 @@ td{padding:10px 12px;vertical-align:top}
     <div class="pagination" id="pag-others"></div>
   </div>
 
-  <!-- ③ 비교 탭 -->
-  <div id="panel-compare" class="tab-panel">
+  <!-- ④ 지면모음 탭 -->
+  <div id="panel-paper" class="tab-panel active">
+    <div class="notice notice-keep">🗞️ 네이버 '신문 지면 보기'에 등록된 주요 신문 19곳의 지면 게재 기사를 모았습니다. 방송·전문지·지면 미제공 매체는 포함되지 않으며, 최근 기사의 면 정보는 신문 발행 후 1~2일 안에 채워집니다. 한가위 특집 별지 같은 <b>H면·별지는 네이버가 지면 보기로 제공하지 않아</b>, 직접 추가한 기사만 나옵니다.</div>
+    <div class="hospital-filter" id="paper-hosp-filter"></div>
+    <div class="stats-row" id="stats-paper"></div>
+    <div class="table-wrap" id="table-paper"></div>
+    <div class="pagination" id="pag-paper"></div>
+  </div>
+
+  <!-- ⑤ 서울아산병원-보고용 탭 -->
+  <div id="panel-report" class="tab-panel">
+    <div class="notice notice-keep">📑 2026 연간 언론실적 엑셀 기준으로 모았습니다. 온라인은 <b>실적에 집계된 적 있는 매체</b>만, '제외 추정'은 6/11~9/10 대시보드 기사를 실적과 대조해 <b>제외율 85% 이상이었던 유형</b>만 표시합니다(서울아산병원 기사에만 적용, 태그에 마우스를 올리면 제외율 표시). 신문은 네이버 지면 정보로 게재가 확인된 기사만 담고, 방송 프로그램 실적은 기사로 구분되지 않아 방송사 웹기사는 온라인에 포함됩니다.
+      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="hide-suspect"> 제외 추정 기사 숨기기</label>
+      <label class="check-label" id="hide-ai-wrap" hidden style="margin-left:8px"><input type="checkbox" id="hide-ai-out"> AI 제외 기사 숨기기</label>
+    </div>
+    <div id="report-body"></div>
+  </div>
+
+  <!-- ⑥ 보도자료 게재율 탭 -->
+  <div id="panel-press" class="tab-panel">
+    <div class="notice notice-keep">📣 구글 시트 <b>'언론 업무'</b> 탭에서 구분이 <b>보도자료</b>이고 게재일이 적힌 건을 가져와, 배포일 전후에 수집된 서울아산병원 기사와 맞춰 봤습니다. <b>의료진 이름과 제목 키워드가 겹치는 기사</b>를 그 보도자료에서 나온 것으로 셉니다. 줄을 누르면 실제 기사 목록이 펼쳐집니다.
+      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="press-zero-only"> 게재 0건만 보기</label>
+    </div>
+    <div class="stats-row" id="stats-press"></div>
+    <div class="table-wrap" id="table-press"></div>
+  </div>
+
+  <!-- ⑦ AI 분석 탭 (개발 버전 전용) -->
+  <div id="panel-ai" class="tab-panel">
+    <div class="notice notice-keep">🤖 수집한 기사 제목·요약을 Claude 경량 모델(Haiku)에게 보여 주고 판정을 받은 결과입니다. <b>아직 사람이 만든 실적·게시글과 대조하지 않은 시험 단계</b>라 참고용으로만 보세요. 날짜를 지정하지 않으면 최근 7일을 보여 줍니다.</div>
+    <div class="stats-row" id="stats-ai"></div>
+    <div id="ai-body"></div>
+    <!-- 병원 비교 — 2026-10-15에 별도 탭에서 AI 분석 안으로 옮김.
+         자체 기간 필터를 쓰므로 renderAI()가 다시 그리는 #ai-body 바깥에 둔다 -->
+    <div class="ai-section" id="compare-section">
+      <h2 onclick="toggleCompare()" title="펼치기"><span class="caret">▶</span>📊 병원 비교<span class="cnt">5개 병원</span></h2>
+      <div id="compare-block" hidden>
+        <div class="ai-desc">병원별 기사 건수와 점유율입니다. 위 날짜 필터와 별개로 <b>자체 기간</b>을 씁니다.</div>
+
     <div class="notice">📋 샘플 데이터 기준 비교입니다. 실제 배포 후 자동 반영됩니다.</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span style="font-size:12px;font-weight:600;color:var(--muted)">기간 설정</span>
+      <button class="period-btn" id="cmp-30" onclick="setComparePeriod(false)">최근 30일</button>
+      <button class="period-btn" id="cmp-all" onclick="setComparePeriod(true)">전체 기간</button>
+      <span style="color:var(--border)">|</span>
       <input type="date" id="compare-date-from" style="font-family:var(--font);font-size:13px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none">
       <span style="color:var(--muted);font-size:12px">~</span>
       <input type="date" id="compare-date-to" style="font-family:var(--font);font-size:13px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none">
@@ -264,33 +353,8 @@ td{padding:10px 12px;vertical-align:top}
         </tr></thead>
         <tbody id="compare-tbody"></tbody>
       </table>
+      </div>
     </div>
-  </div>
-
-  <!-- ④ 지면모음 탭 -->
-  <div id="panel-paper" class="tab-panel active">
-    <div class="notice notice-keep">🗞️ 네이버 '신문 지면 보기'에 등록된 주요 신문 19곳의 지면 게재 기사를 모았습니다. 방송·전문지·지면 미제공 매체는 포함되지 않으며, 최근 기사의 면 정보는 신문 발행 후 1~2일 안에 채워집니다. 한가위 특집 별지 같은 <b>H면·별지는 네이버가 지면 보기로 제공하지 않아</b>, 직접 추가한 기사만 나옵니다.</div>
-    <div class="hospital-filter" id="paper-hosp-filter"></div>
-    <div class="stats-row" id="stats-paper"></div>
-    <div class="table-wrap" id="table-paper"></div>
-    <div class="pagination" id="pag-paper"></div>
-  </div>
-
-  <!-- ⑤ 서울아산병원-보고용 탭 -->
-  <div id="panel-report" class="tab-panel">
-    <div class="notice notice-keep">📑 2026 연간 언론실적 엑셀 기준으로 모았습니다. 온라인은 <b>실적에 집계된 적 있는 매체</b>만, '제외 추정'은 6/11~9/10 대시보드 기사를 실적과 대조해 <b>제외율 85% 이상이었던 유형</b>만 표시합니다(서울아산병원 기사에만 적용, 태그에 마우스를 올리면 제외율 표시). 신문은 네이버 지면 정보로 게재가 확인된 기사만 담고, 방송 프로그램 실적은 기사로 구분되지 않아 방송사 웹기사는 온라인에 포함됩니다.
-      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="hide-suspect"> 제외 추정 기사 숨기기</label>
-    </div>
-    <div id="report-body"></div>
-  </div>
-
-  <!-- ⑥ 보도자료 게재율 탭 -->
-  <div id="panel-press" class="tab-panel">
-    <div class="notice notice-keep">📣 구글 시트 <b>'언론 업무'</b> 탭에서 구분이 <b>보도자료</b>이고 게재일이 적힌 건을 가져와, 배포일 전후에 수집된 서울아산병원 기사와 맞춰 봤습니다. <b>의료진 이름과 제목 키워드가 겹치는 기사</b>를 그 보도자료에서 나온 것으로 셉니다. 줄을 누르면 실제 기사 목록이 펼쳐집니다.
-      <label class="check-label" style="margin-left:8px"><input type="checkbox" id="press-zero-only"> 게재 0건만 보기</label>
-    </div>
-    <div class="stats-row" id="stats-press"></div>
-    <div class="table-wrap" id="table-press"></div>
   </div>
 </main>
 
@@ -298,10 +362,17 @@ td{padding:10px 12px;vertical-align:top}
 // ── 개발 버전 전용 ───────────────────────────────────────────────────────────
 // 여기는 운영 저장소입니다 — 이 값은 반드시 false로 둡니다. 개발 저장소
 // (hospital-news-dashboard-dev)에서는 true이고, 그 밖의 내용은 두 파일이 똑같습니다.
-// 그래야 다음 반영 때 index.html을 그대로 복사해 이 한 줄만 고치면 됩니다.
 // false라서 가려지는 것: 제목의 [개발], 헤더 배지·안내 문구, 보도자료 게재율 탭.
-// false라서 보이는 것: 🔓 대외 공개 가능 딱지 — 대외 공개는 운영본으로만 합니다.
+// false라서 보이는 것: 🔓 대외 공개 가능 딱지.
+// AI 분석 탭과 판정 배지는 양쪽 모두에 보입니다 (2026-10-15부터).
 const IS_DEV = false;
+
+// AI 분석 탭은 양쪽 모두에 보입니다 (2026-10-15). 판정 결과가 없으면
+// '아직 AI 판정 결과가 없습니다' 안내만 뜨므로 키가 없는 곳에서도 안전합니다
+{
+  const ai = document.getElementById('tab-btn-ai');
+  if (ai) ai.hidden = false;
+}
 
 if (IS_DEV) {
   document.title = '[개발] ' + document.title;
@@ -589,6 +660,7 @@ const sorts = {
 // 보고용 탭은 실적 양식대로 날짜 오름차순이 기본. 화면에서만 바꿀 수 있고 엑셀은 늘 날짜순으로 받는다
 const reportSort = {col:'날짜', asc:true};
 let pressData = [];   // docs/press_releases.json 의 보도자료 목록
+let aiData = null;    // docs/ai_labels.json — ai_classify.py가 남긴 AI 판정 (없으면 배지·탭만 빈다)
 let selectedHosp = null; // null = 전체 타병원
 let paperHosp = null;    // null = 지면모음 전체 병원
 let barChart = null, pieChart = null;
@@ -624,10 +696,23 @@ async function init() {
   } catch(e) {
     console.log('보도자료 목록 로드 실패:', e);
   }
+  // AI 판정 (없으면 배지와 AI 분석 탭만 비고 나머지는 그대로 동작한다)
+  try {
+    const res = await fetch('./ai_labels.json?t=' + Date.now());
+    if (res.ok) aiData = await res.json();
+  } catch(e) {
+    console.log('AI 판정 로드 실패:', e);
+  }
+  // 판정이 있을 때만 보고용 탭의 'AI 제외 기사 숨기기'를 보여 준다
+  if (aiData) {
+    const el = document.getElementById('hide-ai-wrap');
+    if (el) el.hidden = false;
+  }
 
   document.getElementById('total-badge').textContent = `총 ${allData.length.toLocaleString()}건`;
   switchTab(currentTab);   // 탭 강조·필터·엑셀 버튼 문구까지 한 번에 맞춘다
-  renderCompare();
+  // 병원 비교는 접혀 있을 때 그리면 캔버스 크기가 0이라 차트가 찌그러진다.
+  // 펼칠 때 toggleCompare()가 그린다
 }
 
 function parseCSV(text) {
@@ -694,11 +779,10 @@ function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-'+tab));
-  document.getElementById('filter-bar').style.display = tab === 'compare' ? 'none' : 'flex';
+  document.getElementById('filter-bar').style.display = 'flex';
   document.getElementById('excel-label').textContent =
     tab === 'paper' ? '지면모음 엑셀 다운로드' : tab === 'report' ? '보고용 엑셀 다운로드'
-    : tab === 'press' ? '게재율 엑셀 다운로드' : '주간 엑셀 다운로드';
-  if (tab === 'compare') { renderCompare(); return; }
+    : tab === 'press' ? '게재율 엑셀 다운로드' : tab === 'ai' ? 'AI 분석 엑셀 다운로드' : '주간 엑셀 다운로드';
   updateKeywordOptions(tab);
   renderCurrent();
 }
@@ -709,6 +793,7 @@ function renderCurrent() {
   else if (currentTab === 'paper')  renderPaper();
   else if (currentTab === 'report') renderReport();
   else if (currentTab === 'press')  renderPress();
+  else if (currentTab === 'ai')     renderAI();
 }
 
 function updateKeywordOptions(tab) {
@@ -783,6 +868,12 @@ const ADMISSION_RE = /지역선발|지역인재|수시|정시|합격선|등급�
 // 제약사가 주체인 기사 — 병원 이름이 제목에 없고 '○○병원 … 교수' 코멘트도 없으면
 // 병원이 스쳐 지나갈 뿐이다. 교수가 나오는 기사는 실적에 잡히므로 남긴다
 const PHARMA_RE = /유한양행|대웅제약|한미약품|종근당|녹십자|제일약품|동아에스티|JW중외제약|셀트리온|HK이노엔|일동제약|삼일제약|보령제약|광동제약|휴젤|메디톡스|온코닉|시지바이오|아스트라제네카|로슈|화이자|MSD|노바티스|길리어드|애브비|베링거|암젠|사노피|얀센/;
+// 의료 AI·진단 기업이 주체인 기사 — 제약사와 달리 '교수 코멘트' 예외를 두지 않는다.
+// 에이아이트릭스 대표가 세브란스병원 교수라, 코멘트 예외를 두면 코스닥 상장·이사회 재편 같은
+// 회사 경영 기사까지 남는다. 2026-10 기준 에이아이트릭스 26건 중 제목에 우리 병원 이름이
+// 들어간 기사는 0건이었다 — 제목에 병원이 나오면(공동연구 발표 등) 그때는 남는다.
+// '노을'처럼 흔한 낱말인 회사 이름은 넣으면 안 된다 — 중증천식 기사가 함께 걸린다
+const VENDOR_RE = /에이아이트릭스/;
 const HOSP_NAME_RE = /아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원/;
 const HOSP_PROF_RE = /(아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원)[^.]{0,40}교수/;
 
@@ -794,6 +885,26 @@ const BRANCH_RULES = [
   // 원주세브란스기독병원 — 연세대 원주캠퍼스 소속 별개 병원. 원주 지역 기사가 대량으로 딸려 온다
   {re: /원주세브란스|세브란스기독병원/, main: '세브란스병원'},
 ];
+// 다른 병원이 제목의 주인공인 기사 — 네이버가 '서울대학교병원'을 '서울대학교'+'병원'으로
+// 쪼개 찾는 탓에 서울성모병원·순천향대 기사가 서울대 기사로 딸려 온다 (30일 기준 61건).
+// 우리 이름이 제목·요약 어디에도 없고, 제목에 다른 병원이 박혀 있을 때만 뺀다
+const OTHER_HOSP_RE = /순천향|고려대학교병원|고대안암|고대구로|한양대병원|중앙대병원|건국대병원|경희대병원|이대목동|이대서울|가천대길병원|아주대병원|인하대병원|단국대병원|원광대병원|조선대병원|전남대병원|전북대병원|충남대병원|충북대병원|경북대병원|부산대병원|강원대병원|제주대병원|차병원|국립암센터|국립중앙의료원|백병원|강북삼성병원|한림대성심|명지병원|제생병원|양지병원|을지대병원|동아대병원/;
+// loose는 공동연구로 이름만 올린 경우를 살리기 위한 것 —
+// '아주대병원·서울대, 체내 분해형 무선 전자약 개발'처럼 제목에 우리 약칭이 있으면 남긴다
+const GROUP_NAME = {
+  '아산':   {full: /서울아산병원|아산병원|아산사회복지재단/, loose: /아산|울산대/},
+  '삼성':   {full: /삼성서울병원/,                      loose: /삼성|성균관/},
+  '세브란스': {full: /세브란스|연세암병원/,                 loose: /세브란스|연세/},
+  '서울대':  {full: /서울대병원|서울대학교병원/,             loose: /서울대|서울의대/},
+  '성모':   {full: /서울성모병원/,                      loose: /성모|가톨릭/},
+};
+function isOtherHospitalStory(group, title, headSumm) {
+  const g = GROUP_NAME[group];
+  if (!g || g.full.test(headSumm) || g.loose.test(title)) return false;
+  return OTHER_HOSP_RE.test(title)
+    || Object.entries(GROUP_NAME).some(([k, v]) => k !== group && v.full.test(title));
+}
+
 function isBranchArticle(title, headSumm) {
   return BRANCH_RULES.some(({re, main}) =>
     (re.test(headSumm) && !headSumm.includes(main)) || (re.test(title) && !title.includes(main)));
@@ -809,7 +920,9 @@ function isNoise(r) {
   // 강릉·정읍아산병원, 충남 아산시 등 — 서울아산병원이 함께 나오면 우리 기사일 수 있어 남긴다
   if (OTHER_ASAN_RE.test(headSumm) && !headSumm.includes('서울아산병원')) return true;
   if (PHARMA_RE.test(headSumm) && !HOSP_NAME_RE.test(r['제목'] || '') && !HOSP_PROF_RE.test(headSumm)) return true;
+  if (VENDOR_RE.test(headSumm) && !HOSP_NAME_RE.test(r['제목'] || '')) return true;
   if (isBranchArticle(r['제목'] || '', headSumm)) return true;
+  if (isOtherHospitalStory(r['병원그룹'], r['제목'] || '', headSumm)) return true;
   if (FE_EXCLUDE_KW.some(kw => combined.includes(kw))) return true;
   const url = (r['언론사원문']||r['네이버링크']||'').toLowerCase();
   return FE_EXCLUDE_MEDIA.some(m => url.includes(m));
@@ -840,6 +953,35 @@ function applyFilters(rows) {
   });
 }
 
+// ── 요약 보드 기간 ───────────────────────────────────────────────────────────
+// 카드·매체 집계는 기본으로 최근 30일만 센다. 수집이 125일치라 전체를 세면
+// 지금 무슨 일이 벌어지는지가 묻힌다. 아래 기사 목록은 그대로 전체를 보여 준다.
+const SUMMARY_DAYS = 30;
+let summaryAll = false;
+function setSummaryPeriod(all) { summaryAll = all; renderCurrent(); }
+
+function summaryScope(filtered) {
+  const {dateFrom, dateTo} = getFilters();
+  // 필터바에서 날짜를 정했으면 보드도 그 기간을 따른다 — 안 그러면 숫자가 서로 어긋난다
+  if (dateFrom || dateTo) {
+    return {rows: filtered, label: `지정 기간 ${dateFrom || '처음'} ~ ${dateTo || '마지막'}`, locked: true};
+  }
+  if (summaryAll) return {rows: filtered, label: '전체 기간', locked: false};
+  const d = new Date();
+  d.setDate(d.getDate() - (SUMMARY_DAYS - 1));
+  const from = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return {rows: filtered.filter(r => r['날짜'] >= from), label: `최근 ${SUMMARY_DAYS}일`, locked: false};
+}
+
+function periodBar(scope) {
+  if (scope.locked) return `<div class="period-bar">기간: <b style="color:var(--text)">${scope.label}</b>
+    <span>— 위 날짜 필터를 따릅니다. 비우면 최근 ${SUMMARY_DAYS}일로 돌아갑니다.</span></div>`;
+  return `<div class="period-bar">기간:
+    <button class="period-btn${summaryAll ? '' : ' on'}" onclick="setSummaryPeriod(false)">최근 ${SUMMARY_DAYS}일</button>
+    <button class="period-btn${summaryAll ? ' on' : ''}" onclick="setSummaryPeriod(true)">전체 기간</button>
+    <span>아래 기사 목록은 기간과 상관없이 모두 보여 줍니다.</span></div>`;
+}
+
 // ── 우리병원 렌더 ─────────────────────────────────────────────────────────────
 function renderOurs() {
   const h = HOSPITALS.asan;
@@ -848,14 +990,18 @@ function renderOurs() {
   const rows = sortRows(filtered, sorts.ours);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
-  // 키워드별 집계 (필터 적용)
+  // 요약 보드는 기본으로 최근 30일만 센다 (기사 목록은 위 filtered 그대로)
+  const scope = summaryScope(filtered);
+  const sr = scope.rows;
+
+  // 키워드별 집계
   const kwCounts = {};
-  filtered.forEach(r => { kwCounts[r['검색어']] = (kwCounts[r['검색어']]||0)+1; });
-  const days = [...new Set(filtered.map(r=>r['날짜']))].length;
+  sr.forEach(r => { kwCounts[r['검색어']] = (kwCounts[r['검색어']]||0)+1; });
+  const days = [...new Set(sr.map(r=>r['날짜']))].length;
 
   // 매체 분류별 집계
   const catCounts = {};
-  filtered.forEach(r => {
+  sr.forEach(r => {
     const cat = classifyMedia(r['매체']);
     catCounts[cat] = (catCounts[cat]||0)+1;
   });
@@ -867,15 +1013,15 @@ function renderOurs() {
 
   // 매체별 Top5
   const mediaCounts = {};
-  filtered.forEach(r => { if(r['매체']) mediaCounts[r['매체']] = (mediaCounts[r['매체']]||0)+1; });
+  sr.forEach(r => { if(r['매체']) mediaCounts[r['매체']] = (mediaCounts[r['매체']]||0)+1; });
   const top5 = Object.entries(mediaCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const maxCount = top5[0]?.[1] || 1;
 
-  document.getElementById('stats-ours').innerHTML = `
+  document.getElementById('stats-ours').innerHTML = periodBar(scope) + `
     <!-- 요약 카드 -->
     <div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:4px">
       ${[
-        statCard('전체 기사', filtered.length, h.color),
+        statCard('기사', sr.length, h.color),
         statCard('수집 일수', days, h.color),
         ...Object.entries(kwCounts).map(([k,v]) => statCard(k, v, h.color))
       ].join('')}
@@ -883,7 +1029,7 @@ function renderOurs() {
     <!-- 매체 분류 집계 -->
     <div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div>
-        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">매체 유형별 집계</div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">매체 유형별 집계 <span style="text-transform:none;font-weight:400">(${scope.label})</span></div>
         <div style="display:flex;flex-wrap:wrap;gap:8px">
           ${CAT_ORDER.filter(c=>catCounts[c]).map(c => `
             <div class="cat-btn" onclick="openMediaModal('${c}')" style="display:flex;align-items:center;gap:6px;min-width:100px;padding:4px 6px;border-radius:6px">
@@ -895,7 +1041,7 @@ function renderOurs() {
         </div>
       </div>
       <div>
-        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">매체별 Top 5</div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">매체별 Top 5 <span style="text-transform:none;font-weight:400">(${scope.label})</span></div>
         <div style="display:flex;flex-direction:column;gap:7px">
           ${top5.map(([media, cnt]) => {
             const cat = classifyMedia(media);
@@ -926,16 +1072,18 @@ function renderOthers() {
   const rows = sortRows(filtered, sorts.others);
   document.getElementById('result-count').textContent = `${rows.length}건`;
 
-  // 통계
+  // 통계 — 보드는 기본으로 최근 30일
+  const scope = summaryScope(filtered);
+  const sr = scope.rows;
   const hospCounts = {};
-  filtered.forEach(r => {
+  sr.forEach(r => {
     const lbl = Object.values(HOSPITALS).find(h=>h.group===r['병원그룹'])?.label || r['병원그룹'];
     hospCounts[lbl] = (hospCounts[lbl]||0)+1;
   });
-  const days = [...new Set(filtered.map(r=>r['날짜']))].length;
+  const days = [...new Set(sr.map(r=>r['날짜']))].length;
   const accentColor = selectedHosp ? HOSPITALS[selectedHosp].color : '#444';
-  document.getElementById('stats-others').innerHTML = [
-    statCard('전체 기사', filtered.length, accentColor),
+  document.getElementById('stats-others').innerHTML = periodBar(scope) + [
+    statCard('기사', sr.length, accentColor),
     statCard('수집 일수', days, accentColor),
     ...Object.entries(hospCounts).map(([k,v]) => {
       const color = Object.values(HOSPITALS).find(h=>h.label===k)?.color || accentColor;
@@ -1055,6 +1203,8 @@ function reportRange() {
 function getReportSections() {
   const range = reportRange();
   const hideSuspect = document.getElementById('hide-suspect').checked;
+  // AI가 '실적에서 뺄 기사'로 본 것 숨기기 — 규칙(제외 추정)과 판정이 달라서 따로 둔다
+  const hideAiOut = document.getElementById('hide-ai-out').checked;
   const base = applyFilters(allData.filter(r => r['날짜'] >= range.from && r['날짜'] <= range.to));
   // 방송 실적은 프로그램 출연이라 네이버 기사로 구분할 수 없고, 방송사 웹기사는 실적에서도 온라인으로 집계된다
   // → 신문 섹션은 지면이 확인된 기사만, 방송사 기사는 온라인 섹션으로 보낸다
@@ -1062,6 +1212,7 @@ function getReportSections() {
   const prep = rows => rows
     .map(r => ({r, tag: suspectTag(r)}))
     .filter(x => !(hideSuspect && x.tag))
+    .filter(x => !(hideAiOut && (aiOf(x.r) || {}).s === '제외'))
     .sort((a, b) => (a.r['발행일시']||'').localeCompare(b.r['발행일시']||''));   // 실적 양식처럼 날짜 오름차순
   const asan = base.filter(r => r['병원그룹'] === '아산');
   return {
@@ -1123,8 +1274,10 @@ function renderReport() {
         <thead><tr>
           ${reportTh('날짜', '날짜', 'style="width:56px"')}${reportTh('매체', '매체')}${withHosp ? reportTh('병원', '병원') : ''}
           <th class="nosort">보도내용</th>
-          <th class="nosort">기자</th><th class="nosort">교수명</th><th class="nosort">구분</th>
-          <th class="nosort" style="min-width:50px">링크</th>
+          <th class="nosort" style="width:140px">판정</th>
+          <th class="nosort" style="width:84px">기자</th><th class="nosort" style="width:92px">교수명</th>
+          <th class="nosort" style="width:54px">구분</th>
+          <th class="nosort" style="width:46px">링크</th>
         </tr></thead>
         <tbody>${items.map(({r, tag}) => {
           const link = r['언론사원문']||r['네이버링크']||'';
@@ -1136,9 +1289,10 @@ function renderReport() {
             <td class="td-date">${mdOf(r)}</td>
             <td class="td-media">${mediaOf(r)}${hasPaper(r) ? `<span class="badge-paper">${r['지면']}</span>` : ''}</td>
             ${withHosp ? `<td class="td-tag"><span class="tag" style="background:${hColor}22;color:${hColor};font-weight:600">${hospLabel(r)}</span></td>` : ''}
-            <td class="td-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>` : r['제목']}${tag ? `<span class="badge-susp" title="과거 실적 대조 시 이 유형의 ${SUSPECT_RATE[tag]}%가 실적에서 제외됨">제외 추정: ${tag}</span>` : ''}</td>
+            <td class="td-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>` : r['제목']}</td>
+            <td><div class="td-verdict">${aiRecordBadge(r)}${aiBadges(r)}${tag ? `<span class="badge-susp" title="과거 실적 대조 시 이 유형의 ${SUSPECT_RATE[tag]}%가 실적에서 제외됨">제외 추정: ${tag}</span>` : ''}</div></td>
             <td class="td-reporter">${reporterCell(r)}</td>
-            <td style="font-size:12px;color:#1a5fa8;white-space:nowrap;font-weight:${prof?'600':'400'}">${prof || '—'}</td>
+            <td class="td-prof" style="font-size:12px;color:#1a5fa8;white-space:nowrap;font-weight:${prof?'600':'400'}">${prof || '—'}</td>
             <td style="font-size:12px;color:var(--muted);white-space:nowrap">${reportKind(r)}</td>
             <td class="td-link">${naver ? `<a href="${naver}" target="_blank" rel="noopener">네이버</a>` : ''}</td>
           </tr>`;
@@ -1417,12 +1571,13 @@ function renderPress() {
     <thead><tr>
       ${pressTh('배포일', '배포일', 'style="width:84px"')}
       <th class="nosort">보도자료</th>
-      <th class="nosort" style="white-space:nowrap">의료진</th>
-      ${pressTh('담당', '담당', 'style="width:84px"')}
-      ${pressTh('게재', '게재', 'style="width:78px;white-space:nowrap"')}
-      ${pressTh('매체', '매체', 'style="width:66px"')}
-      <th class="nosort" style="width:54px">지면</th>
-      <th class="nosort" style="width:66px">출입기자</th>
+      <th class="nosort" style="width:112px">의료진</th>
+      ${pressTh('담당', '담당', 'style="width:64px"')}
+      ${pressTh('게재', '게재', 'style="width:52px;white-space:nowrap"')}
+      ${pressTh('매체', '매체', 'style="width:48px"')}
+      <th class="nosort" style="width:42px">지면</th>
+      <th class="nosort" style="width:56px">출입기자</th>
+      ${aiData ? '<th class="nosort" style="width:130px" title="AI가 이 보도자료 기사로 확인한 것 중 핵심 메시지가 얼마나 담겼는지">일치율</th>' : ''}
     </tr></thead>
     <tbody>${rows.map((x, i) => {
       const key = x.it['날짜'] + '|' + i;
@@ -1434,18 +1589,20 @@ function renderPress() {
         <td class="td-date">${x.it['날짜'].slice(5).replace('-', '/')}<span style="margin-left:4px">(${pressWeekday(x.it['날짜'])})</span></td>
         <td class="td-title">${open ? '▾ ' : '▸ '}${x.it['제목']}
           ${x.it['배포범위'] ? `<span style="font-size:11px;color:var(--muted);margin-left:6px">${x.it['배포범위']}</span>` : ''}</td>
-        <td style="font-size:12px;color:#1a5fa8;white-space:nowrap">${(x.it['의료진'] || []).join(', ') || '—'}</td>
-        <td style="font-size:12px;color:var(--text);white-space:nowrap">${pressOwner(x.it) || '—'}</td>
+        <td class="td-doctors">${(x.it['의료진'] || []).map(n => `<span>${n}</span>`).join('') || '—'}</td>
+        <td style="font-size:12px;color:var(--text)">${pressOwner(x.it) || '—'}</td>
         <td style="font-family:var(--mono);font-size:14px;white-space:nowrap">${cnt}</td>
         <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.media.size || '—'}</td>
         <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.paper || '—'}</td>
         <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${x.beat || '—'}</td>
+        ${aiData ? `<td style="font-size:12px;white-space:nowrap">${pressReflectSummary(x)}</td>` : ''}
       </tr>`;
       if (!open) return main;
       const sub = !x.hits.length
         ? `<div style="padding:14px 18px;color:var(--muted);font-size:12px">맞는 기사를 찾지 못했습니다.</div>`
         : `<table><thead><tr><th class="nosort" style="width:96px">날짜</th><th class="nosort" style="width:110px">매체</th>
-             <th class="nosort">제목</th><th class="nosort" style="width:96px">기자</th></tr></thead>
+             <th class="nosort">제목</th><th class="nosort" style="width:96px">기자</th>
+             ${aiData ? '<th class="nosort" style="width:110px">AI 판정</th>' : ''}</tr></thead>
            <tbody>${x.hits.map(h => {
              const link = h.r['언론사원문'] || h.r['네이버링크'] || '';
              return `<tr>
@@ -1453,9 +1610,10 @@ function renderPress() {
                <td class="td-media">${mediaOf(h.r)}${hasPaper(h.r) ? `<span class="badge-paper">${h.r['지면']}</span>` : ''}</td>
                <td class="td-title">${link ? `<a href="${link}" target="_blank" rel="noopener">${h.r['제목']}</a>` : h.r['제목']}</td>
                <td class="td-reporter">${reporterCell(h.r)}</td>
+               ${aiData ? `<td style="font-size:12px;white-space:nowrap">${pressReflectCell(x.it, h.r)}</td>` : ''}
              </tr>`;
            }).join('')}</tbody></table>`;
-      return main + `<tr class="press-sub"><td colspan="8">${sub}</td></tr>`;
+      return main + `<tr class="press-sub"><td colspan="${aiData ? 9 : 8}">${sub}</td></tr>`;
     }).join('')}</tbody></table>`;
 }
 
@@ -1474,6 +1632,466 @@ function downloadPressExcel() {
   XLSX.utils.book_append_sheet(wb, ws, '보도자료 게재율');
   const {dateFrom, dateTo} = getFilters();
   XLSX.writeFile(wb, `보도자료_게재율_${dateFrom || '처음'}_${dateTo || '오늘'}.xlsx`);
+}
+
+// ── AI 판정 (개발 버전 전용) ──────────────────────────────────────────────────
+// ai_classify.py가 기사 링크마다 짧은 키로 남긴다:
+//   t 논조 · c 위기 · p 정책 주제 · pa 정책 분야 · s 실적(포함/제외) · sr 실적 사유
+//   d 의료진 [[이름, 진료과]] · pr 보도자료('배포일|제목') · pm 메시지 반영 · b 타병원 참고점
+// 아직 사람이 만든 실적·게시글과 대조하지 않은 시험 단계라 화면에는 참고 표시로만 붙인다.
+function aiOf(r) {
+  if (!aiData) return null;
+  return aiData['기사']?.[r['언론사원문'] || r['네이버링크'] || ''] || null;
+}
+// 모델이 쓴 문장은 HTML로 넣기 전에 꺾쇠·따옴표를 풀어 둔다
+function aiEsc(text) {
+  return String(text || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+// 중립은 표시하지 않는다 — 대부분이 중립이라 다 붙이면 눈에 안 들어온다
+function aiBadges(r) {
+  const a = aiOf(r);
+  if (!a) return '';
+  let html = '';
+  if (a.t === '긍정') html += '<span class="badge-tone pos" title="AI 판정 논조">긍정</span>';
+  if (a.t === '부정') html += '<span class="badge-tone neg" title="AI 판정 논조">부정</span>';
+  if (a.c && a.c !== '없음') html += `<span class="badge-crisis" title="AI가 대응이 필요할 수 있다고 본 이슈">${aiEsc(a.c)}</span>`;
+  return html;
+}
+function aiRecordBadge(r) {
+  const a = aiOf(r);
+  if (!a || !a.s) return '';
+  return `<span class="badge-ai ${a.s === '제외' ? 'out' : 'in'}" title="AI 판단 근거: ${aiEsc(a.sr)}">AI ${a.s}</span>`;
+}
+function pressKeyOf(it) { return `${it['날짜']}|${it['제목']}`; }
+// 보도자료 게재율 탭 — 규칙으로 묶은 기사를 AI가 같은 보도자료로 봤는지, 메시지가 얼마나 담겼는지
+const REFLECT_COLOR = {'높음': '#1a7a3c', '보통': '#d4780a', '낮음': '#c0392b'};
+function pressReflectCell(it, r) {
+  const a = aiOf(r);
+  if (!a) return '<span style="color:var(--muted)">미판정</span>';
+  if (a.pr === pressKeyOf(it)) return `<b style="color:${REFLECT_COLOR[a.pm] || '#444'}">반영 ${a.pm}</b>`;
+  if (a.pr) return `<span style="color:var(--muted)" title="${aiEsc(a.pr.split('|')[1])}">다른 보도자료</span>`;
+  return '<span style="color:var(--muted)">관련 없음</span>';
+}
+function pressReflectSummary(x) {
+  const key = pressKeyOf(x.it), cnt = {'높음': 0, '보통': 0, '낮음': 0};
+  for (const h of x.hits) {
+    const a = aiOf(h.r);
+    if (a && a.pr === key && cnt[a.pm] !== undefined) cnt[a.pm]++;
+  }
+  const parts = Object.entries(cnt).filter(([, n]) => n).map(([k, n]) => `<span style="color:${REFLECT_COLOR[k]}">${k} ${n}</span>`);
+  return parts.length ? parts.join(' · ') : '<span style="color:var(--muted)">—</span>';
+}
+
+function aiLinkMap() {
+  const m = new Map();
+  for (const r of allData) {
+    const link = r['언론사원문'] || r['네이버링크'] || '';
+    if (link && !m.has(link)) m.set(link, r);
+  }
+  return m;
+}
+
+function aiTitleCell(r) {
+  const link = r['언론사원문'] || r['네이버링크'] || '';
+  return link ? `<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>` : r['제목'];
+}
+
+// 오늘의 이슈 — 날짜별로 접었다 펼 수 있다. 기본은 가장 최근 날짜만 펼침.
+// 7일치를 다 펼치면 화면이 길어져 그날 무슨 일이 있었는지 한눈에 안 들어온다
+const aiDayOpen = new Set();
+// 섹션은 기본으로 접어 둔다. 다 펼치면 한 화면에 안 들어와 무엇이 있는지조차 안 보인다.
+// 오늘의 이슈만 펼침 — 이 탭에서 가장 먼저 보는 것
+const aiSectionOpen = {issues: true};
+// 병원 비교는 정적 마크업이라 따로 접는다. 펼칠 때 그려야 캔버스가 제 크기를 잡는다
+function toggleCompare() {
+  const box = document.getElementById('compare-block');
+  const sec = document.getElementById('compare-section');
+  const open = box.hidden;
+  box.hidden = !open;
+  sec.querySelector('.caret').textContent = open ? '▼' : '▶';
+  sec.querySelector('h2').title = open ? '접기' : '펼치기';
+  if (open) renderCompare();
+}
+
+function toggleAISection(key) {
+  aiSectionOpen[key] = !aiSectionOpen[key];
+  renderAI();
+}
+let aiDayInit = false;
+function toggleAIDay(day) {
+  if (aiDayOpen.has(day)) aiDayOpen.delete(day); else aiDayOpen.add(day);
+  renderAI();
+}
+
+// 보도자료 묶음 목록 — 머리글을 눌러 날짜·병원·기사 수로 정렬한다
+// 기본은 최신 날짜부터 — 어제오늘 어느 병원이 무엇을 냈는지를 가장 먼저 본다.
+// 같은 날짜 안에서는 sortPrClusters가 기사 많은 순으로 둔다
+const aiPrSort = {col: '날짜', asc: false};
+function doAIPrSort(col) {
+  if (aiPrSort.col === col) aiPrSort.asc = !aiPrSort.asc;
+  else { aiPrSort.col = col; aiPrSort.asc = col === '병원'; }
+  renderAI();
+}
+function aiPrTh(label, col, style = '') {
+  const on = aiPrSort.col === col;
+  const arrow = on ? (aiPrSort.asc ? '↑' : '↓') : '↕';
+  return `<th ${style} class="${on ? 'sorted' : ''}" onclick="doAIPrSort('${col}')"
+    title="${label} 기준 정렬">${label} <span class="si">${arrow}</span></th>`;
+}
+function sortPrClusters(list) {
+  const dir = aiPrSort.asc ? 1 : -1;
+  return [...list].sort((a, b) => {
+    if (aiPrSort.col === '병원') {
+      const c = a.label.localeCompare(b.label, 'ko') * dir;
+      // 같은 병원 안에서는 늘 기사가 많은 순 — 정렬을 바꿔도 중요한 게 위에 온다
+      return c || b.all.length - a.all.length;
+    }
+    if (aiPrSort.col === '날짜') {
+      const c = (a.all[0]['날짜'] || '').localeCompare(b.all[0]['날짜'] || '') * dir;
+      return c || b.all.length - a.all.length;
+    }
+    return (a.all.length - b.all.length) * dir;
+  });
+}
+
+// 통계 카드에서 연 기사 목록 — 카드마다 거르는 기준이 다르다
+const AI_CARD = {
+  '긍정': {label: '우리병원 긍정 기사', color: '#1a7a3c', pick: S => S.asan.filter(x => x.a.t === '긍정')},
+  '중립': {label: '우리병원 중립 기사', color: '#888',    pick: S => S.asan.filter(x => x.a.t === '중립')},
+  '부정': {label: '우리병원 부정 기사', color: '#c0392b', pick: S => S.asan.filter(x => x.a.t === '부정')},
+  '대응': {label: '대응 검토 이슈 기사', color: '#c0392b', pick: S => S.asan.filter(x => x.a.c && x.a.c !== '없음')},
+  '정책': {label: '정책 관심 기사',     color: '#6a3fb5', pick: S => S.policy},
+};
+function openAIModal(kind) {
+  const def = AI_CARD[kind];
+  if (!def || !aiData) return;
+  const list = def.pick(aiSections());
+  document.getElementById('modal-title').innerHTML =
+    `<span style="display:inline-flex;align-items:center;gap:8px">
+      <span style="width:10px;height:10px;border-radius:50%;background:${def.color};flex-shrink:0"></span>
+      ${def.label} <span style="font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted);margin-left:4px">${list.length}건</span>
+    </span>`;
+  document.getElementById('modal-table').innerHTML = !list.length
+    ? `<div style="text-align:center;padding:40px;color:var(--muted)">기사가 없습니다.</div>`
+    : `<table style="width:100%">
+        <colgroup><col style="width:118px"><col style="width:100px"><col style="min-width:420px"><col style="width:200px"></colgroup>
+        <thead><tr><th>날짜</th><th>매체</th><th>제목</th><th>AI 판정</th></tr></thead>
+        <tbody>${list.map(({r, a}) => `<tr>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap">${(r['발행일시'] || r['날짜'] || '').slice(0, 16)}</td>
+          <td style="font-size:12px;white-space:nowrap">${mediaOf(r)}</td>
+          <td>${aiTitleCell(r)}</td>
+          <td style="font-size:11px">${aiBadges(r) || '<span style="color:var(--muted)">중립</span>'}
+            ${a.sr ? `<div style="color:var(--muted);margin-top:2px">${aiEsc(a.sr)}</div>` : ''}</td>
+        </tr>`).join('')}</tbody></table>`;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// 참고점·정책 주제에서 빼는 것 — 강좌·설명회·행사 안내처럼 벤치마킹할 게 없는 단순 공지.
+// 수상·기부·채용은 넣지 않았다. '노벨상 수상자와 공동연구'·'게임사 기부로 완화의료센터 운영'처럼
+// 실제로 눈여겨볼 기사가 함께 걸린다
+const AI_TRIVIAL_RE = /건강\s*(강좌|강연|교실)|공개\s*강좌|시민\s*강좌|강좌\s*(안내|개최|운영)|무료\s*강연|단순\s*(안내|공지)|행사\s*안내|진료\s*안내|휴진/;
+function aiTrivial(phrase, r) {
+  return AI_TRIVIAL_RE.test(phrase || '') || AI_TRIVIAL_RE.test(r['제목'] || '');
+}
+// 같은 사건을 여러 매체가 쓰면 한 줄로 묶는다.
+// 겹치는 낱말 비율(자카드)로 재 봤더니 '폐암 유전자 변이 다기관 연구 성과'와
+// '폐암 관련 유전자 변이 28건 종합 연구'가 0.44로 문턱을 못 넘어 따로 남았다.
+// 드문 정도(IDF) 합으로 바꿔 봤더니 이번엔 '성과'·'다기관' 같은 빈말이 어쩌다
+// 드물게 집계돼 'SGLT2 우울증' 기사까지 폐암 묶음에 끌려왔다.
+// 그래서 빈말을 아예 빼고 남은 핵심어로만 판단한다.
+const AI_STOP = new Set(`연구 성과 사례 도입 개최 참여 발표 분석 확인 추진 기반 활용 공동 국내 최초 세계 대규모
+다기관 다학제 환자 치료 진단 수술 질환 센터 병원 의료 체계 구축 확대 강화 개선 지원 운영 협력
+제시 보고 규명 가능성 방안 필요 문제 대책 현황 통계 관리 전략 모델 기술 시스템 플랫폼 국가
+신규 기존 관련 위한 통해 대한 따른 위해 경우 일부 전체 주요 신청 개시 공개 발굴 대응 종합 논의 개편`.split(/\s+/));
+
+// '자살률'과 '자살'은 글자가 달라 안 겹친다. 뒤에 붙은 말을 떼어 같은 낱말로 만든다.
+// 조사를 먼저 뗀다 — '확대와'가 그대로 남으면 빈말 '확대'로 안 걸러져서,
+// '의대 정원 확대와 임상실습'과 '진료지원간호사 확대와 병동 인력 공백'이 한 줄이 됐다
+const AI_JOSA = /(으로서|으로|에서|에게|부터|까지|라는|와|과|의|를|을|이|가|은|는|에|로)$/;
+const AI_SUFFIX = /(률|율|화|제도|법안|대책|방안|문제|강화|확대|감축|지원|관리|개선|추진|확보|도입|제고|해소)$/;
+function aiStrip(word, re) {
+  let w = word, m;
+  while ((m = re.exec(w)) && w.length - m[0].length >= 2) w = w.slice(0, w.length - m[0].length);
+  return w;
+}
+function aiStem(word) {
+  return aiStrip(aiStrip(word, AI_JOSA), AI_SUFFIX);
+}
+const AI_STOP_LONG = [...AI_STOP].sort((a, b) => b.length - a.length);
+// 쉼표가 붙은 채로 비교하면 '데모데이,'와 '데모데이'가 다른 말이 된다
+function aiKeys(text) {
+  const out = new Set();
+  for (const w of String(text || '').split(/\s+/)) {
+    const k = aiStem(w.replace(/[^0-9A-Za-z가-힣]/g, ''));
+    if (k.length >= 2 && !AI_STOP.has(k)) out.add(k);
+  }
+  return out;
+}
+// 낱말 단위로는 '장애인 의무고용 미달'과 '장애인 고용 의무 이행'이 안 겹친다 —
+// 붙여 쓴 '의무고용'과 띄어 쓴 '의무 고용', 뒤바뀐 말 순서 때문이다.
+// 빈말을 지우고 남은 글자를 두 자씩 끊어 겹치는 비율로 본다 (짧은 쪽 기준).
+// 0.5면 위 둘은 묶이고, '간호 인력 근무 현실 개선'과 '간호·간병통합서비스 정보 공개'는
+// 0.14로 따로 남는다 — 글자 '간호'만 같을 뿐 서로 다른 사건이다
+const AI_CHAR_SIM = 0.5;
+function aiFlat(text) {
+  let t = String(text || '').replace(/[^0-9A-Za-z가-힣]/g, '');
+  for (const w of AI_STOP_LONG) t = t.split(w).join('');
+  return t;
+}
+function aiGrams(text) {
+  const t = aiFlat(text), out = new Set();
+  for (let i = 0; i + 2 <= t.length; i++) out.add(t.slice(i, i + 2));
+  return out;
+}
+function aiCharSim(a, b) {
+  const A = aiGrams(a), B = aiGrams(b);
+  if (!A.size || !B.size) return 0;
+  let hit = 0;
+  for (const g of A) if (B.has(g)) hit++;
+  return hit / Math.min(A.size, B.size);
+}
+
+// 희귀어 하나만 겹쳐도 같은 사건으로 본다 — '겨자씨키움센터'·'SFTS'·'자살'처럼
+// 그 자체가 사건을 가리키는 말. 흔한 말은 안 된다 — '국립대병원'은 49건에 나와서
+// 비급여 가격과 연구역량 격차가 한 묶음이 돼 버린다.
+// 글자 수는 보지 않는다 — '자살'(2글자)을 살리려면 필요하다. 대신 문턱을 2로 좁혔다.
+// 3으로 두면 '개편'(빈말)이 걸려 응급의료센터 지정과 전공의 수련이 한 줄이 된다
+const AI_RARE_DF = 2;
+function aiCluster(list, phraseOf, scopeOf = () => '') {
+  const df = new Map();
+  for (const x of list) for (const w of aiKeys(phraseOf(x))) df.set(w, (df.get(w) || 0) + 1);
+  const out = [];
+  for (const x of list) {
+    const k = aiKeys(phraseOf(x)), sc = scopeOf(x);
+    const hit = out.find(g => {
+      if (g.scope !== sc) return false;
+      if (aiCharSim(phraseOf(x), g.phrase) >= AI_CHAR_SIM) return true;
+      const shared = [...k].filter(w => g.keys.has(w));
+      return shared.length >= 2 || shared.some(w => df.get(w) <= AI_RARE_DF);
+    });
+    if (hit) hit.all.push(x);
+    else out.push({r: x.r, a: x.a, all: [x], keys: k, scope: sc, phrase: phraseOf(x)});
+  }
+  return out;
+}
+
+function aiMoreBadge(g) {
+  if (g.all.length < 2) return '';
+  const rest = g.all.slice(1).map(x => `${mediaOf(x.r)} · ${x.r['제목']}`).join('\n');
+  return ` <span style="font-family:var(--mono);font-size:10px;color:var(--muted)" title="${aiEsc(rest)}">+${g.all.length - 1}</span>`;
+}
+
+// ── 보도자료로 나온 기사 (추정) ────────────────────────────────────────────
+// 보도자료 목록은 우리 것밖에 없어서 타병원은 기사 모양으로 추정한다.
+// 같은 날 · 비슷한 제목 · 5건 이상 + 그중 제목에 그 병원 이름이 있는 기사가 1건 이상.
+// 마지막 조건이 없으면 대웅제약·뷰노·길리어드 같은 '기업 보도자료' 묶음이 절반을 차지한다.
+// 아산 보도자료 정답지(보도자료 게재율 탭)와 맞춰 보니 정밀도 86%,
+// 5건 이상 묶음만 놓고 본 재현율 76%였다 (2026-09-15~10-14, 정답 166건 중 126건)
+const PR_SIM = 0.35;   // 제목 글자쌍 겹침. 매체가 제목을 고쳐 써서 느슨하게 잡는다
+const PR_MIN = 5;      // 같은 날 이만큼 퍼지면 보도자료로 본다
+
+function prClusters(rows, group) {
+  const name = GROUP_NAME[group];
+  if (!name) return [];
+  const byDate = {};
+  for (const r of rows) (byDate[r['날짜']] ||= []).push(r);
+  const out = [];
+  for (const day of Object.values(byDate)) {
+    const gs = [];
+    for (const r of day) {
+      const t = r['제목'] || '';
+      const hit = gs.find(g => aiCharSim(g.title, t) >= PR_SIM);
+      if (hit) hit.all.push(r); else gs.push({title: t, all: [r], r});
+    }
+    for (const g of gs) {
+      if (g.all.length < PR_MIN) continue;
+      // 병원이 주체인지 — 묶음 안에 제목으로 병원을 밝힌 기사가 하나라도 있어야 한다
+      const owned = g.all.filter(x => name.full.test(x['제목'] || ''));
+      if (!owned.length) continue;
+      g.group = group;
+      g.title = (owned[0]['제목'] || g.title);   // 병원 이름이 들어간 제목을 대표로
+      g.date = g.all[0]['날짜'];
+      out.push(g);
+    }
+  }
+  return out;
+}
+
+function aiSections() {
+  const range = reportRange();
+  const rows = applyFilters(allData.filter(r => r['날짜'] >= range.from && r['날짜'] <= range.to));
+  const labeled = rows.map(r => ({r, a: aiOf(r)})).filter(x => x.a);
+  const asan = labeled.filter(x => x.r['병원그룹'] === '아산');
+  const byDate = (x, y) => (y.r['발행일시'] || '').localeCompare(x.r['발행일시'] || '');
+
+  const policy = labeled.filter(x => x.a.p).sort(byDate);
+  // 화면용 — 단순 공지를 빼고 같은 사건끼리 묶는다. 엑셀은 위 raw를 그대로 쓴다
+  const policyG = aiCluster(policy.filter(x => !aiTrivial(x.a.p, x.r)), x => x.a.p);
+
+  // 진료과별 노출 — 한 기사에 같은 진료과 의료진이 둘이어도 기사는 1건으로 센다
+  const depts = new Map();
+  for (const {r, a} of asan) {
+    const seen = new Set();
+    for (const [name, dept] of a.d || []) {
+      const key = dept || '진료과 미상';
+      if (!depts.has(key)) depts.set(key, {dept: key, articles: 0, people: new Map()});
+      const d = depts.get(key);
+      if (!seen.has(key)) { d.articles++; seen.add(key); }
+      d.people.set(name, (d.people.get(name) || 0) + 1);
+    }
+  }
+  const deptRows = [...depts.values()].sort((x, y) => y.articles - x.articles);
+
+  // 병원별 보도자료 추정 — 화면 필터(기간)만 반영하고 병원 필터는 쓰지 않는다
+  const prByHosp = Object.keys(GROUP_NAME).map(g => {
+    const sub = allData.filter(r => r['병원그룹'] === g && r['날짜'] >= range.from
+                                 && r['날짜'] <= range.to && !isNoise(r));
+    const cl = prClusters(sub, g);
+    return {group: g, label: HOSPITALS[Object.keys(HOSPITALS).find(k => HOSPITALS[k].group === g)]?.label || g,
+            color: HOSPITALS[Object.keys(HOSPITALS).find(k => HOSPITALS[k].group === g)]?.color || '#444',
+            releases: cl.length, articles: cl.reduce((n, g2) => n + g2.all.length, 0), clusters: cl};
+  }).sort((a, b) => b.releases - a.releases);
+
+  const issueDays = Object.keys(aiData?.['이슈'] || {})
+    .filter(d => d >= range.from && d <= range.to).sort().reverse();
+  return {range, rows, labeled, asan, policy, policyG, deptRows, issueDays, prByHosp};
+}
+
+function renderAI() {
+  const body = document.getElementById('ai-body');
+  if (!aiData) {
+    document.getElementById('stats-ai').innerHTML = '';
+    document.getElementById('result-count').textContent = '';
+    body.innerHTML = `<div style="text-align:center;padding:50px 20px;color:var(--muted);font-size:13px">
+      아직 AI 판정 결과가 없습니다. GitHub Actions의 'AI 판정 (수동)'을 한 번 돌리면 채워집니다.</div>`;
+    return;
+  }
+  const S = aiSections();
+  const tone = t => S.asan.filter(x => x.a.t === t).length;
+  const crisis = S.asan.filter(x => x.a.c && x.a.c !== '없음').length;
+  document.getElementById('result-count').textContent = `${S.labeled.length}건 판정`;
+  document.getElementById('stats-ai').innerHTML = [
+    statCard('AI 판정 기사', `${S.labeled.length}/${S.rows.length}`, '#6a3fb5'),
+    statCard('우리병원 긍정', tone('긍정'), '#1a7a3c', tone('긍정') ? "openAIModal('긍정')" : ''),
+    statCard('우리병원 중립', tone('중립'), '#888', tone('중립') ? "openAIModal('중립')" : ''),
+    statCard('우리병원 부정', tone('부정'), tone('부정') ? '#c0392b' : '#888', tone('부정') ? "openAIModal('부정')" : ''),
+    statCard('대응 검토 이슈', crisis, crisis ? '#c0392b' : '#888', crisis ? "openAIModal('대응')" : ''),
+    statCard('정책 관심 기사', S.policy.length, '#6a3fb5', S.policy.length ? "openAIModal('정책')" : ''),
+  ].join('');
+
+  const links = aiLinkMap();
+  const empty = msg => `<div style="padding:16px;color:var(--muted);font-size:12px">${msg}</div>`;
+  const section = (key, title, count, desc, inner) => {
+    const open = !!aiSectionOpen[key];
+    return `<div class="ai-section">
+      <h2 onclick="toggleAISection('${key}')" title="${open ? '접기' : '펼치기'}">
+        <span class="caret">${open ? '▼' : '▶'}</span>${title}<span class="cnt">${count}</span></h2>
+      ${open ? `<div class="ai-desc">${desc}</div>${inner}` : ''}
+    </div>`;
+  };
+
+  // 첫 렌더에서 가장 최근 날짜만 펼쳐 둔다. 그 뒤로는 사용자가 연 것을 그대로 둔다
+  if (!aiDayInit && S.issueDays.length) { aiDayOpen.add(S.issueDays[0]); aiDayInit = true; }
+  const issues = S.issueDays.length ? S.issueDays.map(day => {
+    const it = aiData['이슈'][day];
+    const open = aiDayOpen.has(day);
+    const head = `<div class="ai-day" onclick="toggleAIDay('${day}')">
+      <span class="caret">${open ? '▾' : '▸'}</span>${day} (${pressWeekday(day)}) · 기사 ${it['기사수']}건
+      ${open ? '' : `<span style="color:var(--muted)">· 이슈 ${(it['이슈'] || []).length}개</span>`}</div>`;
+    if (!open) return head;
+    return head +
+      (it['이슈'] || []).map(iss => {
+        const arts = iss['기사'].map(l => links.get(l)).filter(Boolean);
+        return `<div class="ai-issue"><h3>${aiEsc(iss['제목'])}</h3><p>${aiEsc(iss['요약'])}</p>
+          <details><summary>기사 ${arts.length}건 보기</summary><ul>${arts.map(r =>
+            `<li>${aiTitleCell(r)} <span style="color:var(--muted);font-size:11px">${mediaOf(r)}</span></li>`).join('')}</ul></details></div>`;
+      }).join('');
+  }).join('') : empty('이 기간에 만든 이슈 요약이 없습니다.');
+
+  // 주제가 곧 요약이라 기사 제목은 따로 두지 않는다 — 주제를 누르면 기사로 간다
+  const policyTable = !S.policyG.length ? empty('이 기간에 정책 관심 기사로 분류된 기사가 없습니다.') : `<div class="table-wrap"><table>
+    <thead><tr><th class="nosort" style="width:62px">날짜</th><th class="nosort" style="width:92px">분야</th>
+      <th class="nosort">주제</th><th class="nosort" style="width:104px">병원</th></tr></thead>
+    <tbody>${S.policyG.slice(0, 60).map(g => `<tr>
+      <td class="td-date">${mdOf(g.r)}</td>
+      <td style="font-size:12px;white-space:nowrap;color:var(--muted)">${aiEsc(g.a.pa) || '—'}</td>
+      <td style="font-size:12px;font-weight:600"><a href="${g.r['언론사원문'] || g.r['네이버링크'] || '#'}" target="_blank" rel="noopener"
+        style="color:#6a3fb5" title="${aiEsc(g.r['제목'])}">${aiEsc(g.a.p)}</a>${aiMoreBadge(g)}</td>
+      <td style="font-size:12px;white-space:nowrap">${hospLabel(g.r)}</td></tr>`).join('')}</tbody></table></div>`
+    + (S.policyG.length > 60 ? empty(`${S.policyG.length}개 주제 중 60개만 표시했습니다 (전체 ${S.policy.length}건은 엑셀로 받으세요).`) : '');
+
+  const deptTable = !S.deptRows.length ? empty('이 기간에 의료진이 나온 기사가 없습니다.') : `<div class="table-wrap"><table>
+    <thead><tr><th class="nosort">진료과</th><th class="nosort" style="width:80px">기사 수</th><th class="nosort">의료진 (기사 수)</th></tr></thead>
+    <tbody>${S.deptRows.map(d => `<tr>
+      <td style="font-weight:600;white-space:nowrap">${aiEsc(d.dept)}</td>
+      <td style="font-family:var(--mono)">${d.articles}</td>
+      <td style="font-size:12px;color:#1a5fa8">${[...d.people].sort((x, y) => y[1] - x[1]).map(([n, c]) => `${aiEsc(n)}(${c})`).join(', ')}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+
+  // 병원별 보도자료 기사 (추정)
+  const prTotal = S.prByHosp.reduce((n, h) => n + h.articles, 0);
+  const prMax = Math.max(...S.prByHosp.map(h => h.releases), 1);
+  const prTable = !prTotal ? empty('이 기간에 보도자료로 보이는 기사 묶음이 없습니다.') : `<div class="table-wrap"><table>
+    <thead><tr><th class="nosort">병원</th><th class="nosort" style="width:86px">보도자료</th>
+      <th class="nosort" style="width:160px">많이 낸 순서</th>
+      <th class="nosort" style="width:78px">기사</th><th class="nosort" style="width:96px">건당 기사</th></tr></thead>
+    <tbody>${S.prByHosp.map(h => `<tr>
+      <td class="td-tag"><span class="tag" style="background:${h.color}22;color:${h.color};font-weight:600">${h.label}</span></td>
+      <td style="font-family:var(--mono);font-size:15px;font-weight:600;color:${h.color}">${h.releases}</td>
+      <td><div class="rank-bar-wrap"><div class="rank-bar-bg"><div class="rank-bar-fill"
+        style="width:${Math.round(h.releases / prMax * 100)}%;background:${h.color}"></div></div></div></td>
+      <td style="font-family:var(--mono);font-size:13px">${h.articles}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--muted)">${h.releases ? (h.articles / h.releases).toFixed(1) : '—'}</td>
+    </tr>`).join('')}</tbody></table></div>` + (() => {
+      const all = sortPrClusters(S.prByHosp.flatMap(h =>
+        h.clusters.map(c => ({...c, color: h.color, label: h.label})))).slice(0, 30);
+      return `<div class="table-wrap" style="margin-top:10px"><table>
+        <thead><tr>${aiPrTh('날짜', '날짜', 'style="width:70px"')}${aiPrTh('병원', '병원', 'style="width:110px"')}
+          <th class="nosort">보도자료로 보이는 기사</th>${aiPrTh('기사', '기사', 'style="width:72px"')}</tr></thead>
+        <tbody>${all.map(c => `<tr>
+          <td class="td-date">${mdOf(c.all[0])}</td>
+          <td class="td-tag"><span class="tag" style="background:${c.color}22;color:${c.color};font-weight:600">${c.label}</span></td>
+          <td style="font-size:12px;font-weight:600">${aiTitleCell(c.all.find(x => (x['제목'] || '').length) || c.all[0])}</td>
+          <td style="font-family:var(--mono);font-size:13px">${c.all.length}</td></tr>`).join('')}</tbody></table></div>`;
+    })();
+
+  body.innerHTML =
+    `<div style="font-size:12px;color:var(--muted);font-family:var(--mono)">기간: ${S.range.label}${S.range.isDefault ? ' (기간 미설정 시 최근 7일)' : ''}</div>` +
+    (aiData['실행'] ? `<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:14px">마지막 AI 판정: ${aiData['실행']['시각']} · ${aiData['실행']['모델']}</div>` : '<div style="margin-bottom:14px"></div>') +
+    section('issues', '📰 오늘의 이슈', `${S.issueDays.length}일`, '그날 나온 서울아산병원 기사를 같은 사건끼리 묶어 AI가 고른 주요 이슈입니다.', issues) +
+    section('policy', '🏛️ 정책 관심 기사', `주제 ${S.policyG.length}개 · 기사 ${S.policy.length}건`, '수가·의대 정원·전공의·상급종합병원 구조전환처럼 병원 운영에 영향을 줄 정책 기사입니다 (모든 병원 기사 대상). 비슷한 주제는 한 줄로 묶고 <b>+N</b>으로 셉니다. 주제를 누르면 기사로 갑니다.', policyTable) +
+    section('pr', '📣 보도자료로 나온 기사 (추정)', `${S.prByHosp.reduce((n, h) => n + h.releases, 0)}건 · 기사 ${prTotal}건`,
+      '보도자료 목록은 우리 것밖에 없어서, <b>같은 날 비슷한 제목 기사가 5건 이상</b> 나왔고 그중 하나라도 제목에 그 병원 이름이 있으면 보도자료로 봤습니다. 아산 보도자료 정답지와 맞춰 보니 <b>정밀도 86%</b>였습니다. 게재가 적었던 보도자료는 빠지므로 실제보다 적게 잡힙니다.', prTable) +
+    section('dept', '🩺 진료과별 언론 노출', `${S.deptRows.length}개 진료과`, '서울아산병원 기사에 이름이 나온 의료진을 진료과별로 모았습니다.', deptTable) +
+    '';
+}
+
+function downloadAIExcel() {
+  const S = aiSections();
+  const wb = XLSX.utils.book_new();
+  const sheet = (name, rows, cols) => {
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = cols.map(wch => ({wch}));
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  };
+  const link = r => r['언론사원문'] || r['네이버링크'] || '';
+  sheet('전체 판정', [['날짜', '병원', '매체', '제목', '논조', '위기', '정책 주제', '정책 분야', 'AI 실적', '실적 근거', '의료진', '타병원 참고점', '링크'],
+    ...S.labeled.map(({r, a}) => [r['날짜'], hospLabel(r), mediaOf(r), r['제목'], a.t || '', a.c || '', a.p || '', a.pa || '',
+      a.s || '', a.sr || '', (a.d || []).map(([n, d]) => d ? `${n}(${d})` : n).join(', '), a.b || '', link(r)])],
+    [11, 12, 12, 60, 6, 12, 18, 12, 8, 30, 30, 30, 50]);
+  sheet('정책 관심', [['날짜', '분야', '주제', '병원', '매체', '제목', '링크'],
+    ...S.policy.map(({r, a}) => [r['날짜'], a.pa || '', a.p, hospLabel(r), mediaOf(r), r['제목'], link(r)])],
+    [11, 12, 18, 12, 12, 60, 50]);
+  sheet('진료과별 노출', [['진료과', '기사 수', '의료진'],
+    ...S.deptRows.map(d => [d.dept, d.articles, [...d.people].map(([n, c]) => `${n}(${c})`).join(', ')])],
+    [18, 8, 80]);
+  const links = aiLinkMap();
+  sheet('오늘의 이슈', [['날짜', '이슈', '요약', '기사 수', '기사'],
+    ...S.issueDays.flatMap(day => (aiData['이슈'][day]['이슈'] || []).map(iss => [day, iss['제목'], iss['요약'], iss['기사'].length,
+      iss['기사'].map(l => links.get(l)?.['제목'] || l).join(' / ')]))],
+    [11, 24, 60, 8, 80]);
+  XLSX.writeFile(wb, `AI_분석_${S.range.from}_${S.range.to}.xlsx`);
 }
 
 // ── 공통 테이블 렌더 ──────────────────────────────────────────────────────────
@@ -1496,7 +2114,6 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
     <thead><tr>
       ${sortTh(panelKey,'날짜','발행일시')}
       ${panelKey!=='ours'?'<th class="nosort">병원</th>':''}
-      ${panelKey==='paper'?'':'<th class="nosort">키워드</th>'}
       ${sortTh(panelKey,'매체','매체')}
       ${panelKey==='paper'?sortTh('paper','면','지면'):''}
       <th class="nosort">제목</th>
@@ -1520,10 +2137,9 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
       return `<tr>
         <td class="td-date">${displayDate}</td>
         ${panelKey!=='ours'?`<td class="td-tag"><span class="tag" style="background:${color}22;color:${color};font-weight:600">${HOSPITALS[hKey]?.label||r['병원그룹']}</span></td>`:''}
-        ${paperView?'':`<td class="td-tag"><span style="font-size:12px;color:var(--muted)">${r['검색어']||''}</span></td>`}
         <td class="td-media">${media}${!paperView&&hasPaper(r)?`<span class="badge-paper">${r['지면']}</span>`:''}</td>
         ${paperView?`<td class="td-media"><span class="badge-paper" style="margin-left:0">${r['지면']}</span></td>`:''}
-        <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}</td>
+        <td class="td-title">${link?`<a href="${link}" target="_blank" rel="noopener">${r['제목']}</a>`:r['제목']}${aiBadges(r)}</td>
         <td class="td-reporter">${reporterCell(r)}</td>
         <td style="font-size:12px;color:#1a5fa8;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:${prof?'600':'400'}">${prof||'—'}</td>
         ${paperView?'':`<td class="td-summary">${snippetAround(r['요약']||'', r['병원그룹'])}</td>`}
@@ -1533,17 +2149,37 @@ function renderTable(id, rows, page, panelKey, defaultColor) {
 }
 
 // ── 비교 탭 렌더 ──────────────────────────────────────────────────────────────
+// 비교 탭도 기본은 최근 30일. 수집이 125일치라 전체를 세면 지금 누가 앞서는지 묻힌다
+let compareAll = false;
+function setComparePeriod(all) { compareAll = all; renderCompare(); }
+
 function getCompareData() {
-  const from = document.getElementById('compare-date-from').value;
-  const to = document.getElementById('compare-date-to').value;
-  let data = allData.filter(r => {
+  let from = document.getElementById('compare-date-from').value;
+  let to = document.getElementById('compare-date-to').value;
+  const picked = !!(from || to);
+  let label;
+  if (picked) {                      // 날짜를 직접 정했으면 그것을 따른다
+    label = `${from || '처음'} ~ ${to || '마지막'}`;
+  } else if (compareAll) {
+    label = '전체 기간';
+  } else {
+    const d = new Date();
+    d.setDate(d.getDate() - (SUMMARY_DAYS - 1));
+    from = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    label = `최근 ${SUMMARY_DAYS}일`;
+  }
+  const data = allData.filter(r => {
     if (isNoise(r)) return false;
     if (from && r['날짜'] < from) return false;
     if (to && r['날짜'] > to) return false;
     return true;
   });
-  const label = document.getElementById('compare-period-label');
-  label.textContent = (from || to) ? `${from || '~'} ~ ${to || '~'} (${data.length}건)` : '';
+  // 날짜를 직접 정하면 버튼은 꺼 둔다 — 눌러도 그 날짜가 이기므로 오해를 부른다
+  for (const [id, on] of [['cmp-30', !picked && !compareAll], ['cmp-all', !picked && compareAll]]) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.toggle('on', on); el.disabled = picked; el.style.opacity = picked ? .45 : 1; }
+  }
+  document.getElementById('compare-period-label').textContent = `${label} · ${data.length.toLocaleString()}건`;
   return data;
 }
 
@@ -1630,8 +2266,10 @@ function renderCompare() {
 }
 
 // ── 유틸 ─────────────────────────────────────────────────────────────────────
-function statCard(label, value, color) {
-  return `<div class="stat-card"><div class="label">${label}</div><div class="value" style="color:${color}">${typeof value==='number'?value.toLocaleString():value}</div></div>`;
+function statCard(label, value, color, onclick = '') {
+  const v = typeof value === 'number' ? value.toLocaleString() : value;
+  return `<div class="stat-card${onclick ? ' clickable' : ''}"${onclick ? ` onclick="${onclick}" title="눌러서 기사 목록 보기"` : ''}>
+    <div class="label">${label}</div><div class="value" style="color:${color}">${v}</div></div>`;
 }
 
 function sortRows(rows, state) {
@@ -1687,7 +2325,7 @@ function onFilterChange() {
   renderCurrent();
 }
 
-['date-from','date-to','keyword-filter','beat-only','hide-suspect','press-zero-only'].forEach(id =>
+['date-from','date-to','keyword-filter','beat-only','hide-suspect','hide-ai-out','press-zero-only'].forEach(id =>
   document.getElementById(id).addEventListener('change', onFilterChange));
 document.getElementById('search-input').addEventListener('input', onFilterChange);
 
@@ -1772,6 +2410,7 @@ function downloadCurrent() {
   if (currentTab === 'paper')  return downloadPaperExcel();
   if (currentTab === 'report') return downloadReportExcel();
   if (currentTab === 'press')  return downloadPressExcel();
+  if (currentTab === 'ai')     return downloadAIExcel();
   downloadExcel();
 }
 

@@ -340,6 +340,10 @@ OTHER_ASAN_RE = re.compile(r"강릉아산병원|정선아산병원|보성아산�
 PHARMA_RE = re.compile(r"유한양행|대웅제약|한미약품|종근당|녹십자|제일약품|동아에스티|JW중외제약|셀트리온"
                        r"|HK이노엔|일동제약|삼일제약|보령제약|광동제약|휴젤|메디톡스|온코닉|시지바이오"
                        r"|아스트라제네카|로슈|화이자|MSD|노바티스|길리어드|애브비|베링거|암젠|사노피|얀센")
+# 의료 AI·진단 기업이 주체인 기사 — 제약사와 달리 '교수 코멘트' 예외를 두지 않는다.
+# 에이아이트릭스 대표가 세브란스병원 교수라, 예외를 두면 회사 경영 기사까지 남는다.
+# 화면 쪽 VENDOR_RE에도 같은 목록이 있다
+VENDOR_RE = re.compile(r"에이아이트릭스")
 HOSP_NAME_RE = re.compile(r"아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원")
 HOSP_PROF_RE = re.compile(r"(아산병원|삼성서울병원|세브란스|서울대병원|서울대학교병원|서울성모병원|연세암병원)[^.]{0,40}교수")
 # 분원 기사 — 본원 이름이 함께 나오지 않으면 그 분원 기사로 본다
@@ -349,6 +353,37 @@ BRANCH_RULES = [
     # 원주세브란스기독병원 — 연세대 원주캠퍼스 소속 별개 병원. 원주 지역 기사가 대량으로 딸려 온다
     (re.compile(r"원주세브란스|세브란스기독병원"), "세브란스병원"),
 ]
+
+
+# 다른 병원이 제목의 주인공인 기사 — 네이버가 '서울대학교병원'을 '서울대학교'+'병원'으로
+# 쪼개 찾는 탓에 서울성모병원·순천향대 기사가 서울대 기사로 딸려 온다.
+# 화면 쪽 isOtherHospitalStory()에도 같은 규칙이 있다
+OTHER_HOSP_RE = re.compile(
+    r"순천향|고려대학교병원|고대안암|고대구로|한양대병원|중앙대병원|건국대병원|경희대병원"
+    r"|이대목동|이대서울|가천대길병원|아주대병원|인하대병원|단국대병원|원광대병원|조선대병원"
+    r"|전남대병원|전북대병원|충남대병원|충북대병원|경북대병원|부산대병원|강원대병원|제주대병원"
+    r"|차병원|국립암센터|국립중앙의료원|백병원|강북삼성병원|한림대성심|명지병원|제생병원"
+    r"|양지병원|을지대병원|동아대병원")
+# loose는 공동연구로 이름만 올린 경우를 살리기 위한 것 —
+# '아주대병원·서울대, 체내 분해형 무선 전자약 개발'처럼 제목에 우리 약칭이 있으면 남긴다
+GROUP_NAME = {
+    "아산":    (re.compile(r"서울아산병원|아산병원|아산사회복지재단"), re.compile(r"아산|울산대")),
+    "삼성":    (re.compile(r"삼성서울병원"),                       re.compile(r"삼성|성균관")),
+    "세브란스": (re.compile(r"세브란스|연세암병원"),                  re.compile(r"세브란스|연세")),
+    "서울대":  (re.compile(r"서울대병원|서울대학교병원"),              re.compile(r"서울대|서울의대")),
+    "성모":    (re.compile(r"서울성모병원"),                       re.compile(r"성모|가톨릭")),
+}
+
+
+def is_other_hospital_story(group: str, title: str, combined: str) -> bool:
+    pair = GROUP_NAME.get(group)
+    if not pair:
+        return False
+    full, loose = pair
+    if full.search(combined) or loose.search(title):
+        return False
+    return bool(OTHER_HOSP_RE.search(title)) or any(
+        f.search(title) for k, (f, _) in GROUP_NAME.items() if k != group)
 
 
 def is_branch_article(title: str, combined: str) -> bool:
@@ -365,8 +400,11 @@ def keep_foundation(title: str, summary: str = "") -> bool:
     return any(k in combined for k in FOUNDATION_TOPICS)
 
 
-def is_excluded(title: str, summary: str = "") -> bool:
+def is_excluded(title: str, summary: str = "", group: str = "") -> bool:
     combined = title + " " + summary
+    # 다른 병원이 주인공인 기사 (병원그룹을 알 때만 판정한다)
+    if group and is_other_hospital_story(group, title, combined):
+        return True
     # 연예인·팬덤 생일 기부 — 아이돌 이름을 하나씩 막으면 새 그룹이 나올 때마다 또 샌다.
     # 화면 쪽 isNoise()에도 같은 규칙이 있다
     if "생일" in combined and re.search(r"기부|기탁|후원|성금|쾌척", combined):
@@ -381,6 +419,9 @@ def is_excluded(title: str, summary: str = "") -> bool:
     # 병원이 스쳐 지나갈 뿐이다. 교수가 나오는 기사는 실적에 잡히므로 남긴다
     if (PHARMA_RE.search(combined) and not HOSP_NAME_RE.search(title)
             and not HOSP_PROF_RE.search(combined)):
+        return True
+    # 의료 AI·진단 기업 — 교수 코멘트 예외 없이, 제목에 병원 이름이 없으면 뺀다
+    if VENDOR_RE.search(combined) and not HOSP_NAME_RE.search(title):
         return True
     if is_branch_article(title, combined):
         return True
@@ -397,7 +438,7 @@ def title_key(title):
     t = re.sub(r"[^\w가-힣a-zA-Z0-9]", "", title)
     return t.lower()[:30]
 
-def collect_news(query):
+def collect_news(query, group=""):
     collected, now = [], datetime.now(KST)
     for start in range(1, 1001, 100):
         try:
@@ -421,7 +462,7 @@ def collect_news(query):
                 summ  = clean_text(item.get("description",""))
                 if query == FOUNDATION_QUERY and not keep_foundation(title, summ):
                     continue
-                if not is_excluded(title, summ):
+                if not is_excluded(title, summ, group):
                     orig  = item.get("originallink","")
                     naver = item.get("link","")
                     # 제외 매체 체크
@@ -472,7 +513,7 @@ def collect_all():
     for group, queries in HOSPITAL_QUERIES.items():
         group_count = 0
         for query in queries:
-            news = collect_news(query)
+            news = collect_news(query, group)
             added = 0
             for item in news:
                 url_key = item["언론사원문"] or item["네이버링크"]

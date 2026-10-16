@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-16 07:27",
-  "전체기사": 22754,
+  "실행시각": "2026-10-16 10:18",
+  "전체기사": 22764,
   "지면": {
-    "대상": 87,
-    "요청": 81,
-    "게재확인": 5,
-    "미게재": 82,
+    "대상": 83,
+    "요청": 78,
+    "게재확인": 0,
+    "미게재": 83,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 794,
-    "요청": 465,
-    "채움": 153,
-    "이름없음": 10,
-    "오류": 71,
-    "차단호스트": 6,
-    "네이버바이라인없음": 225,
+    "대상": 643,
+    "요청": 268,
+    "채움": 15,
+    "이름없음": 2,
+    "오류": 89,
+    "차단호스트": 5,
+    "네이버바이라인없음": 156,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/215/0001269281",
-      "길이": 274770,
-      "title": "송도 11공구  ‘송도 대광로제비앙 모아엘가' 11월 선봬",
+      "url": "https://n.news.naver.com/mnews/article/449/0000364205",
+      "길이": 288365,
+      "title": "[현장 카메라]승객 농락하는 ‘빈차’ 택시…다가가면 ‘예약’",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 631
+    "남은대상": 626
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 535,
-    "표시기사": 4062
+    "표시기사": 4065
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

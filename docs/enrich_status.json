@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-10-17 07:08",
-  "전체기사": 22955,
+  "실행시각": "2026-10-17 10:17",
+  "전체기사": 22963,
   "지면": {
-    "대상": 69,
-    "요청": 74,
-    "게재확인": 5,
+    "대상": 64,
+    "요청": 69,
+    "게재확인": 0,
     "미게재": 64,
     "오류": 0
   },
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 828,
-    "요청": 440,
-    "채움": 171,
-    "이름없음": 12,
-    "오류": 77,
+    "대상": 655,
+    "요청": 301,
+    "채움": 14,
+    "이름없음": 2,
+    "오류": 87,
     "차단호스트": 5,
-    "네이버바이라인없음": 175,
+    "네이버바이라인없음": 193,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009232633",
-      "길이": 244430,
-      "title": "[국감] 답변하는 백남종 서울대학교병원장",
+      "url": "https://n.news.naver.com/mnews/article/421/0009232894",
+      "길이": 246696,
+      "title": "'제자 강제추행' 전 경기대 총장, 교육위 동행명령에도 불출석(종합)",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 645
+    "남은대상": 639
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 535,
-    "표시기사": 4096
+    "표시기사": 4100
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

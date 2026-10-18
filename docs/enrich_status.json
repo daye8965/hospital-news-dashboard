@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-18 10:00",
-  "전체기사": 23006,
+  "실행시각": "2026-10-19 06:35",
+  "전체기사": 23047,
   "지면": {
-    "대상": 57,
-    "요청": 59,
-    "게재확인": 0,
-    "미게재": 57,
+    "대상": 55,
+    "요청": 56,
+    "게재확인": 2,
+    "미게재": 53,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,29 +14,28 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 643,
-    "요청": 343,
-    "채움": 2,
-    "이름없음": 0,
-    "오류": 88,
-    "차단호스트": 5,
-    "네이버바이라인없음": 247,
+    "대상": 683,
+    "요청": 529,
+    "채움": 34,
+    "이름없음": 8,
+    "오류": 78,
+    "차단호스트": 6,
+    "네이버바이라인없음": 402,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009232894",
-      "길이": 246925,
-      "title": "'제자 강제추행' 전 경기대 총장, 교육위 동행명령에도 불출석(종합)",
+      "url": "https://n.news.naver.com/mnews/article/421/0009234841",
+      "길이": 263111,
+      "title": "가을비에 서울 곳곳 침수, 교통통제…폭우 피해 129건(종합2보)",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
-    "시간초과": true,
     "남은대상": 641
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 535,
-    "표시기사": 4107
+    "표시기사": 4113
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

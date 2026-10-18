@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-10-18 06:31",
-  "전체기사": 23005,
+  "실행시각": "2026-10-18 10:00",
+  "전체기사": 23006,
   "지면": {
-    "대상": 61,
-    "요청": 62,
-    "게재확인": 4,
+    "대상": 57,
+    "요청": 59,
+    "게재확인": 0,
     "미게재": 57,
     "오류": 0
   },
@@ -14,24 +14,24 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 691,
-    "요청": 462,
-    "채움": 45,
-    "이름없음": 4,
-    "오류": 80,
-    "차단호스트": 6,
-    "네이버바이라인없음": 326,
+    "대상": 643,
+    "요청": 343,
+    "채움": 2,
+    "이름없음": 0,
+    "오류": 88,
+    "차단호스트": 5,
+    "네이버바이라인없음": 247,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/020/0003755651",
-      "길이": 277667,
-      "title": "‘만병의 근원’ 미세 염증… 앉아 있는 시간을 줄여라[베스트 닥터의 베스트 건강법]",
+      "url": "https://n.news.naver.com/mnews/article/421/0009232894",
+      "길이": 246925,
+      "title": "'제자 강제추행' 전 경기대 총장, 교육위 동행명령에도 불출석(종합)",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 642
+    "남은대상": 641
   },
   "출입기자": {
     "결과": "대조 완료",

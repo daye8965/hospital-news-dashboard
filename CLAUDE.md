@@ -61,7 +61,21 @@ const IS_DEV = false;   // dev 저장소에서는 true
 | `docs/enrich_status.json` | 보강 진행 상태 |
 | `paper_manual.csv` | 지면을 손으로 지정하는 목록. 여기는 **사람이 직접 적는 파일** |
 | `.github/workflows/naver_news.yml` | 수집 + 보강 자동화 |
+| `ai_classify.py` | Claude 경량 모델로 기사 판정 → `docs/ai_labels.json` |
+| `docs/ai_labels.json` | AI 판정 결과. `ai_classify.py`만 씀 |
 | `.github/workflows/enrich.yml` | 보강 단독 실행용 (평소엔 수집 워크플로 안에서 같이 돌아감) |
+| `.github/workflows/ai_classify.yml` | AI 판정 단독 실행용 (과거분 채울 때) |
+
+## 내려받는 엑셀 서식
+
+2026-10-19부터 모든 시트가 **나눔고딕 9pt·가운데 정렬**입니다. 머리글만 굵게 + 연한 바탕(`F2F2F0`)이고,
+`XL_LEFT`에 적힌 긴 글 열(보도내용·제목·링크·요약 등)만 왼쪽 정렬입니다.
+
+- **시트를 새로 붙일 때는 `XLSX.utils.book_append_sheet`를 직접 부르지 말고 `addSheet()`를 쓰세요.**
+  그 안의 `styleSheet()`가 서식을 입힙니다. 직접 부르면 그 시트만 서식 없이 나갑니다.
+- 보고용 엑셀의 **매체 열에는 면 번호를 붙이지 않습니다** — 실적 양식의 매체명과 글자가 그대로
+  맞아야 붙여넣기가 됩니다(화면에는 `A17면` 배지가 그대로 보입니다).
+- **타병원 신문 시트는 `병원`이 첫 열**입니다 — 병원별로 훑어 내려가는 쓰임이라서입니다.
 
 ## 손대면 안 되는 것들 (요약)
 
@@ -79,8 +93,12 @@ const IS_DEV = false;   // dev 저장소에서는 true
   `FOUNDATION_TOPICS`의 `복지`·`재단`·`사회`(`아산사회복지재단`에 들어 있어 조건이 무력해짐).
 - **연예인·팬덤 생일 기부**는 이름 대신 `생일` + `기부·기탁·후원·성금·쾌척` 조합으로 거릅니다.
   아이돌 이름을 하나씩 막으면 새 그룹이 나올 때마다 또 새기 때문입니다.
-- `docs/news.csv`의 헤더 순서는 고정입니다. `clean_csv.py`의 `NEW_FIELDNAMES`에서 보강 열 4개가
-  빠지면 매 실행마다 지워집니다.
+- `docs/news.csv`의 헤더 순서는 고정입니다. `clean_csv.py`의 `NEW_FIELDNAMES`에서 보강 열 3개
+  (`기자명`·`지면`·`출입기자`)가 빠지면 매 실행마다 지워집니다.
+- **엑셀 라이브러리를 `cdnjs`의 SheetJS로 되돌리면 안 됩니다.** 무료판 SheetJS는 글꼴·정렬을
+  **저장하지 못합니다** — 셀에 `s`를 넣어도 파일에 안 들어가고, 오류도 없이 서식만 조용히 사라집니다.
+  지금은 같은 API에 서식만 더한 갈래(`xlsx-js-style`, jsDelivr)를 씁니다. 전역 이름(`XLSX`)이
+  같아 호출부는 그대로입니다.
 
 ## 데이터
 

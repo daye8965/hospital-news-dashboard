@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-10-19 06:35",
+  "실행시각": "2026-10-19 10:13",
   "전체기사": 23047,
   "지면": {
-    "대상": 55,
-    "요청": 56,
-    "게재확인": 2,
+    "대상": 53,
+    "요청": 54,
+    "게재확인": 0,
     "미게재": 53,
     "오류": 0
   },
@@ -14,22 +14,23 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 683,
-    "요청": 529,
-    "채움": 34,
-    "이름없음": 8,
-    "오류": 78,
-    "차단호스트": 6,
-    "네이버바이라인없음": 402,
+    "대상": 642,
+    "요청": 220,
+    "채움": 1,
+    "이름없음": 0,
+    "오류": 93,
+    "차단호스트": 5,
+    "네이버바이라인없음": 121,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009234841",
-      "길이": 263111,
-      "title": "가을비에 서울 곳곳 침수, 교통통제…폭우 피해 129건(종합2보)",
+      "url": "https://n.news.naver.com/mnews/article/421/0009234003",
+      "길이": 251855,
+      "title": "[100세건강] 갑자기 픽 쓰러진다면…공황·뇌전증 아닌 이것일 수도",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
+    "시간초과": true,
     "남은대상": 641
   },
   "출입기자": {

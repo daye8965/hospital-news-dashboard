@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-23 10:28",
-  "전체기사": 24077,
+  "실행시각": "2026-10-24 07:21",
+  "전체기사": 24223,
   "지면": {
-    "대상": 104,
+    "대상": 113,
     "요청": 78,
-    "게재확인": 0,
-    "미게재": 104,
+    "게재확인": 4,
+    "미게재": 109,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 691,
-    "요청": 329,
-    "채움": 23,
-    "이름없음": 6,
-    "오류": 83,
+    "대상": 828,
+    "요청": 458,
+    "채움": 144,
+    "이름없음": 14,
+    "오류": 74,
     "차단호스트": 5,
-    "네이버바이라인없음": 211,
+    "네이버바이라인없음": 221,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009244244",
-      "길이": 262154,
-      "title": "뮤지컬부터 거리공연까지…종로 대학로서 '차 없는 거리 축제'",
+      "url": "https://n.news.naver.com/mnews/article/421/0009247054",
+      "길이": 250871,
+      "title": "한독·가정의학회, 일차의료학술상에 김영식 원장 선정",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 662
+    "남은대상": 670
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 535,
-    "표시기사": 4243
+    "표시기사": 4282
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

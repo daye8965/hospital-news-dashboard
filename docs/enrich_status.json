@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-10-25 06:40",
+  "실행시각": "2026-10-25 10:07",
   "전체기사": 24264,
   "지면": {
-    "대상": 97,
+    "대상": 95,
     "요청": 71,
-    "게재확인": 2,
+    "게재확인": 0,
     "미게재": 95,
     "오류": 0
   },
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 713,
-    "요청": 418,
-    "채움": 32,
-    "이름없음": 5,
-    "오류": 86,
-    "차단호스트": 6,
-    "네이버바이라인없음": 289,
+    "대상": 676,
+    "요청": 294,
+    "채움": 5,
+    "이름없음": 0,
+    "오류": 91,
+    "차단호스트": 5,
+    "네이버바이라인없음": 193,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/011/0004674718",
-      "길이": 277114,
-      "title": "“살 빠졌다고 좋아했는데”…노년에 찾아오는 ‘사망률 3배’ 섬뜩한 신호 [헬시타임]",
+      "url": "https://n.news.naver.com/mnews/article/421/0009245813",
+      "길이": 261764,
+      "title": "대전대 서울한방병원 개원 7주년 맞아 지역사회 교류회 개최",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 676
+    "남은대상": 671
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 535,
-    "표시기사": 4290
+    "표시기사": 4292
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

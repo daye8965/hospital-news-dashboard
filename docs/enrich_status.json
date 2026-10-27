@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-10-27 08:10",
-  "전체기사": 24731,
+  "실행시각": "2026-10-27 11:03",
+  "전체기사": 24734,
   "지면": {
-    "대상": 80,
-    "요청": 75,
-    "게재확인": 7,
+    "대상": 73,
+    "요청": 72,
+    "게재확인": 0,
     "미게재": 73,
     "오류": 0
   },
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 942,
-    "요청": 502,
-    "채움": 222,
-    "이름없음": 13,
-    "오류": 70,
+    "대상": 711,
+    "요청": 315,
+    "채움": 9,
+    "이름없음": 1,
+    "오류": 89,
     "차단호스트": 6,
-    "네이버바이라인없음": 191,
+    "네이버바이라인없음": 210,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009249238",
-      "길이": 251835,
-      "title": "희귀 콩팥병 '기텔만 증후군'…유전자 가위로 기능 회복 가능성",
+      "url": "https://n.news.naver.com/mnews/article/421/0009250197",
+      "길이": 250907,
+      "title": "닳은 무릎 연골 되살릴까…입셀, 줄기세포 후보물질 30명에 투여",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 707
+    "남은대상": 701
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 536,
-    "표시기사": 4351
+    "표시기사": 4353
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

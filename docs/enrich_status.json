@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-28 11:12",
-  "전체기사": 24998,
+  "실행시각": "2026-10-29 08:19",
+  "전체기사": 25208,
   "지면": {
-    "대상": 82,
-    "요청": 67,
-    "게재확인": 0,
-    "미게재": 82,
+    "대상": 114,
+    "요청": 81,
+    "게재확인": 11,
+    "미게재": 103,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,29 +14,29 @@
     "이번에바뀐행": 0
   },
   "기자명": {
-    "대상": 710,
-    "요청": 323,
-    "채움": 6,
-    "이름없음": 2,
-    "오류": 88,
+    "대상": 917,
+    "요청": 517,
+    "채움": 184,
+    "이름없음": 18,
+    "오류": 71,
     "차단호스트": 5,
-    "네이버바이라인없음": 222,
+    "네이버바이라인없음": 238,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009253594",
-      "길이": 252017,
-      "title": "\"간호사 1명이 환자 13명 돌봤다\"…서울대병원 노조, 28일 파업",
+      "url": "https://n.news.naver.com/mnews/article/005/0001881497",
+      "길이": 258687,
+      "title": "[특별 기고] 암 생긴 뒤에야 건보 인정 ‘유방 예방 수술’, 이제 다시 논의할 때다",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 702
+    "남은대상": 715
   },
   "출입기자": {
     "결과": "대조 완료",
-    "명단인원": 537,
-    "표시기사": 4421
+    "명단인원": 538,
+    "표시기사": 4525
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

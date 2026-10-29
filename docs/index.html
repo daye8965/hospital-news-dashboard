@@ -318,7 +318,7 @@ td{padding:10px 12px;vertical-align:top}
 
   <!-- ⑥ 보도자료 게재율 탭 -->
   <div id="panel-press" class="tab-panel">
-    <div class="notice notice-keep">📣 구글 시트 <b>'언론 업무'</b> 탭에서 구분이 <b>보도자료</b>이고 게재일이 적힌 건을 가져와, 배포일 전후에 수집된 서울아산병원 기사와 맞춰 봤습니다. <b>의료진 이름과 제목 키워드가 겹치는 기사</b>를 그 보도자료에서 나온 것으로 셉니다. 줄을 누르면 실제 기사 목록이 펼쳐집니다.
+    <div class="notice notice-keep">📣 구글 시트 <b>'언론 업무'</b> 탭에서 구분이 <b>보도자료</b>이고 게재일이 적힌 건을 가져와, 배포일 전후에 수집된 서울아산병원 기사와 맞춰 봤습니다. 배포범위에 <b>특정 매체 한 곳만</b> 적힌 건(전체 배포가 아니라 그 매체에만 준 건)은 뺐습니다. <b>의료진 이름과 제목 키워드가 겹치는 기사</b>를 그 보도자료에서 나온 것으로 셉니다. 줄을 누르면 실제 기사 목록이 펼쳐집니다.
       <label class="check-label" style="margin-left:8px"><input type="checkbox" id="press-zero-only"> 게재 0건만 보기</label>
     </div>
     <div class="stats-row" id="stats-press"></div>
@@ -378,11 +378,9 @@ td{padding:10px 12px;vertical-align:top}
 
 <script>
 // ── 개발 버전 전용 ───────────────────────────────────────────────────────────
-// 여기는 운영 저장소입니다 — 이 값은 반드시 false로 둡니다. 개발 저장소
-// (hospital-news-dashboard-dev)에서는 true이고, 그 밖의 내용은 두 파일이 똑같습니다.
-// false라서 가려지는 것: 제목의 [개발], 헤더 배지·안내 문구, 🔒 대외비 딱지, 보도자료 게재율 탭.
-// false라서 보이는 것: 🔓 대외 공개 가능 딱지.
-// AI 분석 탭과 판정 배지는 양쪽 모두에 보입니다 (2026-10-15부터).
+// 운영 저장소(hospital-news-dashboard)에서는 이 값만 false로 두고, 나머지는 이 파일과
+// 똑같이 유지합니다. 그래야 다음 반영 때 index.html을 그대로 복사하면 됩니다.
+// false일 때 가려지는 것: 제목의 [개발], 헤더 배지·안내 문구, 보도자료 게재율·AI 분석 탭, AI 판정 배지.
 const IS_DEV = false;
 
 // AI 분석 탭은 양쪽 모두에 보입니다 (2026-10-15). 판정 결과가 없으면

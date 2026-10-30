@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-30 11:35",
-  "전체기사": 25421,
+  "실행시각": "2026-10-31 08:02",
+  "전체기사": 25608,
   "지면": {
-    "대상": 96,
-    "요청": 71,
-    "게재확인": 8,
-    "미게재": 88,
+    "대상": 102,
+    "요청": 78,
+    "게재확인": 3,
+    "미게재": 99,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 314,
-    "요청": 208,
-    "영상": 83,
-    "아님": 156,
-    "판정보류": 72,
-    "오류": 3,
-    "남은대상": 75
+    "대상": 317,
+    "요청": 210,
+    "영상": 93,
+    "아님": 178,
+    "판정보류": 44,
+    "오류": 2,
+    "남은대상": 46
   },
   "기자명": {
-    "대상": 926,
-    "요청": 351,
-    "채움": 184,
-    "이름없음": 16,
-    "오류": 60,
+    "대상": 916,
+    "요청": 441,
+    "채움": 162,
+    "이름없음": 21,
+    "오류": 68,
     "차단호스트": 4,
-    "네이버바이라인없음": 86,
+    "네이버바이라인없음": 186,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009258972",
-      "길이": 258776,
-      "title": "한독, 3분기 영업익 37억 6000만원…전년대비 1207% 증가",
+      "url": "https://n.news.naver.com/mnews/article/052/0002426298",
+      "길이": 300262,
+      "title": "[메디컬 인사이트 160회] 생명을 잇는 나눔 '장기기증'",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 726
+    "남은대상": 733
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5323
+    "표시기사": 5356
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

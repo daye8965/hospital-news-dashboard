@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-10-29 12:10",
-  "전체기사": 25208,
+  "실행시각": "2026-10-30 11:35",
+  "전체기사": 25421,
   "지면": {
-    "대상": 103,
-    "요청": 77,
-    "게재확인": 0,
-    "미게재": 103,
+    "대상": 96,
+    "요청": 71,
+    "게재확인": 8,
+    "미게재": 88,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 106,
-    "요청": 92,
-    "영상": 22,
-    "아님": 49,
-    "판정보류": 32,
+    "대상": 314,
+    "요청": 208,
+    "영상": 83,
+    "아님": 156,
+    "판정보류": 72,
     "오류": 3,
-    "남은대상": 35
+    "남은대상": 75
   },
   "기자명": {
-    "대상": 713,
-    "요청": 233,
-    "채움": 0,
-    "이름없음": 1,
-    "오류": 86,
+    "대상": 926,
+    "요청": 351,
+    "채움": 184,
+    "이름없음": 16,
+    "오류": 60,
     "차단호스트": 4,
-    "네이버바이라인없음": 141,
+    "네이버바이라인없음": 86,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009255920",
-      "길이": 251442,
-      "title": "탈모 치료 새시대 열리나…한국애브비 '린버크', 중증 원형탈모 치료 허가",
+      "url": "https://n.news.naver.com/mnews/article/421/0009258972",
+      "길이": 258776,
+      "title": "한독, 3분기 영업익 37억 6000만원…전년대비 1207% 증가",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 712
+    "남은대상": 726
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5282
+    "표시기사": 5323
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

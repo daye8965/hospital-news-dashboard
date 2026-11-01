@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-01 11:12",
-  "전체기사": 25658,
+  "실행시각": "2026-11-02 07:55",
+  "전체기사": 25693,
   "지면": {
-    "대상": 75,
-    "요청": 68,
-    "게재확인": 0,
-    "미게재": 75,
+    "대상": 53,
+    "요청": 58,
+    "게재확인": 2,
+    "미게재": 51,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 319,
-    "요청": 211,
-    "영상": 112,
-    "아님": 189,
-    "판정보류": 18,
+    "대상": 321,
+    "요청": 213,
+    "영상": 111,
+    "아님": 177,
+    "판정보류": 33,
     "오류": 0,
-    "남은대상": 18
+    "남은대상": 33
   },
   "기자명": {
-    "대상": 725,
-    "요청": 239,
-    "채움": 2,
-    "이름없음": 0,
-    "오류": 83,
+    "대상": 759,
+    "요청": 318,
+    "채움": 31,
+    "이름없음": 4,
+    "오류": 79,
     "차단호스트": 4,
-    "네이버바이라인없음": 150,
+    "네이버바이라인없음": 199,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009261286",
-      "길이": 257232,
-      "title": "큐로셀, 림카토 2차 치료 임상 3상 신청…적응증 확대 추진",
+      "url": "https://n.news.naver.com/mnews/article/215/0001271151",
+      "길이": 292238,
+      "title": "퇴근 후 AI 배우러 몰렸다…‘우먼 AI 위크’ 500여 명 참여",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 723
+    "남은대상": 724
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5368
+    "표시기사": 5377
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-04 12:00",
-  "전체기사": 26439,
+  "실행시각": "2026-11-05 07:40",
+  "전체기사": 26688,
   "지면": {
-    "대상": 104,
-    "요청": 78,
-    "게재확인": 0,
-    "미게재": 104,
+    "대상": 142,
+    "요청": 88,
+    "게재확인": 11,
+    "미게재": 131,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 370,
-    "요청": 248,
-    "영상": 135,
-    "아님": 197,
-    "판정보류": 36,
-    "오류": 2,
-    "남은대상": 38
+    "대상": 398,
+    "요청": 267,
+    "영상": 137,
+    "아님": 192,
+    "판정보류": 69,
+    "오류": 0,
+    "남은대상": 69
   },
   "기자명": {
-    "대상": 761,
-    "요청": 270,
-    "채움": 13,
-    "이름없음": 0,
-    "오류": 76,
-    "차단호스트": 5,
-    "네이버바이라인없음": 174,
+    "대상": 1008,
+    "요청": 550,
+    "채움": 222,
+    "이름없음": 22,
+    "오류": 60,
+    "차단호스트": 6,
+    "네이버바이라인없음": 239,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009266852",
-      "길이": 258835,
-      "title": "동화약품, 이상지질혈증 복합제 '프라바펜' 출시…의료진 심포지엄",
+      "url": "https://n.news.naver.com/mnews/article/449/0000366442",
+      "길이": 291630,
+      "title": "[김종석의 리포트]정신과 의사, 환자에 또 흉기 피습",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 748
+    "남은대상": 764
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5488
+    "표시기사": 5528
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

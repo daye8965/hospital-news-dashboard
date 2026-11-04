@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-03 12:55",
-  "전체기사": 26095,
+  "실행시각": "2026-11-04 09:02",
+  "전체기사": 26427,
   "지면": {
-    "대상": 96,
-    "요청": 77,
-    "게재확인": 0,
-    "미게재": 96,
+    "대상": 113,
+    "요청": 79,
+    "게재확인": 10,
+    "미게재": 103,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 348,
-    "요청": 232,
-    "영상": 124,
-    "아님": 187,
-    "판정보류": 34,
+    "대상": 368,
+    "요청": 247,
+    "영상": 138,
+    "아님": 206,
+    "판정보류": 21,
     "오류": 3,
-    "남은대상": 37
+    "남은대상": 24
   },
   "기자명": {
-    "대상": 746,
-    "요청": 206,
-    "채움": 7,
-    "이름없음": 0,
-    "오류": 79,
-    "차단호스트": 4,
-    "네이버바이라인없음": 116,
+    "대상": 1075,
+    "요청": 495,
+    "채움": 305,
+    "이름없음": 21,
+    "오류": 44,
+    "차단호스트": 6,
+    "네이버바이라인없음": 117,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009265673",
-      "길이": 271112,
-      "title": "통일교 한학자, 보석 중 천정궁 외출 인정…법원, 취소 심문(종합)",
+      "url": "https://n.news.naver.com/mnews/article/123/0002393250",
+      "길이": 238081,
+      "title": "‘천정궁 외출’ 한학자 통일교 총재 보석 취소…보증금 2억원 몰수",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 739
+    "남은대상": 749
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5411
+    "표시기사": 5486
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

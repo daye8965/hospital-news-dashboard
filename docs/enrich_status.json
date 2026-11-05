@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-11-06 07:16",
-  "전체기사": 27050,
+  "실행시각": "2026-11-06 07:42",
+  "전체기사": 27055,
   "지면": {
-    "대상": 141,
+    "대상": 130,
     "요청": 79,
-    "게재확인": 11,
+    "게재확인": 0,
     "미게재": 130,
     "오류": 0
   },
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 422,
-    "요청": 285,
-    "영상": 169,
-    "아님": 240,
-    "판정보류": 13,
-    "오류": 0,
-    "남은대상": 13
+    "대상": 423,
+    "요청": 286,
+    "영상": 164,
+    "아님": 231,
+    "판정보류": 27,
+    "오류": 1,
+    "남은대상": 28
   },
   "기자명": {
-    "대상": 1124,
-    "요청": 504,
-    "채움": 314,
-    "이름없음": 33,
-    "오류": 46,
-    "차단호스트": 7,
-    "네이버바이라인없음": 103,
+    "대상": 785,
+    "요청": 385,
+    "채움": 15,
+    "이름없음": 2,
+    "오류": 72,
+    "차단호스트": 6,
+    "네이버바이라인없음": 289,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/056/0012288434",
-      "길이": 301822,
-      "title": "“임세원 잃고 8년이나 지났는데”…또 흉기 찔린 의사, 왜?",
+      "url": "https://n.news.naver.com/mnews/article/421/0009273172",
+      "길이": 268808,
+      "title": "[속보] 경찰, '신촌 세브란스 병원 흉기난동' 50대 구속영장 신청",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 777
+    "남은대상": 768
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5625
+    "표시기사": 5632
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

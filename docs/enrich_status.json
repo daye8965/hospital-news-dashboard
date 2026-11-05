@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-05 12:28",
-  "전체기사": 26702,
+  "실행시각": "2026-11-06 07:16",
+  "전체기사": 27050,
   "지면": {
-    "대상": 131,
-    "요청": 85,
-    "게재확인": 0,
-    "미게재": 131,
+    "대상": 141,
+    "요청": 79,
+    "게재확인": 11,
+    "미게재": 130,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 402,
-    "요청": 271,
-    "영상": 158,
-    "아님": 217,
-    "판정보류": 25,
-    "오류": 2,
-    "남은대상": 27
+    "대상": 422,
+    "요청": 285,
+    "영상": 169,
+    "아님": 240,
+    "판정보류": 13,
+    "오류": 0,
+    "남은대상": 13
   },
   "기자명": {
-    "대상": 780,
-    "요청": 231,
-    "채움": 17,
-    "이름없음": 0,
-    "오류": 77,
-    "차단호스트": 6,
-    "네이버바이라인없음": 127,
+    "대상": 1124,
+    "요청": 504,
+    "채움": 314,
+    "이름없음": 33,
+    "오류": 46,
+    "차단호스트": 7,
+    "네이버바이라인없음": 103,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009270568",
-      "길이": 269569,
-      "title": "신촌 세브란스서 50대女 흉기 난동…진료실서 교수 피습(종합)",
+      "url": "https://n.news.naver.com/mnews/article/056/0012288434",
+      "길이": 301822,
+      "title": "“임세원 잃고 8년이나 지났는데”…또 흉기 찔린 의사, 왜?",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 763
+    "남은대상": 777
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 538,
-    "표시기사": 5531
+    "표시기사": 5625
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-07 11:46",
-  "전체기사": 27270,
+  "실행시각": "2026-11-08 05:57",
+  "전체기사": 27345,
   "지면": {
-    "대상": 140,
-    "요청": 83,
-    "게재확인": 1,
-    "미게재": 139,
+    "대상": 118,
+    "요청": 76,
+    "게재확인": 2,
+    "미게재": 116,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 436,
-    "요청": 295,
-    "영상": 162,
-    "아님": 229,
-    "판정보류": 42,
-    "오류": 3,
-    "남은대상": 45
+    "대상": 450,
+    "요청": 304,
+    "영상": 182,
+    "아님": 240,
+    "판정보류": 27,
+    "오류": 1,
+    "남은대상": 28
   },
   "기자명": {
-    "대상": 781,
-    "요청": 228,
-    "채움": 6,
-    "이름없음": 7,
-    "오류": 75,
+    "대상": 850,
+    "요청": 410,
+    "채움": 60,
+    "이름없음": 10,
+    "오류": 68,
     "차단호스트": 4,
-    "네이버바이라인없음": 136,
+    "네이버바이라인없음": 267,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/056/0012288948",
-      "길이": 297156,
-      "title": "또 병원에서 흉기난동…만취 60대, 출동 경찰관도 위협",
+      "url": "https://n.news.naver.com/mnews/article/215/0001272015",
+      "길이": 292271,
+      "title": "[단독] 대장내시경 후 사망 위험 낮춘 '변수'…외과 의사였다",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 768
+    "남은대상": 780
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 5698
+    "표시기사": 5709
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

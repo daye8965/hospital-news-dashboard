@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-14 12:11",
-  "전체기사": 28738,
+  "실행시각": "2026-11-15 06:33",
+  "전체기사": 28775,
   "지면": {
-    "대상": 109,
-    "요청": 75,
-    "게재확인": 0,
-    "미게재": 109,
+    "대상": 85,
+    "요청": 66,
+    "게재확인": 1,
+    "미게재": 84,
     "오류": 0
   },
   "직접지정지면": {
@@ -14,26 +14,26 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 469,
-    "요청": 317,
-    "영상": 154,
-    "아님": 208,
-    "판정보류": 105,
-    "오류": 2,
-    "남은대상": 107
+    "대상": 468,
+    "요청": 316,
+    "영상": 153,
+    "아님": 205,
+    "판정보류": 110,
+    "오류": 0,
+    "남은대상": 110
   },
   "기자명": {
-    "대상": 819,
-    "요청": 241,
-    "채움": 4,
-    "이름없음": 3,
-    "오류": 75,
+    "대상": 855,
+    "요청": 451,
+    "채움": 36,
+    "이름없음": 7,
+    "오류": 68,
     "차단호스트": 4,
-    "네이버바이라인없음": 155,
+    "네이버바이라인없음": 336,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009287377",
-      "길이": 256650,
-      "title": "금호건설, 영업익 44% 증가·수주 목표 조기 달성에 상한가[핫종목]",
+      "url": "https://n.news.naver.com/mnews/article/243/0000105672",
+      "길이": 267268,
+      "title": "5만원 비타민 주사 vs 500원 알약… 피로 회복 승자는?",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
@@ -45,7 +45,7 @@
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 539,
-    "표시기사": 6023
+    "표시기사": 6028
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

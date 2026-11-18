@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-18 13:15",
-  "전체기사": 29318,
+  "실행시각": "2026-11-19 08:25",
+  "전체기사": 29630,
   "지면": {
-    "대상": 69,
-    "요청": 59,
-    "게재확인": 0,
-    "미게재": 69,
+    "대상": 97,
+    "요청": 63,
+    "게재확인": 3,
+    "미게재": 94,
     "오류": 0
   },
   "직접지정지면": {
@@ -16,36 +16,35 @@
   "영상": {
     "대상": 471,
     "요청": 318,
-    "영상": 153,
-    "아님": 206,
-    "판정보류": 108,
-    "오류": 4,
-    "남은대상": 112
+    "영상": 157,
+    "아님": 211,
+    "판정보류": 103,
+    "오류": 0,
+    "남은대상": 103
   },
   "기자명": {
-    "대상": 842,
-    "요청": 228,
-    "채움": 12,
-    "이름없음": 1,
-    "오류": 77,
-    "차단호스트": 5,
-    "네이버바이라인없음": 130,
+    "대상": 1148,
+    "요청": 540,
+    "채움": 338,
+    "이름없음": 24,
+    "오류": 36,
+    "차단호스트": 6,
+    "네이버바이라인없음": 136,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/421/0009293728",
-      "길이": 260381,
-      "title": "특발성 폐섬유증 급성악화, 고용량 스테로이드 추가 효과 없었다",
+      "url": "https://n.news.naver.com/mnews/article/421/0009296849",
+      "길이": 257372,
+      "title": "KT·서울대병원, ‘의료 피지컬 AI’ 실증",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
-    "시간초과": true,
-    "남은대상": 829
+    "남은대상": 786
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 6172
+    "표시기사": 6243
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

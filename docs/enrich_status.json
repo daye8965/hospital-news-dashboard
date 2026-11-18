@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-18 08:52",
-  "전체기사": 29314,
+  "실행시각": "2026-11-18 13:15",
+  "전체기사": 29318,
   "지면": {
-    "대상": 70,
-    "요청": 60,
-    "게재확인": 2,
-    "미게재": 68,
+    "대상": 69,
+    "요청": 59,
+    "게재확인": 0,
+    "미게재": 69,
     "오류": 0
   },
   "직접지정지면": {
@@ -16,36 +16,36 @@
   "영상": {
     "대상": 471,
     "요청": 318,
-    "영상": 136,
-    "아님": 182,
+    "영상": 153,
+    "아님": 206,
     "판정보류": 108,
-    "오류": 45,
-    "남은대상": 153
+    "오류": 4,
+    "남은대상": 112
   },
   "기자명": {
-    "대상": 1043,
-    "요청": 243,
-    "채움": 188,
-    "이름없음": 20,
-    "오류": 15,
-    "차단호스트": 3,
-    "네이버바이라인없음": 14,
+    "대상": 842,
+    "요청": 228,
+    "채움": 12,
+    "이름없음": 1,
+    "오류": 77,
+    "차단호스트": 5,
+    "네이버바이라인없음": 130,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/346/0000119043",
-      "길이": 273187,
-      "title": "“혼자 사는 것보다 무서운 것 있다”… 노년기 사망 위험 높이는 ‘고독감’",
+      "url": "https://n.news.naver.com/mnews/article/421/0009293728",
+      "길이": 260381,
+      "title": "특발성 폐섬유증 급성악화, 고용량 스테로이드 추가 효과 없었다",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 835
+    "남은대상": 829
   },
   "출입기자": {
     "결과": "대조 완료",
-    "명단인원": 539,
-    "표시기사": 6168
+    "명단인원": 540,
+    "표시기사": 6172
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

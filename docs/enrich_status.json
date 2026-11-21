@@ -1,10 +1,10 @@
 {
-  "실행시각": "2026-11-21 08:08",
-  "전체기사": 30142,
+  "실행시각": "2026-11-21 12:57",
+  "전체기사": 30152,
   "지면": {
-    "대상": 134,
-    "요청": 80,
-    "게재확인": 7,
+    "대상": 128,
+    "요청": 77,
+    "게재확인": 1,
     "미게재": 127,
     "오류": 0
   },
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 484,
-    "요청": 238,
-    "영상": 165,
-    "아님": 215,
-    "판정보류": 103,
-    "오류": 1,
-    "남은대상": 104
+    "대상": 485,
+    "요청": 227,
+    "영상": 160,
+    "아님": 209,
+    "판정보류": 114,
+    "오류": 2,
+    "남은대상": 116
   },
   "기자명": {
-    "대상": 1000,
-    "요청": 456,
-    "채움": 167,
-    "이름없음": 20,
-    "오류": 60,
+    "대상": 825,
+    "요청": 318,
+    "채움": 15,
+    "이름없음": 3,
+    "오류": 76,
     "차단호스트": 5,
-    "네이버바이라인없음": 202,
+    "네이버바이라인없음": 219,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/015/0005356474",
-      "길이": 286281,
-      "title": "새 아산의료원장에 박승일 병원장·서울아산병원장에 이제환 부원장",
+      "url": "https://n.news.naver.com/mnews/article/421/0009301697",
+      "길이": 256195,
+      "title": "아산의료원장에 박승일…서울아산병원장 이제환",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 813
+    "남은대상": 807
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 6349
+    "표시기사": 6356
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

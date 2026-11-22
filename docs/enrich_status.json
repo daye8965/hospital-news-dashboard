@@ -1,12 +1,12 @@
 {
-  "실행시각": "2026-11-22 12:07",
-  "전체기사": 30180,
+  "실행시각": "2026-11-23 07:30",
+  "전체기사": 30224,
   "지면": {
-    "대상": 110,
-    "요청": 68,
+    "대상": 89,
+    "요청": 65,
     "게재확인": 1,
-    "미게재": 105,
-    "오류": 1
+    "미게재": 88,
+    "오류": 0
   },
   "직접지정지면": {
     "목록": 1,
@@ -15,36 +15,37 @@
   },
   "영상": {
     "대상": 487,
-    "요청": 228,
-    "영상": 160,
-    "아님": 210,
-    "판정보류": 116,
-    "오류": 1,
-    "남은대상": 117
+    "요청": 331,
+    "영상": 201,
+    "아님": 273,
+    "판정보류": 13,
+    "오류": 0,
+    "남은대상": 13
   },
   "기자명": {
-    "대상": 807,
+    "대상": 851,
     "요청": 334,
-    "채움": 1,
-    "이름없음": 2,
-    "오류": 62,
-    "차단호스트": 6,
-    "네이버바이라인없음": 263,
+    "채움": 34,
+    "이름없음": 8,
+    "오류": 68,
+    "차단호스트": 5,
+    "네이버바이라인없음": 217,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/020/0003764077",
-      "길이": 291080,
-      "title": "아산의료원장에 박승일, 서울아산병원장 이제환",
+      "url": "https://n.news.naver.com/mnews/article/032/0003484271",
+      "길이": 252416,
+      "title": "아산의료원장에 박승일 임명…서울아산병원장에 이제환",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
-    "남은대상": 804
+    "시간초과": true,
+    "남은대상": 809
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 6356
+    "표시기사": 6364
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

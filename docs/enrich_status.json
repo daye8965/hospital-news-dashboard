@@ -1,12 +1,12 @@
 {
-  "실행시각": "2026-11-23 12:42",
-  "전체기사": 30224,
+  "실행시각": "2026-11-24 12:22",
+  "전체기사": 30461,
   "지면": {
-    "대상": 88,
-    "요청": 122,
-    "게재확인": 1,
-    "미게재": 87,
-    "오류": 0
+    "대상": 69,
+    "요청": 134,
+    "게재확인": 7,
+    "미게재": 61,
+    "오류": 1
   },
   "직접지정지면": {
     "목록": 1,
@@ -14,38 +14,38 @@
     "이번에바뀐행": 0
   },
   "영상": {
-    "대상": 487,
-    "요청": 228,
-    "영상": 160,
-    "아님": 210,
-    "판정보류": 115,
-    "오류": 2,
-    "남은대상": 117
+    "대상": 488,
+    "요청": 281,
+    "영상": 184,
+    "아님": 239,
+    "판정보류": 64,
+    "오류": 1,
+    "남은대상": 65
   },
   "기자명": {
-    "대상": 811,
-    "요청": 296,
-    "채움": 1,
-    "이름없음": 2,
-    "오류": 78,
-    "차단호스트": 5,
-    "네이버바이라인없음": 209,
+    "대상": 1047,
+    "요청": 417,
+    "채움": 205,
+    "이름없음": 28,
+    "오류": 50,
+    "차단호스트": 6,
+    "네이버바이라인없음": 128,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/243/0000106006",
-      "길이": 252383,
-      "title": "MBC ‘전참시’ ITZY 채령, 일상 속 간식 공개…메디슨벨 ‘한입샐러드 젤리’ 눈길",
+      "url": "https://n.news.naver.com/mnews/article/421/0009305580",
+      "길이": 257639,
+      "title": "똑같이 '삐' 소리 나도 다르다…AI로 이명 세 유형 나눴다",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 808
+    "남은대상": 814
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 6363
+    "표시기사": 6419
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"

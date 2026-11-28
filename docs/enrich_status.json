@@ -1,11 +1,11 @@
 {
-  "실행시각": "2026-11-28 08:34",
-  "전체기사": 31663,
+  "실행시각": "2026-11-28 10:29",
+  "전체기사": 31670,
   "지면": {
-    "대상": 117,
-    "요청": 139,
-    "게재확인": 4,
-    "미게재": 113,
+    "대상": 114,
+    "요청": 137,
+    "게재확인": 0,
+    "미게재": 114,
     "오류": 0
   },
   "직접지정지면": {
@@ -15,37 +15,37 @@
   },
   "영상": {
     "대상": 500,
-    "요청": 232,
-    "영상": 163,
-    "아님": 216,
-    "판정보류": 120,
+    "요청": 248,
+    "영상": 169,
+    "아님": 226,
+    "판정보류": 104,
     "오류": 1,
-    "남은대상": 121
+    "남은대상": 105
   },
   "기자명": {
-    "대상": 1136,
-    "요청": 459,
-    "채움": 268,
-    "이름없음": 18,
-    "오류": 46,
-    "차단호스트": 5,
-    "네이버바이라인없음": 122,
+    "대상": 862,
+    "요청": 279,
+    "채움": 11,
+    "이름없음": 2,
+    "오류": 74,
+    "차단호스트": 6,
+    "네이버바이라인없음": 186,
     "네이버진단": {
-      "url": "https://n.news.naver.com/mnews/article/052/0002439139",
-      "길이": 299484,
-      "title": "[메디컬 인사이트 164회] 누구도 피할 수 없는 '뇌 노화' 예방법",
+      "url": "https://n.news.naver.com/mnews/article/421/0009314846",
+      "길이": 260164,
+      "title": "\"시력 잃기 전 맞춤약 닿을까\"…9살 윤아의 기다림",
       "byline_s태그": false,
       "journalist태그": true,
       "journalist주변HTML": "2> </div> <div class=\"media_end_head_info nv_notrans \"> <div class=\"media_end_head_info_journalist\"> <div class=\"media_end_head_journalist_info\"> <div class=\"media_end_head_info_datestamp\"> <div class=\"media_end_head_info_datestamp_bunch_area\"> <div class=\"media_end_head_info_datestamp_group\"> <div class=\"media_end_head_info_datestamp_bunch\"> <em class=\"media_end_head_info_datestamp_term\">입력</em> <span class=\"media_end_head_info_datestamp_time _ARTICLE_DATE_TIME\" data-da",
       "jsonld_author": false
     },
     "시간초과": true,
-    "남은대상": 850
+    "남은대상": 849
   },
   "출입기자": {
     "결과": "대조 완료",
     "명단인원": 540,
-    "표시기사": 6681
+    "표시기사": 6684
   },
   "보도자료": "건너뜀 (SKIP_PRESS_RELEASES)",
   "결과": "완료"
